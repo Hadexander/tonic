@@ -5,3 +5,4 @@ A discord bartender for developers...
 * Log into discord and detect events
 * Respond to user/hello world test
 * Track Git Commits
+* Notify users of git commits 
