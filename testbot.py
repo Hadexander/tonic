@@ -36,5 +36,4 @@ async def on_message(message):
         await client.send_message(message.channel, 'RIP')
         sys.exit(0)
 
-
 client.run('MzQwOTE5NDIxMjQzNjIxMzc3.DF5kGQ.gz23fwEWEb8UrQCzoSRXUvrnOyY')
