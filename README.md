@@ -2,7 +2,10 @@
 A discord bartender for developers...
 
 # TODO
-* Log into discord and detect events
-* Respond to user/hello world test
-* Track Git Commits
-* Notify users of git commits 
+
+* Register users
+* Register repositories
+* Notify of repo commits
+* Report repo info
+* Reminder of last time you commited every time you log in
+* Reminder to sleep
