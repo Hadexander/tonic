@@ -11,7 +11,7 @@ async def on_ready():
     print('------')
 
 @client.event
-async def on_message(message):
+async def on_message(message):   
     if message.content.startswith('!test'):
         counter = 0
         tmp = await client.send_message(message.channel, 'Calculating messages...')
@@ -24,17 +24,22 @@ async def on_message(message):
         await asyncio.sleep(5)
         await client.send_message(message.channel, 'Done sleeping')
 
-    elif message.content.startswith('!die'):
-        await client.send_message(message.channel, 'Ima go die now..')
-        await asyncio.sleep(1)
-        await client.send_message(message.channel, 'dead in 3..')
-        await asyncio.sleep(1)
-        await client.send_message(message.channel, 'dead in 2..')
-        await asyncio.sleep(1)
-        await client.send_message(message.channel, 'dead in 1..')
-        await asyncio.sleep(1)
-        await client.send_message(message.channel, 'RIP')
-        sys.exit(0)
+    elif message.content.startswith('!lp'):
+        await client.send_message(message.channel, 'Let\'s play!', tts = True)
 
+    if message.content.startswith('!emtest'):
+        em = discord.Embed(title='My Embed Title', description='My Embed Content.', colour=0xDEADBF)
+        em.set_author(name='Someone', icon_url=client.user.default_avatar_url)
+        await client.send_message(message.channel, embed=em)
+    
+    if message.content.startswith('!upgrade'):
+        tmp = await client.send_message(message.channel, 'OK! \n\
+        Upgrading my systems...')
+        with open('avi.png', 'rb') as avi:
+            await client.edit_profile(avatar=avi.read())
+        await client.edit_message(tmp, \
+        'OK!\n \
+        Upgrading my systems...\n \
+        Systems upgraded, I have a new face!')
 
 client.run('MzQwOTE5NDIxMjQzNjIxMzc3.DF5kGQ.gz23fwEWEb8UrQCzoSRXUvrnOyY')
