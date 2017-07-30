@@ -2,6 +2,7 @@ import shelve
 import asyncio
 import discord
 from discord.ext.commands import *
+import extras
 
 async def command_prefix(me : Bot, message : discord.Message):
     return [bot.user.mention+' ', '!']
@@ -28,5 +29,6 @@ async def owners(ctx):
     msg = '\n'.join(ustr)
     await bot.send_message(ctx.message.channel, 'My owners are:\n'+msg)
 
+bot.add_command(extras.inspirobot.inspire)
 bot.run('MzQwOTE5NDIxMjQzNjIxMzc3.DF5kGQ.gz23fwEWEb8UrQCzoSRXUvrnOyY')
 db.close()
