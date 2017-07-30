@@ -1,15 +1,20 @@
 import discord
 import asyncio
 import sys
+import time
+import socket
 client = discord.Client()
+
 
 @client.event
 async def on_ready():
+    
     print('Logged in as')
     print(client.user.name)
     print(client.user.id)
     print('------')
-
+    await client.send_message(client.get_channel('133578549432025088'),'Im up and running! :smiley: \n \n' + 'My current time is: ' + time.asctime() + '\n \n' + 'and Im running from: ' + socket.gethostname() )
+    
 @client.event
 async def on_message(message):   
     if message.content.startswith('!test'):
