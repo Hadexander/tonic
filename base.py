@@ -3,6 +3,8 @@ import asyncio
 import sys
 import time
 import socket
+import aiohttp
+import imghdr
 client = discord.Client()
 
 @client.event
@@ -28,8 +30,8 @@ async def on_message(message):
     if(len(args) > 0):
         #find respective coroutine
         coroutine = commands.get(args[0], None)
-        if(coroutine is not None):
-            await coroutine(message, args)
+        if(coroutine):
+            await coroutine(message, *args[1:])
 
 async def extract_command(text):
     text = text.strip()
@@ -71,12 +73,32 @@ async def upgrade(message, *args):
     Upgrading my systems...\n \
     Systems upgraded, I have a new face!')
 
+async def avatar(message, *args):
+    if(len(args) < 1):
+        return
+    msg = await client.send_message(message.channel, 'Downloading new avatar...')
+    async with aiohttp.ClientSession() as session:
+        try:
+            async with session.get(args[0]) as response:
+                if(response.status == 200):
+                    avi = await response.read()
+                    if(imghdr.what('', h = avi)):
+                        await client.edit_profile(avatar = avi)
+                        await client.edit_message(msg, 'Avatar changed.')
+                    else:
+                        await client.edit_message(msg, 'I\'m sorry, that\'s not a valid image')
+                else:
+                    await client.edit_message(msg, 'I\'m sorry, download failed: '+response.reason)
+        except ValueError:
+            await client.edit_message(msg, "I\'m sorry, the URL was invalid.")
+
 prefix = '!'
 commands = {
     'test' : test,
     'sleep' : sleep,
     'lp' :  cmd_lp,
     'emtest' : emtest,
-    'upgrade' : upgrade
+    'upgrade' : upgrade,
+    'avatar' : avatar
 }
 client.run('MzQwOTE5NDIxMjQzNjIxMzc3.DF5kGQ.gz23fwEWEb8UrQCzoSRXUvrnOyY')
