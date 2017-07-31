@@ -3,7 +3,7 @@ from discord.ext.commands import *
 from extras import *
 from util import *
 
-async def command_prefix(me : Bot, message : discord.Message):
+async def command_prefix(bot, message):
     return [bot.user.mention+' ', '!']
 
 bot = Bot(command_prefix)
