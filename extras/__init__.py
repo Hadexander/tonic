@@ -1,3 +1,1 @@
-from .inspirobot import inspire
-
-__all__ = ["inspirobot"]
+from extras.inspirobot import inspire

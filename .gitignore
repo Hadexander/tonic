@@ -1,7 +1,7 @@
 *.bak
 *.dat
 *.dir
-
+*.db
 
 ### Python ###
 # Byte-compiled / optimized / DLL files
