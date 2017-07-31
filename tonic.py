@@ -22,10 +22,10 @@ async def on_command_error(error, ctx):
 @command(pass_context=True)
 async def info(ctx):
     """Shows general information about me."""
-    msg = """```Hello, I am Tonic v%s - your diligent bartender.\n
-I am using discord.py v%s.\n
-I am currently servicing %s servers.\n
-Please report any issues to my author: %s\n
+    msg = """```Hello, I am Tonic v%s - your diligent bartender.
+I am using discord.py v%s.
+I am currently servicing %s servers.
+Please report any issues to my author: %s
 Use %shelp to get a list of commands.```"""\
     %(__version__, discord.__version__, len(ctx.bot.servers), __author__, await serverwide_prefix(ctx.message.server))
     await ctx.bot.send_message(ctx.message.channel, msg)
