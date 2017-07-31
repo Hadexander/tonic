@@ -1,6 +1,3 @@
-*.bak
-*.dat
-*.dir
 *.db
 
 ### Python ###
