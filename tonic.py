@@ -16,7 +16,7 @@ async def on_ready():
 @bot.event
 async def on_command_error(error, ctx):
     if(isinstance(error, VerificationError)):
-        nope = ['No.', 'Nope.', 'Nah.', 'Nu.', 'Your access level isn\'t high enough.']
+        nope = ['No.', 'Nope.', 'Nah.', 'Your access level isn\'t high enough.']
         await ctx.bot.send_message(ctx.message.channel, random.choice(nope))
     elif(isinstance(error, (MissingRequiredArgument, BadArgument))):
         help = bot.commands.get('help')
