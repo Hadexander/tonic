@@ -10,7 +10,7 @@ bot = Bot(command_prefix)
 
 @bot.event
 async def on_ready():
-    print('Logged in (%s:%s)' % (bot.user.name, bot.user.id))
+    print('Ready (%s:%s)' % (bot.user.name, bot.user.id))
 
 @bot.event
 async def on_command_error(error, ctx):
