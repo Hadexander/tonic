@@ -1,2 +1,2 @@
-from util.verification import VerificationError, verify_access_level, access
+from util.verification import VerificationError, access
 from util.maintenance import avatar
