@@ -2,6 +2,7 @@ __author__ = 'Hadexander'
 __version__ = '0.0.1'
 
 import discord
+import random
 from discord.ext.commands import *
 from extras import *
 from util import *
@@ -15,7 +16,11 @@ async def on_ready():
 @bot.event
 async def on_command_error(error, ctx):
     if(isinstance(error, VerificationError)):
-        await ctx.bot.send_message(ctx.message.channel, 'You do not have sufficient access to use this command.')
+        nope = ['No.', 'Nope.', 'Nah.', 'Nu.', 'Your access level isn\'t high enough.']
+        await ctx.bot.send_message(ctx.message.channel, random.choice(nope))
+    elif(isinstance(error, (MissingRequiredArgument, BadArgument))):
+        help = bot.commands.get('help')
+        await help.callback(ctx, ctx.command.name)
     else:
         print('Unhandled exception: %s' %(type(error)))
 
@@ -27,7 +32,7 @@ I am using discord.py v%s.
 I am currently servicing %s servers.
 Please report any issues to my author: %s
 Use %shelp to get a list of commands.```"""\
-    %(__version__, discord.__version__, len(ctx.bot.servers), __author__, await serverwide_prefix(ctx.message.server))
+    %(__version__, discord.__version__, len(ctx.bot.servers), __author__, ctx.prefix)
     await ctx.bot.send_message(ctx.message.channel, msg)
 
 bot.add_command(inspire)
