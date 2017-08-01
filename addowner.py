@@ -12,8 +12,8 @@ else:
     user = db.User(sha = sha.hexdigest())
     db.pull(user)
     if(user.access == 9001):
-        print('id:'+id+' already has owner-level access')
+        print('id:{} already has owner-level access'.format(id))
     else:
         user.access = 9001
         db.merge(user)
-        print('Successfully granted id:'+id+' owner-level access')
+        print('Successfully granted id:{} owner-level access'.format(id))

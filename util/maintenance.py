@@ -22,6 +22,6 @@ async def avatar(ctx, url):
                     else:
                         await ctx.bot.edit_message(msg, 'I\'m sorry, that\'s not a valid image')
                 else:
-                    await ctx.bot.edit_message(msg, 'I\'m sorry, download failed: %s' %(response.reason))
+                    await ctx.bot.edit_message(msg, 'I\'m sorry, download failed: {}'.format(response.reason))
         except ValueError:
             await ctx.bot.edit_message(msg, "I\'m sorry, the URL was invalid.")

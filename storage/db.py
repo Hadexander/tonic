@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, Column, Integer, String
+from sqlalchemy import create_engine, Column, Integer, String, PickleType
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from config import *
@@ -16,14 +16,20 @@ class User(Base):
         self.sha = kwargs.pop('sha', None)
         self.access = kwargs.pop('access', 0)
 
+    def save(self):
+        merge(self)
+
 class Guild(Base):
     __tablename__ = 'guilds'
     sha = Column(String(64), primary_key = True)
-    prefix = Column(String(), default='!')
+    prefix = Column(PickleType())
 
     def __init__(self, **kwargs):
         self.sha = kwargs.get('sha', None)
-        self.prefix = kwargs.get('prefix', '!')
+        self.prefix = kwargs.get('prefix', None)
+
+    def save(self):
+        merge(self)
 
 def validate_dbo(dbo):
     if(len(getattr(dbo, 'sha', '')) != 64):
