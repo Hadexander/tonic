@@ -2,12 +2,22 @@ import discord
 from discord.ext import commands
 import aiohttp
 import imghdr
-from util.verification import verify_access_level
+from storage.lookups import find_user
+from util.checks import require_owner_access
 
 @commands.command(pass_context=True)
+async def access(ctx):
+    """Tells you your access level."""
+    user = find_user(ctx.message.author.id)
+    level = 'user'
+    if(user.access > 9000):
+        level = 'owner'
+    await ctx.bot.send_message(ctx.message.channel, 'You have {} level access with me.'.format(level))
+
+@commands.command(pass_context=True)
+@commands.check(require_owner_access)
 async def avatar(ctx, url):
     """Changes my avatar from a URL."""
-    await verify_access_level(ctx.message.author.id, 9000)
     if(not url):
         return
     msg = await ctx.bot.send_message(ctx.message.channel, 'Downloading new avatar...')
