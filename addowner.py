@@ -10,10 +10,10 @@ else:
     sha = hashlib.sha256()
     sha.update(id.encode())
     user = db.User(sha = sha.hexdigest())
-    user.retrieve()
+    db.pull(user)
     if(user.access == 9001):
         print('id:'+id+' already has owner-level access')
     else:
         user.access = 9001
-        user.store()
+        db.merge(user)
         print('Successfully granted id:'+id+' owner-level access')

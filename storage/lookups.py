@@ -5,5 +5,5 @@ async def retrieve_user(uid : str):
     sha = hashlib.sha256()
     sha.update(uid.encode())
     user = db.User(sha = sha.hexdigest())
-    user.retrieve()
+    db.pull(user)
     return user
