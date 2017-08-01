@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
 from storage.lookups import find_guild
-from util.checks import no_private_message
+from util.checks import no_private_message, require_server_permissions
 
 prefix_cache = dict()
 
@@ -23,6 +23,7 @@ async def command_prefix(bot, message):
 
 @commands.command(pass_context=True)
 @commands.check(no_private_message)
+@commands.check(require_server_permissions)
 async def prefix(ctx, *args):
     """Changes my command prefix string on this server."""
     guild = find_guild(ctx.message.server.id)
