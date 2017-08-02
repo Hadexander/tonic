@@ -11,10 +11,12 @@ class User(Base):
     __tablename__ = 'users'
     sha = Column(String(64), primary_key = True)
     access = Column(Integer, default=0)
+    github = Column(String(40))
 
     def __init__(self, **kwargs):
         self.sha = kwargs.pop('sha', None)
         self.access = kwargs.pop('access', 0)
+        self.github = kwargs.pop('github', None)
 
     def save(self):
         merge(self)

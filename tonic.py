@@ -7,6 +7,7 @@ import traceback
 from discord.ext.commands import *
 from extras import *
 from util import *
+from github import *
 
 bot = Bot(command_prefix)
 
@@ -46,4 +47,6 @@ bot.add_command(access)
 bot.add_command(avatar)
 bot.add_command(info)
 bot.add_command(prefix)
+bot.add_command(gitprofile)
+bot.add_command(mygit)
 bot.run('MzQwOTE5NDIxMjQzNjIxMzc3.DF5kGQ.gz23fwEWEb8UrQCzoSRXUvrnOyY')
