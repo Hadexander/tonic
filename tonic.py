@@ -8,6 +8,7 @@ from discord.ext.commands import *
 from extras import *
 from util import *
 from github import *
+from poe import *
 
 bot = Bot(command_prefix)
 
@@ -50,4 +51,5 @@ bot.add_command(prefix)
 bot.add_command(gitprofile)
 bot.add_command(mygit)
 bot.add_command(tonictoken)
+bot.add_command(poewiki)
 bot.run('MzQwOTE5NDIxMjQzNjIxMzc3.DF5kGQ.gz23fwEWEb8UrQCzoSRXUvrnOyY')
