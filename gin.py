@@ -7,10 +7,10 @@ gitcmd=['git', 'pull']
 
 def gitPull():  
     print('Pulling from git')
-    subprocess.run(gitcmd)
+    subprocess.run(gitcmd, shell=True)
 
 def serveTonic():
-    return subprocess.run(cmd).returncode
+    return subprocess.run(cmd, shell=True).returncode
 
 exitCode = -1
 while(exitCode != 0):
