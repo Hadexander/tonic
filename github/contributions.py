@@ -7,7 +7,7 @@ from lxml import etree
 from io import BytesIO
 from storage.lookups import find_user
 
-github_font = ImageFont.truetype('segoeui.ttf', size=12)
+github_font = ImageFont.truetype('arial.ttf', size=12)
 
 def get_size(root):
     return (int(root.get('width')), int(root.get('height')))
