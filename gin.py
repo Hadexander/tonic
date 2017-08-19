@@ -1,5 +1,6 @@
 import subprocess
 import os
+from time import sleep
 
 print('Gin is now serving Tonic.')
 cmd = ['python',  'tonic.py']
@@ -16,5 +17,6 @@ exitCode = -1
 while(exitCode != 0):
     exitCode = serveTonic()
     print('Tonic exited with code {}'.format(exitCode))
+    sleep(5)
     if exitCode == 420:
         gitPull()
