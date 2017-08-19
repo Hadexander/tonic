@@ -10,12 +10,11 @@ def gitPull():
     subprocess.run(gitcmd)
 
 def serveTonic():
-    run = subprocess.run('cmd')
-    exitCode = run.returncode
-    if exitCode == 420:
-        print('Client close detected')
-        print(exitCode)
-        gitPull()
-        #serveTonic()
+    return subprocess.run(cmd).returncode
 
-serveTonic()
+exitCode = -1
+while(exitCode != 0):
+    exitCode = serveTonic()
+    print('Tonic exited with code {}'.format(exitCode))
+    if exitCode == 420:
+        gitPull()
