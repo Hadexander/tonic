@@ -7,4 +7,5 @@ async def upgrade(ctx):
     """Exits Tonic in order for Gin to git pull and relaunch"""
     msg = 'Okay! I\'ll check for updates now, be right back!'
     await ctx.bot.send_message(ctx.message.channel, msg)
-    await sys.exit(1)
+    await discord.Client().close()
+    sys.exit(420)

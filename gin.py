@@ -2,17 +2,20 @@ import subprocess
 import os
 
 print('Gin is now serving Tonic.')
-os.chdir('C:/Users/MT/tonic')
+cmd = 'python tonic.py'
+gitcmd = 'git pull'
 
 def gitPull():
-    subprocess.run('git pull')
-    serveTonic()
+    print('Pulling from git')
+    subprocess.run(gitcmd)
 
-cmd = 'python tonic.py'
 def serveTonic():
     run = subprocess.run(cmd)
-    exitCode = serveTonic().returncode
-    if exitCode == 1:
+    exitCode = run.returncode
+    if exitCode == 420:
+        print('Client close detected')
+        print(exitCode)
         gitPull()
+        serveTonic()
 
 serveTonic()
