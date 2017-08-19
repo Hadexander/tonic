@@ -1,9 +1,8 @@
-#!/usr/bin/env python
 import subprocess
 import os
 
 print('Gin is now serving Tonic.')
-cmd = 'python tonic.py'
+cmd = 'python '+ os.getcwd() +'/tonic.py'
 gitcmd = 'git pull'
 
 def gitPull():
