@@ -2,7 +2,7 @@ import subprocess
 import os
 
 print('Gin is now serving Tonic.')
-cmd = 'python '+ os.getcwd() +'/tonic.py'
+cmd = 'python tonic.py'
 gitcmd = 'git pull'
 
 def gitPull():
