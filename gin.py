@@ -2,16 +2,30 @@ import subprocess
 import os
 from time import sleep
 
+print('Testing aliases...')
+python = None
+py_aliases = ['python3', 'python']
+for alias in py_aliases:
+    so = subprocess.getstatusoutput(alias+' -V')
+    if so[0] == 0:
+        python = alias
+        print('{} found.'.format(alias))
+        break
+
+if not python:
+    print('Could not find a valid python alias.')
+    exit(0)
+
 print('Gin is now serving Tonic.')
-cmd = 'python tonic.py'
-gitcmd = 'git pull'
+cmd = [python, 'tonic.py']
+gitcmd = ['git', 'pull']
 
 def gitPull():  
     print('Pulling from git')
-    subprocess.run(gitcmd, shell=True)
+    subprocess.run(gitcmd)
 
 def serveTonic():
-    return subprocess.run(cmd, shell=True)
+    return subprocess.run(cmd)
 
 exitCode = -1
 while(exitCode != 0):
