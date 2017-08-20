@@ -17,21 +17,10 @@ if not python:
     exit(0)
 
 print('Gin is now serving Tonic.')
-cmd = [python, 'tonic.py']
-gitcmd = ['git', 'pull']
+serveTonic = [python, 'tonic.py']
+gitPull = ['git', 'pull']
 
-def gitPull():  
-    print('Pulling from git')
-    subprocess.run(gitcmd)
-
-def serveTonic():
-    return subprocess.run(cmd)
-
-exitCode = -1
-while(exitCode != 0):
-    result = serveTonic()
-    exitCode = result.returncode
-    print('Tonic exited with code {}'.format(exitCode))
+while True:
+    subprocess.run(gitPull)
+    subprocess.run(serveTonic)
     sleep(5)
-    if exitCode == 420:
-        gitPull()
