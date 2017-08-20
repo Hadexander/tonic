@@ -3,4 +3,4 @@ from util.maintenance import access, avatar
 from util.prefix import prefix
 from util.checks import VerificationError
 from util.randomgeneration import tonictoken
-from util.upgradeTonic import blaze_it
+from util.upgradeTonic import evolve
