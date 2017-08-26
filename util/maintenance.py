@@ -39,6 +39,6 @@ async def avatar(ctx, url):
 @commands.command(pass_context=True)
 async def evolve(ctx):
     """Exits Tonic in order for Gin to git pull and relaunch"""
-    msg = 'Getting some improvements! I\'ll be back in a sec!'
+    msg = 'Getting some improvements! I\'ll be back as soon as possible!'
     await ctx.bot.send_message(ctx.message.channel, msg)
     await ctx.bot.close()
