@@ -58,7 +58,7 @@ async def wiki_search(wiki, text, limit):
 async def poewiki(ctx, *args):
     """Looks up an item on the Path of Exile wiki."""
     itemname = ' '.join(args)
-    matches = wiki_search(wikiurl, itemname, search_limit)
+    matches = await wiki_search(wikiurl, itemname, search_limit)
     if not matches:
         await ctx.bot.send_message(ctx.message.channel, 'No item matches "{}"'.format(itemname))
     infobox = matches[0]['infobox']
