@@ -33,9 +33,16 @@ async def wiki_get_item(session, wiki, name):
     item = dict()
     item['name'] = name
     item['tags'] = json.get('Has tags')
-    item['infobox'] = json.get('Has infobox HTML')[0]
-    icon = json.get('Has inventory icon')[0]
-    item['image'] = icon.get('fullurl', '').replace('File:','Special:Filepath/')
+    infobox = json.get('Has infobox HTML')
+    if not infobox:
+        return None
+    item['infobox'] = infobox[0]
+    icon = json.get('Has inventory icon')
+    if icon:
+        image = icon[0].get('fullurl', '').replace('File:','Special:Filepath/')
+    else:
+        image = ''
+    item['image'] = image
     return item
 
 async def wiki_search(wiki, text, limit):
