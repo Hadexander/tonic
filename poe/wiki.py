@@ -104,17 +104,17 @@ def infobox_parse(node):
     elif not _ignore.search(c):
         if _header.search(c):
             #header tags
-            dataobj['header'] += _format_text(node.text, '**')
+            dataobj['header'] += _format_text(node.text)
         else:
             if _group.search(c):
                 #new group
                 dataobj['text'] += ['\n']
             if _highlight.search(c):
                 #highlighted tags
-                dataobj['text'] += _format_text(node.text, '**')
+                dataobj['text'] += _format_text(node.text, '***')
             else:
                 #everything else
-                dataobj['text'] += _format_text(node.text)
+                dataobj['text'] += _format_text(node.text, '**')
         for child in node:
             co = infobox_parse(child)
             for key in dataobj:
