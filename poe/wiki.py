@@ -78,15 +78,15 @@ def _wikilink_parse(text):
     subs = _links.split(text)
     return [_pipes.split(s)[-1] for s in subs]
 
-def _format_text(text, fmt=''):
-    """Surrounds text with given formatting. Also handles None and empty strings."""
+def _format_text(text):
+    """Surrounds text with given formatting. Also handles None and empty strings.
+    Formatting removed for now."""
     if text:
-        return [fmt] + _wikilink_parse(text) + [fmt[::-1]]
+        return _wikilink_parse(text)
     return []
 
 _header = re.compile('header')
 _group = re.compile('group')
-_highlight = re.compile('tc -value')
 _ignore = re.compile('tc -flavour|tc -help')
 
 def infobox_parse(node):
@@ -109,12 +109,8 @@ def infobox_parse(node):
             if _group.search(c):
                 #new group
                 dataobj['text'] += ['\n']
-            if _highlight.search(c):
-                #highlighted tags
-                dataobj['text'] += _format_text(node.text, '***')
-            else:
-                #everything else
-                dataobj['text'] += _format_text(node.text, '**')
+            #everything else
+            dataobj['text'] += _format_text(node.text)
         for child in node:
             co = infobox_parse(child)
             for key in dataobj:
