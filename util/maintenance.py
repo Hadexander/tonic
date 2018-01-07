@@ -37,6 +37,7 @@ async def avatar(ctx, url):
             await ctx.bot.edit_message(msg, "I\'m sorry, the URL was invalid.")
 
 @commands.command(pass_context=True)
+@commands.check(require_owner_access)
 async def evolve(ctx):
     """Exits Tonic in order for Gin to git pull and relaunch"""
     msg = 'Getting some improvements! I\'ll be back as soon as possible!'

@@ -9,6 +9,7 @@ from extras import *
 from util import *
 from github import *
 from poe import *
+from storage.lookups import get_setting
 
 bot = Bot(command_prefix)
 
@@ -57,4 +58,6 @@ bot.add_command(flipcoin)
 bot.add_command(deal)
 bot.add_command(getxkcd)
 bot.add_command(whatIf)
-bot.run('MzQwOTE5NDIxMjQzNjIxMzc3.DF5kGQ.gz23fwEWEb8UrQCzoSRXUvrnOyY')
+
+apikey = get_setting('discord_api_key')
+bot.run(apikey.value)

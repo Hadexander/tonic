@@ -7,6 +7,19 @@ from sqlalchemy import inspect
 _engine = create_engine(dburl)
 Session = sessionmaker(bind=_engine)
 Base = declarative_base()
+class Setting(Base):
+    __tablename__ = 'settings'
+    sha = Column(String(64), primary_key = True)
+    value = Column(String(64))
+
+    def __init__(self, **kwargs):
+        self.sha = kwargs.pop('sha', None)
+        self.name = kwargs.pop('name', None)
+        self.value = kwargs.pop('value', None)
+
+    def save(self):
+        merge(self)
+
 class User(Base):
     __tablename__ = 'users'
     sha = Column(String(64), primary_key = True)
