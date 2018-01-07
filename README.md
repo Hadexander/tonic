@@ -1,8 +1,12 @@
 # tonic
-A discord bartender for developers...
+A small discord bot for a group of bored programmers. 
+
+# Features
+*
+*
+*
 
 # TODO
-
 * Register users
 * Register repositories
 * Notify of repo commits
