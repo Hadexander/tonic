@@ -1,4 +1,5 @@
-from sqlalchemy import create_engine, Column, Integer, String, PickleType
+from datetime import datetime
+from sqlalchemy import create_engine, Column, Integer, String, PickleType, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from config import *
@@ -7,15 +8,24 @@ from sqlalchemy import inspect
 _engine = create_engine(dburl)
 Session = sessionmaker(bind=_engine)
 Base = declarative_base()
-class Setting(Base):
+class Settings(Base):
     __tablename__ = 'settings'
     sha = Column(String(64), primary_key = True)
-    value = Column(String(64))
+    discord_key = Column(String(59))
+    imgur_id = Column(String(15))
+    imgur_secret = Column(String(40))
+    imgur_refresh = Column(String(40))
+    imgur_access = Column(String(40))
+    imgur_expiration = Column(DateTime())
 
     def __init__(self, **kwargs):
         self.sha = kwargs.pop('sha', None)
-        self.name = kwargs.pop('name', None)
-        self.value = kwargs.pop('value', None)
+        self.discord_key = kwargs.pop('discord_key', None)
+        self.imgur_id = kwargs.pop('imgur_id', None)
+        self.imgur_secret = kwargs.pop('imgur_secret', None)
+        self.imgur_refresh = kwargs.pop('imgur_refresh', None)
+        self.imgur_access = kwargs.pop('imgur_access', None)
+        self.imgur_expiration = kwargs.pop('imgur_expiration', datetime.min)
 
     def save(self):
         merge(self)

@@ -6,16 +6,10 @@ def hash(string : str):
     sha.update(string.encode())
     return sha.hexdigest()
 
-def get_setting(name : str):
-    setting = db.Setting(sha = hash(name))
-    db.pull(setting)
-    return setting
-
-def store_setting(name, value):
-    setting = db.Setting(sha = hash(name))
-    setting.name = name
-    setting.value = value
-    setting.save()
+def global_settings():
+    obj = db.Settings(sha = hash(''))
+    db.pull(obj)
+    return obj
 
 def find_user(uid : str):
     user = db.User(sha = hash(uid))

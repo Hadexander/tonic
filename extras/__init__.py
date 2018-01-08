@@ -1,6 +1,8 @@
 from extras.xkcd import Xkcd
 from extras.fun import Fun
+from extras.emoji import Emoji
 
 def setup(bot):
     bot.add_cog(Xkcd())
     bot.add_cog(Fun())
+    bot.add_cog(Emoji())

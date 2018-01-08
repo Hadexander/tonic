@@ -5,7 +5,7 @@ from discord.ext.commands import Bot, MissingRequiredArgument, BadArgument, NoPr
 import core
 from util.prefix import command_prefix
 from util.checks import VerificationError
-from storage.lookups import get_setting
+from storage.lookups import global_settings
 
 bot = Bot(command_prefix)
 
@@ -27,5 +27,4 @@ async def on_command_error(error, ctx):
         traceback.print_exception(type(error), error, None)
 
 core.setup(bot)
-apikey = get_setting('discord_api_key')
-bot.run(apikey.value)
+bot.run(global_settings().discord_key)
