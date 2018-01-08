@@ -51,29 +51,6 @@ def text(node, image, position):
         y = int(node.get('dy')) + position[1] - 10
     image.text((x, y), node.text, '#767676', github_font)
 
-@commands.command(pass_context=True)
-async def mygit(ctx):
-    user = find_user(ctx.message.author.id)
-    if not user.github:
-        await ctx.bot.send_message(ctx.message.channel, 'You need to register your github profile first.')
-        return
-    name = user.github
-    url = 'https://github.com/users/{}/contributions'.format(name)
-    async with aiohttp.ClientSession() as session:
-        async with session.get(url) as response:
-            if(response.status != 200):
-                return
-            svg = await response.read()
-    root = etree.fromstring(svg)
-    with Image.new(mode='RGB', size = get_size(root), color='#ffffff') as img:
-        draw = ImageDraw.Draw(img)
-        parse(root, draw)
-        with BytesIO() as output:
-            img.save(output, 'PNG')
-            output.seek(0)
-            msg = await ctx.bot.send_file(ctx.message.channel, fp=output, filename='contributions.png')
-    await embed_mygit(ctx, msg, name)
-
 async def embed_mygit(ctx, message, name):
     disname = ctx.message.author.name
     if isinstance(ctx.message.author, discord.Member):
@@ -86,3 +63,33 @@ async def embed_mygit(ctx, message, name):
     embed.set_image(url=image['url'])
     await ctx.bot.send_message(ctx.message.channel, embed=embed)
     await ctx.bot.delete_message(message)
+
+class Github:
+    @commands.command(pass_context=True)
+    async def mygit(self, ctx):
+        user = find_user(ctx.message.author.id)
+        if not user.github:
+            await ctx.bot.send_message(ctx.message.channel, 'You need to register your github profile first.')
+            return
+        name = user.github
+        url = 'https://github.com/users/{}/contributions'.format(name)
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url) as response:
+                if(response.status != 200):
+                    return
+                svg = await response.read()
+        root = etree.fromstring(svg)
+        with Image.new(mode='RGB', size = get_size(root), color='#ffffff') as img:
+            draw = ImageDraw.Draw(img)
+            parse(root, draw)
+            with BytesIO() as output:
+                img.save(output, 'PNG')
+                output.seek(0)
+                msg = await ctx.bot.send_file(ctx.message.channel, fp=output, filename='contributions.png')
+        await embed_mygit(ctx, msg, name)
+
+    @commands.command(pass_context=True)
+    async def gitprofile(self, ctx, name):
+        user = find_user(ctx.message.author.id)
+        user.github = name
+        user.save()

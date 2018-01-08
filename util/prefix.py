@@ -7,7 +7,7 @@ prefix_cache = dict()
 
 async def serverwide_prefix(server):
     if not server:
-        return None
+        return '!'
     if server not in prefix_cache:
         guild = find_guild(server.id)
         prefix_cache[server.id] = guild.prefix

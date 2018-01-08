@@ -118,25 +118,26 @@ def infobox_parse(node):
         dataobj['text'] += _format_text(node.tail)
     return dataobj
 
-@commands.command(pass_context=True)
-async def poewiki(ctx, *args):
-    """Looks up an item on the Path of Exile wiki."""
-    itemname = ' '.join(args)
-    matches = await wiki_search(wikiurl, itemname, search_limit)
-    if not matches:
-        await ctx.bot.send_message(ctx.message.channel, 'No item matches "{}"'.format(itemname))
-        return
-    
-    infobox = matches[0]['infobox']
-    image = matches[0]['image']
-    tree = html.fromstring(infobox)
-    box = infobox_parse(tree)
-    
-    embed = discord.Embed(title=''.join(box['header']), description=''.join(box['text']))
-    embed.set_thumbnail(url=image)
-    alternatives = [n['name'] for n in matches[1:]]
-    if alternatives:
-        #await ctx.bot.send_message(ctx.message.channel, 'Did you mean: {}?'.format(', '.join(alternatives)))
-        embed.set_footer(text='Did you mean: {}?'.format(', '.join(alternatives)))
-    await ctx.bot.send_message(ctx.message.channel, embed=embed)
+class PathOfExile:
+    @commands.command(pass_context=True)
+    async def poewiki(self, ctx, *args):
+        """Looks up an item on the Path of Exile wiki."""
+        itemname = ' '.join(args)
+        matches = await wiki_search(wikiurl, itemname, search_limit)
+        if not matches:
+            await ctx.bot.send_message(ctx.message.channel, 'No item matches "{}"'.format(itemname))
+            return
+        
+        infobox = matches[0]['infobox']
+        image = matches[0]['image']
+        tree = html.fromstring(infobox)
+        box = infobox_parse(tree)
+        
+        embed = discord.Embed(title=''.join(box['header']), description=''.join(box['text']))
+        embed.set_thumbnail(url=image)
+        alternatives = [n['name'] for n in matches[1:]]
+        if alternatives:
+            #await ctx.bot.send_message(ctx.message.channel, 'Did you mean: {}?'.format(', '.join(alternatives)))
+            embed.set_footer(text='Did you mean: {}?'.format(', '.join(alternatives)))
+        await ctx.bot.send_message(ctx.message.channel, embed=embed)
 

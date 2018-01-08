@@ -1,5 +1,12 @@
-from .prefix import serverwide_prefix, command_prefix
-from util.maintenance import access, avatar, evolve
+from util.maintenance import Maintenance
 from util.prefix import prefix
-from util.checks import VerificationError
 from util.randomgeneration import tonictoken
+from util.info import info
+
+_no_category = [info, prefix, tonictoken]
+
+def setup(bot):
+    for cmd in _no_category:
+        bot.add_command(cmd)
+    bot.add_cog(Maintenance())
+    

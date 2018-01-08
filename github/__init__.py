@@ -1,2 +1,4 @@
-from github.register import gitprofile
-from github.contributions import mygit
+from github.github import Github
+
+def setup(bot):
+    bot.add_cog(Github())
