@@ -20,3 +20,8 @@ def find_guild(uid : str):
     guild = db.Guild(sha = hash(uid))
     db.pull(guild)
     return guild
+
+def find_emoji(name : str):
+    emoji = db.Emoji(sha = hash(name))
+    db.pull(emoji)
+    return emoji

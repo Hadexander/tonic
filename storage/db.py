@@ -56,6 +56,25 @@ class Guild(Base):
     def save(self):
         merge(self)
 
+class Emoji(Base):
+    __tablename__ = 'emojis'
+    sha = Column(String(64), primary_key = True)
+    url = Column(String(64))
+    name = Column(String(64))
+    id = Column(String(16))
+
+    def __init__(self, **kwargs):
+        self.sha = kwargs.get('sha', None)
+        self.url = kwargs.get('url', None)
+        self.name = kwargs.get('name', None)
+        self.id = kwargs.get('id', None)
+
+    def save(self):
+        merge(self)
+    
+    def remove(self):
+        delete(self)
+
 def validate_dbo(dbo):
     if(len(getattr(dbo, 'sha', '')) != 64):
         raise ValueError('Invalid DBO/SHA: '+repr(dbo))
@@ -77,6 +96,14 @@ def pull(dbo):
     if(i):
         for attr in i.__dict__:
             setattr(dbo, attr, getattr(i, attr))
+    session.close()
+
+def delete(dbo):
+    """Delete object from the db."""
+    validate_dbo(dbo)
+    session = Session()
+    session.delete(dbo)
+    session.commit()
     session.close()
 
 Base.metadata.create_all(_engine)
