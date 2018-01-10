@@ -32,7 +32,7 @@ class Emoji:
                     url = ctx.message.attachments[0]['url']
                 else:
                     async for log in ctx.bot.logs_from(ctx.message.channel, limit=1, before=ctx.message):
-                        if(log.content.attachments):
+                        if(log.attachments):
                             url = log.attachments[0]['url']
                         else:
                             url = log.content
