@@ -14,13 +14,9 @@ async def _validate_url_image(url):
     if(not ctype or not (ctype.startswith('image') or ctype.startswith('video'))):
         raise ValueError
 
-async def _emoji_embed(emoji):
+def _emoji_embed(emoji):
     embed = discord.Embed()
-    ctype = await _get_content_type(emoji.url)
-    if(ctype.startswith('image')):
-        embed.set_image(url = emoji.url)
-    else:
-        embed.description = emoji.url
+    embed.set_image(url = emoji.url)
     embed.set_footer(text = emoji.name)
     return embed
 
@@ -62,7 +58,11 @@ class Emoji:
         """Repost an emoji from my gallery."""
         e = find_emoji(name)
         if(e.url):
-            await ctx.bot.send_message(ctx.message.channel, embed = await _emoji_embed(e))
+            ctype = await _get_content_type(e.url)
+            if(ctype.startswith('image')):
+                await ctx.bot.send_message(ctx.message.channel, embed = _emoji_embed(e))
+            else:
+                await ctx.bot.send_message(ctx.message.channel, e.url)
 
     @commands.command(pass_context=True)
     async def emdelete(self, ctx, name):
