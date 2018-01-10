@@ -29,11 +29,11 @@ class Emoji:
         try:
             if(not url):
                 if(ctx.message.attachments):
-                    url = ctx.message.attachments[0]
+                    url = ctx.message.attachments[0]['url']
                 else:
                     async for log in ctx.bot.logs_from(ctx.message.channel, limit=1, before=ctx.message):
                         if(log.content.attachments):
-                            url = log.content.attachments[0]
+                            url = log.attachments[0]['url']
                         else:
                             url = log.content
             await _validate_url_image(url)
