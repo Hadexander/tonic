@@ -4,19 +4,25 @@ from discord.ext import commands
 from extras.imgur import image_upload, image_delete
 from storage.lookups import find_emoji
 
-def _emoji_embed(emoji):
-    embed = discord.Embed()
-    #embed.set_image(url = emoji.url)
-    embed.url = emoji.url
-    embed.set_footer(text = emoji.name)
-    return embed
-
-async def _validate_url_image(url):
+async def _get_content_type(url):
     async with aiohttp.ClientSession() as session:
         async with session.head(url) as response:
-            ctype = response.headers.get('content-type')
-            if(not ctype or not (ctype.startswith('image') or ctype.startswith('video'))):
-                raise ValueError
+            return response.headers.get('content-type')
+
+async def _validate_url_image(url):
+    ctype = await _get_content_type(url)
+    if(not ctype or not (ctype.startswith('image') or ctype.startswith('video'))):
+        raise ValueError
+
+def _emoji_embed(emoji):
+    embed = discord.Embed()
+    ctype = await _get_content_type(emoji.url)
+    if(ctype.startswith('image')):
+        embed.set_image(url = emoji.url)
+    else:
+        embed.description = emoji.url
+    embed.set_footer(text = emoji.name)
+    return embed
 
 class Emoji:
     @commands.command(pass_context=True)
