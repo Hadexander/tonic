@@ -23,7 +23,7 @@ class Emoji:
         """Saves an emoji to my gallery. Can be a URL or direct attachment. Or you could just use this command right after an image is posted."""
         e = find_emoji(name)
         if(e.name):
-            await ctx.bot.send_message(ctx.message.channel, 'I already have \'{}\', use a different name or !emdelete.'.format(name)))
+            await ctx.bot.send_message(ctx.message.channel, 'I already have \'{}\', use a different name or !emdelete.'.format(name))
             return
         e.name = name
         try:
