@@ -14,7 +14,7 @@ async def _validate_url_image(url):
     async with aiohttp.ClientSession() as session:
         async with session.head(url) as response:
             ctype = response.headers.get('content-type')
-            if(not (ctype and ctype.startswith('image'))):
+            if(not ctype or not (ctype.startswith('image') or ctype.startswith('video'))):
                 raise ValueError
 
 class Emoji:
