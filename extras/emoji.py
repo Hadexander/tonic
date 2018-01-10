@@ -32,7 +32,10 @@ class Emoji:
                     url = ctx.message.attachments[0]
                 else:
                     async for log in ctx.bot.logs_from(ctx.message.channel, limit=1, before=ctx.message):
-                        url = log.content
+                        if(log.content.attachments):
+                            url = log.content.attachments[0]
+                        else:
+                            url = log.content
             await _validate_url_image(url)
         except(TypeError, ValueError, discord.Forbidden, discord.NotFound, discord.HTTPException):
             await ctx.bot.send_message(ctx.message.channel, 'No valid image found.')
