@@ -6,7 +6,8 @@ from storage.lookups import find_emoji
 
 def _emoji_embed(emoji):
     embed = discord.Embed()
-    embed.set_image(url = emoji.url)
+    #embed.set_image(url = emoji.url)
+    embed.url = emoji.url
     embed.set_footer(text = emoji.name)
     return embed
 
