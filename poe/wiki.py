@@ -15,63 +15,50 @@ def _urlencode(wiki, **kwargs):
     kwargs['format'] = 'json'
     return wiki + '/api.php?' + urllib.parse.urlencode(kwargs, quote_via=urllib.parse.quote)
 
-def _jsonpath(json, path):
-    """Primitive json traverser, no need for actual JSONPath."""
-    i = 0
-    while json and i < len(path):
-        json = json.get(path[i], [])
-        i += 1
-    return json
-
-def _smwencode(*args):
-    return '|'.join(args)
-
-async def wiki_get_item(session, wiki, name):
-    """For a given page on the wiki, attempts to retrieve: tags, item infobox, inventory image.
-    Returns: dictionary { infobox, name, tags[], image } on success; None if the page doesn't have the required properties."""
-    url = _urlencode(wiki, action='askargs', conditions=_smwencode('Has name::'+name), printouts=_smwencode('Has tags', 'Has infobox HTML', 'Has inventory icon'))
-    async with session.get(url) as response:
-        if(response.status != 200):
-            return None
-        json = await response.json()
-    json = _jsonpath(json, ['query', 'results', name, 'printouts'])
+async def wiki_get_item(wiki, name):
+    """For a given item name, attempts to retrieve: item infobox, inventory image.
+    Returns: dictionary { infobox, image } on success, None on failure."""
+    url = _urlencode(wiki, action='cargoquery', tables='items', fields='html, inventory_icon', where="name = '{}'".format(name), limit=1)
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url) as response:
+            if(response.status != 200):
+                return None
+            json = await response.json()
+    json = json.get('cargoquery')
     if not json:
         return None
-    item = dict()
-    infobox = json.get('Has infobox HTML')
+    json = json[0]
+    if not json:
+        return None
+    json = json.get('title')
+    if not json:
+        return None
+    infobox = json.get('html')
     if not infobox:
         return None
-    item['infobox'] = infobox[0]
-    item['name'] = name
-    item['tags'] = json.get('Has tags')
-    icon = json.get('Has inventory icon')
+    item = dict()
+    item['infobox'] = infobox
+    icon = json.get('inventory icon')
     if icon:
-        image = icon[0].get('fullurl', '').replace('File:','Special:Filepath/')
+        image = icon.replace('File:','Special:Filepath/')
     else:
         image = ''
     item['image'] = image
     return item
 
 async def wiki_search(wiki, text, limit):
-    """Performs a search using the wiki's search engine. For every match found, attempts to retrieve item data.
-    Returns: list of 0-limit matched item data."""
-    url = _urlencode(wiki, action='query', list='search', srsearch=text, srinfo='', srprop='', srlimit=limit)
+    """Performs a search using the cargotables API. Returns list of possible matches."""
+    url = _urlencode(wiki, action='cargoautocomplete', table='items', substr=text, limit=limit)
     async with aiohttp.ClientSession() as session:
         async with session.get(url) as response:
             if(response.status != 200):
-                return []
+                return None
             json = await response.json()
-        json = _jsonpath(json, ['query', 'search'])
-        results = [r.get('title') for r in json]
-        items = []
-        for name in results:
-            item = await wiki_get_item(session, wiki, name)
-            if item:
-                items.append(item)
+        items = json.get('cargoautocomplete')
     return items
 
-_links = re.compile('\[+|\]+')
-_pipes = re.compile('\|')
+_links = re.compile(r'\[+|\]+')
+_pipes = re.compile(r'\|')
 
 def _wikilink_parse(text):
     """Consumes wiki link formatting and returns clean text."""
@@ -128,14 +115,18 @@ class PathOfExile:
             await ctx.bot.send_message(ctx.message.channel, 'No item matches "{}"'.format(itemname))
             return
         
-        infobox = matches[0]['infobox']
-        image = matches[0]['image']
+        item = wiki_get_item(wikiurl, matches[0])
+        if not item:
+            await ctx.bot.send_message(ctx.message.channel, 'Could not retrieve item data for "{}"'.format(matches[0]))
+            return
+        infobox = item['infobox']
+        image = item['image']
         tree = html.fromstring(infobox)
         box = infobox_parse(tree)
         
         embed = discord.Embed(title=''.join(box['header']), description=''.join(box['text']))
         embed.set_thumbnail(url=image)
-        alternatives = [n['name'] for n in matches[1:]]
+        alternatives = matches[1:]
         if alternatives:
             #await ctx.bot.send_message(ctx.message.channel, 'Did you mean: {}?'.format(', '.join(alternatives)))
             embed.set_footer(text='Did you mean: {}?'.format(', '.join(alternatives)))
