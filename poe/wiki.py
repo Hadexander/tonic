@@ -6,14 +6,14 @@ import re
 from lxml import html
 from discord.ext import commands
 
-wikiurl = 'https://pathofexile.gamepedia.com'
+wikiurl = 'https://pathofexile.gamepedia.com/'
 search_limit = 5
 
 def _urlencode(wiki, **kwargs):
     """Forms a request with arbitrary arguments to MediaWiki's api.php, urlencodes special characters.
     Returns: json."""
     kwargs['format'] = 'json'
-    return wiki + '/api.php?' + urllib.parse.urlencode(kwargs, quote_via=urllib.parse.quote)
+    return wiki + 'api.php?' + urllib.parse.urlencode(kwargs, quote_via=urllib.parse.quote)
 
 async def wiki_get_item(wiki, name):
     """For a given item name, attempts to retrieve: item infobox, inventory image.
@@ -42,7 +42,7 @@ async def wiki_get_item(wiki, name):
     if icon:
         image = icon.replace('File:','Special:Filepath/')
     else:
-        image = ''
+        image = None
     item['image'] = image
     return item
 
@@ -125,7 +125,9 @@ class PathOfExile:
         box = infobox_parse(tree)
         
         embed = discord.Embed(title=''.join(box['header']), description=''.join(box['text']))
-        embed.set_thumbnail(url=image)
+        if image:
+            imageurl = wikiurl + image
+            embed.set_thumbnail(url=imageurl)
         alternatives = matches[1:]
         if alternatives:
             #await ctx.bot.send_message(ctx.message.channel, 'Did you mean: {}?'.format(', '.join(alternatives)))
