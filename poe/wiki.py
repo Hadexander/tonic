@@ -4,6 +4,7 @@ import aiohttp
 import asyncio
 import re
 from lxml import html
+from xml.sax.saxutils import unescape
 from discord.ext import commands
 
 wikiurl = 'https://pathofexile.gamepedia.com/'
@@ -37,7 +38,7 @@ async def wiki_get_item(wiki, name):
     if not infobox:
         return None
     item = dict()
-    item['infobox'] = infobox
+    item['infobox'] = unescape(infobox)
     icon = json.get('inventory icon')
     if icon:
         image = icon.replace('File:','Special:Filepath/')
