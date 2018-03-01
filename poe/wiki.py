@@ -1,5 +1,5 @@
 import discord
-import urllib.parse
+from urllib.parse import urlencode, quote
 import aiohttp
 import asyncio
 import re
@@ -14,7 +14,7 @@ def _urlencode(wiki, **kwargs):
     """Forms a request with arbitrary arguments to MediaWiki's api.php, urlencodes special characters.
     Returns: json."""
     kwargs['format'] = 'json'
-    return wiki + 'api.php?' + urllib.parse.urlencode(kwargs, quote_via=urllib.parse.quote)
+    return wiki + 'api.php?' + urlencode(kwargs, quote_via=quote)
 
 async def wiki_get_item(wiki, name):
     """For a given item name, attempts to retrieve: item infobox, inventory image.
@@ -41,7 +41,7 @@ async def wiki_get_item(wiki, name):
     item['infobox'] = unescape(infobox)
     icon = json.get('inventory icon')
     if icon:
-        image = icon.replace('File:','Special:Filepath/')
+        image = quote(icon.replace('File:','Special:Filepath/'))
     else:
         image = None
     item['image'] = image
@@ -126,9 +126,9 @@ class PathOfExile:
         box = infobox_parse(tree)
         
         embed = discord.Embed(title=''.join(box['header']), description=''.join(box['text']))
-        #if image:
-        #    imageurl = wikiurl + image
-        #    embed.set_thumbnail(url=imageurl)
+        if image:
+            imageurl = wikiurl + image
+            embed.set_thumbnail(url=imageurl)
         alternatives = matches[1:]
         if alternatives:
             #await ctx.bot.send_message(ctx.message.channel, 'Did you mean: {}?'.format(', '.join(alternatives)))
