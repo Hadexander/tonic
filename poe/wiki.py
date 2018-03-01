@@ -48,7 +48,7 @@ async def wiki_get_item(wiki, name):
 
 async def wiki_search(wiki, text, limit):
     """Performs a search using the cargotables API. Returns list of possible matches."""
-    url = _urlencode(wiki, action='cargoautocomplete', table='items', substr=text, limit=limit)
+    url = _urlencode(wiki, action='cargoautocomplete', table='items', field='name', substr=text, limit=limit)
     async with aiohttp.ClientSession() as session:
         async with session.get(url) as response:
             if(response.status != 200):
