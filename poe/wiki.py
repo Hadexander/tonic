@@ -115,7 +115,7 @@ class PathOfExile:
             await ctx.bot.send_message(ctx.message.channel, 'No item matches "{}"'.format(itemname))
             return
         
-        item = wiki_get_item(wikiurl, matches[0])
+        item = await wiki_get_item(wikiurl, matches[0])
         if not item:
             await ctx.bot.send_message(ctx.message.channel, 'Could not retrieve item data for "{}"'.format(matches[0]))
             return
