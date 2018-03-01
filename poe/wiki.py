@@ -126,9 +126,9 @@ class PathOfExile:
         box = infobox_parse(tree)
         
         embed = discord.Embed(title=''.join(box['header']), description=''.join(box['text']))
-        if image:
-            imageurl = wikiurl + image
-            embed.set_thumbnail(url=imageurl)
+        #if image:
+        #    imageurl = wikiurl + image
+        #    embed.set_thumbnail(url=imageurl)
         alternatives = matches[1:]
         if alternatives:
             #await ctx.bot.send_message(ctx.message.channel, 'Did you mean: {}?'.format(', '.join(alternatives)))
