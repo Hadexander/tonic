@@ -19,7 +19,7 @@ def _urlencode(wiki, **kwargs):
 async def wiki_get_item(wiki, name):
     """For a given item name, attempts to retrieve: item infobox, inventory image.
     Returns: dictionary { infobox, image } on success, None on failure."""
-    url = _urlencode(wiki, action='cargoquery', tables='items', fields='html, inventory_icon', where="name = '{}'".format(name), limit=1)
+    url = _urlencode(wiki, action='cargoquery', tables='items', fields='html, inventory_icon', where='name = "{}"'.format(name), limit=1)
     async with aiohttp.ClientSession() as session:
         async with session.get(url) as response:
             if(response.status != 200):
