@@ -35,10 +35,10 @@ class Fun:
         response = "Rolling d{} ... \n {}"
         if call.isdigit() and call!=0:
             result = random.randrange(1,call)
-            await ctx.bot.send_message(ctx.message.channel, response.format(call, result))
+            await ctx.bot.send_message(ctx.message.channel, response.format(call, int(result)))
         elif call[:1] == 'd' and call[1:].isdigit():
             result = random.randrange(1,call[1:])
-            await ctx.bot.send_message(ctx.message.channel, response.format(call[1:],result))
+            await ctx.bot.send_message(ctx.message.channel, response.format(call[1:], int(result)))
         else:
             await ctx.bot.send_message(ctx.message.channel, random.choice(erresponses).format(call))
 
