@@ -49,7 +49,7 @@ class Fun:
         for choice in args:
             choicelist.append(choice)
         result = random.choice(choicelist)
-        await ctx.bot.send_message(ctx.message.channel, "I pick {}!.".format(result))
+        await ctx.bot.send_message(ctx.message.channel, "I pick {}!".format(result))
 
 
     @commands.command(pass_context=True)
