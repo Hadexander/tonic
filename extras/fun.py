@@ -44,7 +44,7 @@ class Fun:
 
     @commands.command(pass_context=True)
     async def watdo(self, ctx, *args):
-        """Ask Tonic to randomly pick from a specified list of options, separated by commas."""
+        """Ask Tonic to randomly pick from a specified list of options."""
         choicelist = []
         for choice in args:
             choicelist.append(choice)
