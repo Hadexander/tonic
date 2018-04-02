@@ -29,10 +29,10 @@ class Fun:
             await ctx.bot.send_message(ctx.message.channel, msg)
 
     @commands.command(pass_context=True)
-    async def rolldie(self, ctx, call):
+    async def roll(self, ctx, call):
         """Roll a die with a specified number of faces."""
         erresponses = ["I don't roll your {}.", "I don't have any {} die.", "I can't roll a {}, you donut."]
-        response = "Rolling d{} ... \n {}"
+        response = "Rolling d{} ... \n{}"
         if call.isdigit() and call!=0:
             result = random.randrange(1,int(call))
             await ctx.bot.send_message(ctx.message.channel, response.format(call, result))
