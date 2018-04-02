@@ -43,6 +43,16 @@ class Fun:
             await ctx.bot.send_message(ctx.message.channel, random.choice(erresponses).format(call))
 
     @commands.command(pass_context=True)
+    async def watdo(self, ctx, *args):
+        """Ask Tonic to randomly pick from a specified list of options, separated by commas."""
+        choicelist = []
+        for choice in args:
+            choicelist.append(choice)
+        result = random.choice(choicelist)
+        await ctx.bot.send_message(ctx.message.channel, "I pick {}!.".format(result))
+
+
+    @commands.command(pass_context=True)
     async def deal(self, ctx):
         """A dank meme."""
         frames = ['( •_•)', '( •_•)>⌐■-■', '(⌐■_■)', '(⌐■_■) Deal', '(⌐■_■) Deal with', '(⌐■_■) Deal with it.']
