@@ -49,7 +49,7 @@ class Fun:
         m = int(m)
         if m < 0:
             raise BadArgument()
-        rolls = random.sample(xrange(1, m), n)
+        rolls = random.sample(range(1, m), n)
         result = sum(rolls)
         if x:
             x = int(x)
