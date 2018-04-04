@@ -44,10 +44,12 @@ class Fun:
         x = args[2]
         if n:
             n = int(n)
-            if n < 0:
+            if n <= 0:
                 raise BadArgument()
+        else:
+            n = 1
         m = int(m)
-        if m < 0:
+        if m <= 0:
             raise BadArgument()
         rolls = [random.randint(1, m) for i in range(n)]
         result = sum(rolls)
