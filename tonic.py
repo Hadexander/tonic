@@ -24,10 +24,11 @@ async def on_command_error(error, ctx):
     elif(isinstance(error, MissingRequiredArgument)):
         help = bot.commands.get('help')
         await help.callback(ctx, ctx.command.name)
-    elif(isinstance(error, BadArgument)):
-        errmsg = random.choice(sass)
-        errmsg = errmsg.format(ctx.command.name, ctx.args[2])
-        await ctx.bot.send_message(ctx.message.channel, errmsg)
+    elif(isinstance(error, (CommandNotFound, BadArgument))):
+        if(len(ctx.args)) > 2):
+            errmsg = random.choice(sass)
+            errmsg = errmsg.format(ctx.command.name, ctx.args[2])
+            await ctx.bot.send_message(ctx.message.channel, errmsg)
     elif(isinstance(error, NoPrivateMessage)):
         await ctx.bot.send_message(ctx.message.channel, 'This command must be used in a channel.')
     else:
