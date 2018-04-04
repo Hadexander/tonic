@@ -25,7 +25,7 @@ async def on_command_error(error, ctx):
         help = bot.commands.get('help')
         await help.callback(ctx, ctx.command.name)
     elif(isinstance(error, (CommandNotFound, BadArgument))):
-        if(len(ctx.args)) > 2):
+        if len(ctx.args) > 2:
             errmsg = random.choice(sass)
             errmsg = errmsg.format(ctx.command.name, ctx.args[2])
             await ctx.bot.send_message(ctx.message.channel, errmsg)
