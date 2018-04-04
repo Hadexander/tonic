@@ -8,6 +8,8 @@ from util.checks import VerificationError
 from storage.lookups import global_settings
 
 bot = Bot(command_prefix)
+sass = ["I don't {} your {}.", "I can't {} a {}, you donut.", "No, you {} your {}."]
+nope = ['No.', 'Nope.', 'Nah.', 'Your access level isn\'t high enough.']
 
 @bot.event
 async def on_ready():
@@ -15,12 +17,17 @@ async def on_ready():
 
 @bot.event
 async def on_command_error(error, ctx):
+    error = getattr(error, 'original', error)
+
     if(isinstance(error, VerificationError)):
-        nope = ['No.', 'Nope.', 'Nah.', 'Your access level isn\'t high enough.']
         await ctx.bot.send_message(ctx.message.channel, random.choice(nope))
-    elif(isinstance(error, (MissingRequiredArgument, BadArgument))):
+    elif(isinstance(error, MissingRequiredArgument)):
         help = bot.commands.get('help')
         await help.callback(ctx, ctx.command.name)
+    elif(isinstance(error, BadArgument)):
+        errmsg = random.choice(sass)
+        errmsg.format(ctx.command.name, ctx.args[0])
+        await ctx.bot.send_message(ctx.message.channel, errmsg)
     elif(isinstance(error, NoPrivateMessage)):
         await ctx.bot.send_message(ctx.message.channel, 'This command must be used in a channel.')
     else:

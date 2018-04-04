@@ -2,7 +2,9 @@ import random
 import asyncio
 import aiohttp
 import discord
+import re
 from discord.ext import commands
+from discord.ext.commands import BadArgument
 
 class Fun:
     @commands.command(pass_context=True)
@@ -28,19 +30,25 @@ class Fun:
             msg = 'It\'s tails!'
             await ctx.bot.send_message(ctx.message.channel, msg)
 
+    _dice = re.compile('^(\d+)?d(\d+)([+-]\d+)?')
     @commands.command(pass_context=True)
-    async def roll(self, ctx, call):
-        """Roll a die with a specified number of faces."""
-        erresponses = ["I don't roll your {}.", "I don't have any {} die.", "I can't roll a {}, you donut."]
-        response = "Rolling d{} ... \n{}"
-        if call.isdigit() and call!=0:
-            result = random.randint(1,int(call))
-            await ctx.bot.send_message(ctx.message.channel, response.format(call, result))
-        elif call[:1] == 'd' and call[1:].isdigit():
-            result = random.randint(1,int(call[1:]))
-            await ctx.bot.send_message(ctx.message.channel, response.format(call[1:], result))
-        else:
-            await ctx.bot.send_message(ctx.message.channel, random.choice(erresponses).format(call))
+    async def roll(self, ctx, NdM):
+        """Roll N dice with M sides each. Supports dice notation NdM[+-X]"""
+        response = "Rolled {} ... \n{}"
+        match = _dice.match(NdM)
+        if not match:
+            raise BadArgument()
+        args = match.groups()
+        n = args[0]
+        m = args[1]
+        x = args[2]
+        if (n and n < 0) or m < 0:
+            raise BadArgument()
+        rolls = random.sample(xrange(1, m), n)
+        result = sum(rolls)
+        if x:
+            result += x
+        await ctx.bot.send_message(ctx.message.channel, response.format(NdM, result))
 
     @commands.command(pass_context=True)
     async def watdo(self, ctx, *args):
