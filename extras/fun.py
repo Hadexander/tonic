@@ -58,7 +58,7 @@ class Fun:
             result += x
         response = response.format(NdM, result)
         if n < 30:
-            response += "\n[{}]".format(', '.join(str(rolls)))
+            response += "\n{}".format(str(rolls))
         await ctx.bot.send_message(ctx.message.channel, response.format(NdM, result))
 
     @commands.command(pass_context=True)
