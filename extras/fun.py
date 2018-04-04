@@ -34,10 +34,10 @@ class Fun:
         erresponses = ["I don't roll your {}.", "I don't have any {} die.", "I can't roll a {}, you donut."]
         response = "Rolling d{} ... \n{}"
         if call.isdigit() and call!=0:
-            result = random.randrange(1,int(call))
+            result = random.randint(1,int(call))
             await ctx.bot.send_message(ctx.message.channel, response.format(call, result))
         elif call[:1] == 'd' and call[1:].isdigit():
-            result = random.randrange(1,int(call[1:]))
+            result = random.randint(1,int(call[1:]))
             await ctx.bot.send_message(ctx.message.channel, response.format(call[1:], result))
         else:
             await ctx.bot.send_message(ctx.message.channel, random.choice(erresponses).format(call))
@@ -50,7 +50,6 @@ class Fun:
             choicelist.append(choice)
         result = random.choice(choicelist)
         await ctx.bot.send_message(ctx.message.channel, "I pick {}!".format(result))
-
 
     @commands.command(pass_context=True)
     async def deal(self, ctx):
