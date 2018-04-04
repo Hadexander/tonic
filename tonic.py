@@ -26,7 +26,7 @@ async def on_command_error(error, ctx):
         await help.callback(ctx, ctx.command.name)
     elif(isinstance(error, BadArgument)):
         errmsg = random.choice(sass)
-        errmsg.format(ctx.command.name, ctx.args[0])
+        errmsg = errmsg.format(ctx.command.name, ctx.args[0])
         await ctx.bot.send_message(ctx.message.channel, errmsg)
     elif(isinstance(error, NoPrivateMessage)):
         await ctx.bot.send_message(ctx.message.channel, 'This command must be used in a channel.')

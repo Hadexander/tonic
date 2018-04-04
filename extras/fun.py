@@ -42,11 +42,17 @@ class Fun:
         n = args[0]
         m = args[1]
         x = args[2]
-        if (n and n < 0) or m < 0:
+        if n:
+            n = int(n)
+            if n < 0:
+                raise BadArgument()
+        m = int(m)
+        if m < 0:
             raise BadArgument()
         rolls = random.sample(xrange(1, m), n)
         result = sum(rolls)
         if x:
+            x = int(x)
             result += x
         await ctx.bot.send_message(ctx.message.channel, response.format(NdM, result))
 
