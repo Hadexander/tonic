@@ -34,7 +34,7 @@ class Fun:
     @commands.command(pass_context=True)
     async def roll(self, ctx, NdM):
         """Roll N dice with M sides each. Supports dice notation NdM[+-X]"""
-        response = "Rolled {} ... \n{}"
+        response = "Rolled {}: **{}**"
         match = self._dice.match(NdM)
         if not match:
             raise BadArgument()
@@ -49,11 +49,14 @@ class Fun:
         m = int(m)
         if m < 0:
             raise BadArgument()
-        rolls = random.sample(range(1, m), n)
+        rolls = [random.randint(1, m) for i in range(n)]
         result = sum(rolls)
         if x:
             x = int(x)
             result += x
+        response = response.format(NdM, result)
+        if n < 30:
+            response.append("\n[{}]".format(', '.join(rolls)))
         await ctx.bot.send_message(ctx.message.channel, response.format(NdM, result))
 
     @commands.command(pass_context=True)
