@@ -35,7 +35,7 @@ class Fun:
     async def roll(self, ctx, NdM):
         """Roll N dice with M sides each. Supports dice notation NdM[+-X]"""
         response = "Rolled {} ... \n{}"
-        match = _dice.match(NdM)
+        match = self._dice.match(NdM)
         if not match:
             raise BadArgument()
         args = match.groups()
