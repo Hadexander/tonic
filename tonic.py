@@ -1,7 +1,7 @@
 #! /usr/bin/python3
 import random
 import traceback
-from discord.ext.commands import Bot, MissingRequiredArgument, BadArgument, NoPrivateMessage
+from discord.ext.commands import Bot, MissingRequiredArgument, BadArgument, NoPrivateMessage, CommandNotFound
 import core
 from util.prefix import command_prefix
 from util.checks import VerificationError
