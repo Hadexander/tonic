@@ -31,6 +31,7 @@ class Fun:
             await ctx.bot.send_message(ctx.message.channel, msg)
 
     _dice = re.compile('^(\d+)?d(\d+)([+-]\d+)?')
+    _dicelimit = 100
     @commands.command(pass_context=True)
     async def roll(self, ctx, NdM):
         """Roll N dice with M sides each. Supports dice notation NdM[+-X]"""
@@ -57,7 +58,7 @@ class Fun:
             x = int(x)
             result += x
         response = response.format(NdM, result)
-        if n < 30:
+        if n <= self._dicelimit:
             response += "\n{}".format(str(rolls))
         await ctx.bot.send_message(ctx.message.channel, response.format(NdM, result))
 
