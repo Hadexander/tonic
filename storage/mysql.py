@@ -19,7 +19,6 @@ curs.execute("Select Count(ID) From emojis")
 
 result = curs.fetchall()
 
-
 for row in result:
     print(row[0])
 
