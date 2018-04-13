@@ -8,7 +8,7 @@ from util.checks import VerificationError
 from storage.lookups import global_settings
 
 bot = Bot(command_prefix)
-sass = ["I don't {} your {}.", "I can't {} a {}, you donut.", "No, you {} your {}."]
+sass = ["I don't {} your {}.", "I can't {} a {}, you donut.", "No, you {} your {}.", "You should know that I can't {} a {} just like that..."]
 nope = ['No.', 'Nope.', 'Nah.', 'Your access level isn\'t high enough.']
 
 @bot.event
