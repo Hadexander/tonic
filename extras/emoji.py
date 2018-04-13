@@ -5,16 +5,19 @@ from extras.imgur import image_upload, image_delete
 from storage.lookups import find_emoji
 
 async def _get_content_type(url):
+    """Checks page header and returns MIME content type."""
     async with aiohttp.ClientSession() as session:
         async with session.head(url) as response:
             return response.headers.get('content-type')
 
 async def _validate_url_image(url):
+    """Raises ValueError for unsupported content types."""
     ctype = await _get_content_type(url)
     if(not ctype or not (ctype.startswith('image') or ctype.startswith('video'))):
         raise ValueError
 
 def _emoji_embed(emoji):
+    """Generates a discord embed for an image."""
     embed = discord.Embed()
     embed.set_image(url = emoji.url)
     embed.set_footer(text = emoji.name)
@@ -24,13 +27,16 @@ class Emoji:
     @commands.command(pass_context=True)
     async def emsave(self, ctx, name, url=None):
         """Saves an emoji to my gallery. Can be a URL or direct attachment. Or you could just use this command right after an image is posted."""
+        #check if object already exists
         e = find_emoji(name)
         if(e.name):
             await ctx.bot.send_message(ctx.message.channel, 'I already have \'{}\', use a different name or !emdelete.'.format(name))
             return
+        #attempt to find a valid image url
         e.name = name
         try:
             if(not url):
+                #if url argument is missing, check attachments and message history
                 if(ctx.message.attachments):
                     url = ctx.message.attachments[0]['url']
                 else:
@@ -43,6 +49,7 @@ class Emoji:
         except(TypeError, ValueError, discord.Forbidden, discord.NotFound, discord.HTTPException):
             await ctx.bot.send_message(ctx.message.channel, 'No valid image found.')
             return
+        #upload image if found
         data = await image_upload(url)
         if('error' in data):
             e.url = url

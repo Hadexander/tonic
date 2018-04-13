@@ -4,6 +4,7 @@ import aiohttp
 from storage.lookups import global_settings
 
 async def _update_access_token(settings):
+    """Generates or updates an imgur API access token using imgur account data provided in settings."""
     now = datetime.now()
     if(settings.imgur_expiration < now):
         async with aiohttp.ClientSession() as session:
@@ -22,6 +23,7 @@ async def _update_access_token(settings):
                     settings.save()
 
 async def image_upload(url):
+    """Uploads an image to imgur by url. Returns a link and image id on success, error message on failure."""
     settings = global_settings()
     await _update_access_token(settings)
     async with aiohttp.ClientSession() as session:
@@ -41,6 +43,7 @@ async def image_upload(url):
 
 
 async def image_delete(id):
+    """Deletes an image from imgur."""
     settings = global_settings()
     await _update_access_token(settings)
     async with aiohttp.ClientSession() as session:
