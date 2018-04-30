@@ -12,24 +12,12 @@ xport = 3306
 xuser = "tonicvps"
 xpasswd = "T0n1cVp5"
 xdb = "innodb"
-conn = MySQLdb.connect(host = xhost, port = xport, user = xuser, passwd= xpasswd, db = xdb)
-'''
-Connection test
-'''
-'''
+conn = MySQLdb.connect(host=xhost, port=xport, user=xuser, passwd=xpasswd, db=xdb)
 
-
-
-result = curs.fetchall()
-conn.close()
-
-for row in result:
-    print(row[0])
-'''
 engine = create_engine('sqlite:///storage.db')
 result = engine.execute('SELECT * FROM emojis')
 
 for row in result:
 
-    e = emoji.save_emoji(row[2],row[1])
+    e = emoji.save_emoji(row[2], row[1])
     print(e)
