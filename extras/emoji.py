@@ -3,6 +3,7 @@ import discord
 from discord.ext import commands
 from extras.imgur import image_upload, image_delete
 from storage.lookups import find_emoji, save_emoji, delete_emoji, list_emojis
+import math
 
 
 async def _get_content_type(url):
@@ -82,6 +83,37 @@ class Emoji:
     @commands.command(pass_context=True)
     async def emlist(self, ctx):
         """Lists all emojis from my gallery."""
-        e = str(list_emojis()).replace(",", "\n")
-        embed = discord.Embed(description=e)
+
+        e = str(list_emojis()).split(",")
+
+        max_e = len(e)
+        row_e = int(math.ceil(max_e / 3))
+
+        e1 = e[:row_e]
+        e2 = e[row_e:row_e*2]
+        e3 = e[row_e*2:]
+
+        row1 = ""
+        row2 = ""
+        row3 = ""
+
+        for x in e1:
+            row1 += "\n"+x
+
+        for x in e2:
+            row2 += "\n"+x
+
+        for x in e3:
+            row3 += "\n"+x
+
+        H1 = (e1[0][0] + " - " + e1[len(e1)-1][0]).upper()
+        H2 = (e2[0][0] + " - " + e2[len(e2)-1][0]).upper()
+        H3 = (e3[0][0] + " - " + e3[len(e3)-1][0]).upper()
+
+        embed = discord.Embed()
+
+        embed.add_field(name=H1, value=row1, inline=True)
+        embed.add_field(name=H2, value=row2, inline=True)
+        embed.add_field(name=H3, value=row3, inline=True)
+
         await ctx.bot.send_message(ctx.message.channel, embed=embed)
