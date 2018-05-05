@@ -14,8 +14,8 @@ xuser = "tonicvps"
 xpasswd = "T0n1cVp5"
 xdb = "innodb"
 
-conn = MySQLdb.connect(host=xhost, port=xport,
-                       user=xuser, passwd=xpasswd, db=xdb)
+# conn = MySQLdb.connect(host=xhost, port=xport,
+#                       user=xuser, passwd=xpasswd, db=xdb)
 
 '''
 ==============================================================================================
@@ -48,36 +48,56 @@ def find_guild(uid: str):
 
 
 def find_emoji(name: str):
+
+    conn = MySQLdb.connect(host=xhost, port=xport,
+                           user=xuser, passwd=xpasswd, db=xdb)
+
     curs = conn.cursor()
     curs.callproc("GetEmoji", [name])
     result = curs.fetchall()
     curs.close()
+    conn.close()
     emoji = result[0]
     return emoji[0]
 
 
 def save_emoji(name: str, url: str):
+
+    conn = MySQLdb.connect(host=xhost, port=xport,
+                           user=xuser, passwd=xpasswd, db=xdb)
+
     curs = conn.cursor()
     curs.callproc("AddEmoji", [name, url])
     result = curs.fetchall()
     curs.close()
+    conn.close()
     emoji = result[0]
     return emoji[0]
 
 
 def delete_emoji(name: str):
+
+    conn = MySQLdb.connect(host=xhost, port=xport,
+                           user=xuser, passwd=xpasswd, db=xdb)
+
     curs = conn.cursor()
     curs.callproc("DeleteEmoji", [name])
     result = curs.fetchall()
     curs.close()
+    conn.close()
     emoji = result[0]
     return emoji[0]
 
 
 def list_emojis():
+
+    conn = MySQLdb.connect(host=xhost, port=xport,
+                           user=xuser, passwd=xpasswd, db=xdb)
+
     curs = conn.cursor()
     curs.callproc("ListEmojis")
     result = curs.fetchall()
     curs.close()
+    conn.close()
     emoji = result[0]
     return emoji[0]
