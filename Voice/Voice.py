@@ -14,5 +14,6 @@ class Voice:
 
     @commands.command(pass_context=True)
     async def disconnect(self,ctx):
+        await voiceclient = ctx.bot.voice_client_in(ctx.message.guild)        
         await ctx.bot.send_message(ctx.message.channel, "Crunk time over")
-        await ctx.bot.disconnect()
+        await voiceclient.disconnect()
