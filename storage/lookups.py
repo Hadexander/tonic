@@ -8,10 +8,10 @@ import MySQLdb
 Connection parameters shouldn't be here, change later.
 ==============================================================================================
 '''
-xhost = "tonicdb.caq0gwjk9u9y.us-east-2.rds.amazonaws.com"
+xhost = "localhost"
 xport = 3306
-xuser = "tonicvps"
-xpasswd = "T0n1cVp5"
+xuser = "tonic"
+xpasswd = "TheBartender24"
 xdb = "innodb"
 
 # conn = MySQLdb.connect(host=xhost, port=xport,
