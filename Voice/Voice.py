@@ -4,7 +4,7 @@ from discord.ext import commands
 class Voice:
 
     @commands.command(pass_context=True)
-    async def _jointest_(ctx):
+    async def jointest(ctx):
         if ctx.message.author.voice is None:
             ctx.bot.send_message(ctx.message.channel, 'You ain\'t there. Can\'t connect')
             return
@@ -13,5 +13,5 @@ class Voice:
         return
 
     @commands.command(pass_context=True)
-    async def _disconnect_():
+    async def disconnect():
         Disconnect()
