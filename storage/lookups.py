@@ -12,7 +12,7 @@ xhost = "localhost"
 xport = 3306
 xuser = "tonic"
 xpasswd = "TheBartender24"
-xdb = "innodb"
+xdb = "Innodb"
 
 # conn = MySQLdb.connect(host=xhost, port=xport,
 #                       user=xuser, passwd=xpasswd, db=xdb)
