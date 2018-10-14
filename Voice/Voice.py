@@ -8,7 +8,7 @@ class Voice:
         if ctx.message.author.voice is None:
             await ctx.bot.send_message(ctx.message.channel, 'You ain\'t there. Can\'t connect')
             return
-        await client.join_voice_channel(ctx.message.author.voice.channel)
+        await ctx.bot.join_voice_channel(ctx.message.author.voice.channel)
         await ctx.bot.send_message(ctx.message.channel, "Party times boys!")
         return
 
