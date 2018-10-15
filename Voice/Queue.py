@@ -55,3 +55,8 @@ class Queue:
             await Queue.Voice.play(ctx,Queue.QueueURL[0])
             await ctx.bot.send_message(ctx.message.channel, 'Here we go skipping again!')
             return
+
+    @commands.command(pass_context=True)
+    async def setvolume(self,ctx, vol):
+        await Queue.Voice.setvolume(ctx,vol)
+        return
