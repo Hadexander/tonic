@@ -16,4 +16,14 @@ class Queue:
     @commands.command(pass_context=True)
     async def disconnect(self,ctx):
         await Queue.Voice.disconnect(ctx)
-    
+
+    def _addqueue(self,yturl):
+        Queue.QueueURL.append(yturl)
+        return
+
+    @commands.command(pass_context=True)
+    async def play(self,ctx,url):
+        if Queue.Voice.player.is_live():
+            self._addqueue(url)
+        else:
+            await Queue.Voice.play(url)
