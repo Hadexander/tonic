@@ -78,7 +78,7 @@ class Voice:
             return
 
     async def setvolume(self,ctx,vol):
-        if vol < 200 or vol < 0:
+        if vol < 200 or vol > 0:
             await ctx.bot.send_message(ctx.message.channel, "Please set volume higher than 0 and lower than 200")
             return
         else:
