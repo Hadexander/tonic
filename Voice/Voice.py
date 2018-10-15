@@ -49,6 +49,7 @@ class Voice:
             await ctx.bot.send_message(ctx.message.channel, "Let me join first.")
         elif Voice.player is not None and Voice.player.is_live():
             #queue system needed
+            return
         else:
             Voice.player = await Voice.voiceclient.create_ytdl_player(url)
             Voice.player.start()
