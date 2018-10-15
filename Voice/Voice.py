@@ -3,6 +3,7 @@ from discord.ext import commands
 
 class Voice:
     voiceclient=None
+    player=None
     @commands.command(pass_context=True)
     async def join(self,ctx):
         if ctx.message.author.voice is None:
@@ -25,9 +26,9 @@ class Voice:
         voiceclient = ctx.bot.voice_client_in(ctx.message.server)
         if Voice.voiceclient is None:
             await ctx.bot.send_message(ctx.message.channel, "I'm not connected to channel, attempting to join")
-            await self.join(self,ctx)
+            await self.join(ctx)
         else:
             await ctx.bot.send_message(ctx.message.channel, "Playing test sound")
-        player = voiceclient.create_ffmpeg_player('victory.mp3')
-        player.start()
+        Voice.player = voiceclient.create_ffmpeg_player('victory.mp3')
+        Voice.player.start()
         return
