@@ -3,7 +3,7 @@ import util
 import github
 import poe
 import Voice
-import Queue
+from Voice.Voice import Queue
 def setup(bot):
     util.setup(bot)
     poe.setup(bot)
