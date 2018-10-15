@@ -1,5 +1,4 @@
 import discord
-import ffmpeg-python
 from discord.ext import commands
 
 class Voice:
