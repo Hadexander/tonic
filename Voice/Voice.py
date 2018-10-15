@@ -25,7 +25,7 @@ class Voice:
         voiceclient = ctx.bot.voice_client_in(ctx.message.server)
         if Voice.voiceclient is None:
             await ctx.bot.send_message(ctx.message.channel, "I'm not connected to channel, attempting to join")
-            await Voice.join(self,ctx)
+            await self.join(self,ctx)
         else:
             await ctx.bot.send_message(ctx.message.channel, "Playing test sound")
         player = voiceclient.create_ffmpeg_player('victory.mp3')
