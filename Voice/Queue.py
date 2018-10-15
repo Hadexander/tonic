@@ -58,5 +58,6 @@ class Queue:
 
     @commands.command(pass_context=True)
     async def setvolume(self,ctx, vol):
+        vol = int(vol)
         await Queue.Voice.setvolume(ctx,vol)
         return
