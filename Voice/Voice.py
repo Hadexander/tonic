@@ -2,7 +2,6 @@ import discord
 from discord.ext import commands
 
 class Voice:
-    voiceclient = None
     @commands.command(pass_context=True)
     async def join(self,ctx):
         if ctx.message.author.voice is None:
@@ -15,6 +14,7 @@ class Voice:
 
     @commands.command(pass_context=True)
     async def disconnect(self,ctx):
+        voiceclient = ctx.bot.voice_client_in(ctx.message.server)
         await ctx.bot.send_message(ctx.message.channel, "Crunk time over")
         await voiceclient.disconnect()
         return
