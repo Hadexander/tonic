@@ -39,7 +39,7 @@ class Queue:
             self._removequeue()
             return
         else:
-            self._addqueue()
+            self._addqueue(url)
             return
 
     @commands.command(pass_context=True)
@@ -59,5 +59,6 @@ class Queue:
     @commands.command(pass_context=True)
     async def setvolume(self,ctx, vol):
         vol = int(vol)
+        await ctx.bot.send_message(ctx.message.channel, 'volume input = '+ vol)
         await Queue.Voice.setvolume(ctx,vol)
         return
