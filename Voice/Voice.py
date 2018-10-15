@@ -24,7 +24,6 @@ class Voice:
 
     @commands.command(pass_context=True)
     async def playtest(self,ctx):
-        voiceclient = ctx.bot.voice_client_in(ctx.message.server)
         if Voice.voiceclient is None:
             await ctx.bot.send_message(ctx.message.channel, "I'm not connected to channel, attempting to join")
             #will fix later.
@@ -49,5 +48,5 @@ class Voice:
         if Voice.voiceclient is None:
             await ctx.bot.send_message(ctx.message.channel, "Let me join first.")
         else:
-            Voice.player = create_ytdl_player(url)
+            Voice.player = Voice.voiceclient.create_ytdl_player(url)
             Voice.player.start()
