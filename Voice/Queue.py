@@ -23,7 +23,5 @@ class Queue:
 
     @commands.command(pass_context=True)
     async def play(self,ctx,url):
-        if Queue.Voice.player.is_live():
             self._addqueue(url)
-        else:
-            await Queue.Voice.play(url)
+            await Queue.Voice.play(Queue.QueueURL[0])
