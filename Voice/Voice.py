@@ -30,9 +30,9 @@ class Voice:
         if Voice.voiceclient is None:
             await ctx.bot.send_message(ctx.message.channel, "I'm not connected to channel, attempting to join")
             #will fix later.
-            #await self.join(ctx)
-            await ctx.bot.join_voice_channel(ctx.message.author.voice.voice_channel)
-            Voice.voiceclient = ctx.bot.voice_client_in(ctx.message.server)
+            await self.join(ctx)
+            #await ctx.bot.join_voice_channel(ctx.message.author.voice.voice_channel)
+            #Voice.voiceclient = ctx.bot.voice_client_in(ctx.message.server)
         else:
             await ctx.bot.send_message(ctx.message.channel, "Playing test sound")
         if Voice.player is None:

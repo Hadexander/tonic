@@ -3,6 +3,7 @@ from discord.ext import commands
 
 class Queue:
     Voice = Voice()
+    QueueURL=[]
     @commands.command(pass_context=True)
     async def join(self,ctx):
         if Voice.voiceclient is None:
@@ -15,3 +16,4 @@ class Queue:
     @commands.command(pass_context=True)
     async def disconnect(self,ctx):
         await Queue.Voice.disconnect(ctx)
+    
