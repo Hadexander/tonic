@@ -48,6 +48,5 @@ class Voice:
         if Voice.voiceclient is None:
             await ctx.bot.send_message(ctx.message.channel, "Let me join first.")
             await self.join(ctx)
-        else:
-            Voice.player = await Voice.voiceclient.create_ytdl_player(url)
-            Voice.player.start()
+        Voice.player = await Voice.voiceclient.create_ytdl_player(url)
+        Voice.player.start()
