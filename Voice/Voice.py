@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands
 
 class Voice:
-
+voiceclient = None
     @commands.command(pass_context=True)
     async def join(self,ctx):
         if ctx.message.author.voice is None:
@@ -21,6 +21,7 @@ class Voice:
 
     @commands.command(pass_context=True)
     async def playtest(self,ctx):
+        voiceclient = ctx.bot.voice_client_in(ctx.message.server)
         if voiceclient.is_connected():
             await ctx.bot.send_message(ctx.message.channel, "Playing test sound")
         else:
