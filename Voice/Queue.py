@@ -24,4 +24,4 @@ class Queue:
     @commands.command(pass_context=True)
     async def play(self,ctx,url):
             self._addqueue(url)
-            await Queue.Voice.play(Queue.QueueURL[0])
+            await Queue.Voice.play(ctx,Queue.QueueURL[0])
