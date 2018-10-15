@@ -1,4 +1,5 @@
 import discord
+import youtube_dl
 from discord.ext import commands
 
 class Voice:
@@ -26,9 +27,30 @@ class Voice:
         voiceclient = ctx.bot.voice_client_in(ctx.message.server)
         if Voice.voiceclient is None:
             await ctx.bot.send_message(ctx.message.channel, "I'm not connected to channel, attempting to join")
-            await self.join(ctx)
+            #will fix later.
+            #await self.join(ctx)
+            await ctx.bot.join_voice_channel(ctx.message.author.voice.voice_channel)
+            Voice.voiceclient = ctx.bot.voice_client_in(ctx.message.server)
         else:
             await ctx.bot.send_message(ctx.message.channel, "Playing test sound")
-        Voice.player = voiceclient.create_ffmpeg_player('victory.mp3')
-        Voice.player.start()
+        if Voice.player is None
+            Voice.player = voiceclient.create_ffmpeg_player('victory.mp3')
+            Voice.player.start()
+        elif Voice.player.is_playing():
+            #Need to create queue functionality for this
+            return
+        else:
+            #something truly went wrong if we reach here
+            return
         return
+
+    @commands.command(pass_context=True)
+    async def play(self,ctx,url):
+        if Voice.voiceclient is None:
+            await ctx.bot.send_message(ctx.message.channel, "Let me join first.")
+        elif Voice.player.is_playing():
+            #need to create queue functionality for this
+            return
+        else:
+            Voice.player = create_ytdl_player(url)
+            Voice.player.start()
