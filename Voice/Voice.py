@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands
 
 class Voice:
-voiceclient = None
+    voiceclient = None
     @commands.command(pass_context=True)
     async def join(self,ctx):
         if ctx.message.author.voice is None:
