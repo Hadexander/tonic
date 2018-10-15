@@ -22,7 +22,7 @@ class Voice:
     @commands.command(pass_context=True)
     async def playtest(self,ctx):
         voiceclient = ctx.bot.voice_client_in(ctx.message.server)
-        if voiceclient.is_connected() is None:
+        if voiceclient is None:
             await ctx.bot.send_message(ctx.message.channel, "I'm not connected to channel, attempting to join")
             #will replace this next section. I know...I know...
             #await ctx.bot.join_voice_channel(ctx.message.author.voice.voice_channel)
