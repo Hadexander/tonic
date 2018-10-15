@@ -1,5 +1,5 @@
 from Voice.Voice import Voice
-
+from discord.ext import commands
 
 class Queue:
     Voice = Voice()
