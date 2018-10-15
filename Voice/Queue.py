@@ -6,7 +6,7 @@ class Queue:
     @commands.command(pass_context=True)
     async def join(self,ctx):
         if Voice.voiceclient is None:
-            await Voice.join(ctx)
+            await Queue.Voice.join(ctx)
             return
         else:
             await ctx.bot.send_message(ctx.message.channel, 'Bruh, I\'m already here')
