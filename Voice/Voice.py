@@ -33,7 +33,7 @@ class Voice:
             Voice.voiceclient = ctx.bot.voice_client_in(ctx.message.server)
         else:
             await ctx.bot.send_message(ctx.message.channel, "Playing test sound")
-        if Voice.player is None
+        if Voice.player is None:
             Voice.player = voiceclient.create_ffmpeg_player('victory.mp3')
             Voice.player.start()
         elif Voice.player.is_playing():
