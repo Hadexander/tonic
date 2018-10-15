@@ -27,7 +27,7 @@ class Voice:
             #will replace this next section. I know...I know...
             #await ctx.bot.join_voice_channel(ctx.message.author.voice.voice_channel)
             #voiceclient = ctx.bot.voice_client_in(ctx.message.server)
-            join(self,ctx)
+            self.join(self,ctx)
         else:
             await ctx.bot.send_message(ctx.message.channel, "Playing test sound")
         player = voiceclient.create_ffmpeg_player('victory.mp3')
