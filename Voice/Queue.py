@@ -11,3 +11,8 @@ class Queue:
         else:
             await ctx.bot.send_message(ctx.message.channel, 'Bruh, I\'m already here')
             return
+
+    @commands.command(pass_context=True)
+    async def disconnect(self,ctx):
+        Queue.Voice.voiceclient.disconnect(ctx)
+        

@@ -15,11 +15,14 @@ class Voice:
         await ctx.bot.send_message(ctx.message.channel, "Party times boys!")
         return
 
-    @commands.command(pass_context=True)
     async def disconnect(self,ctx):
-        await ctx.bot.send_message(ctx.message.channel, "Crunk time over")
-        await Voice.voiceclient.disconnect()
-        Voice.voiceclient=None
+        if Voice.voiceclient is None:
+            await ctx.bot.send_message(ctx.message.channel, "I'm not even in the channel...? :thinking:")
+            return
+        else:
+            await ctx.bot.send_message(ctx.message.channel, "Crunk time over")
+            await Voice.voiceclient.disconnect()
+            Voice.voiceclient=None
         return
 
     @commands.command(pass_context=True)
@@ -33,11 +36,8 @@ class Voice:
         else:
             await ctx.bot.send_message(ctx.message.channel, "Playing test sound")
         if Voice.player is None:
-            Voice.player = voiceclient.create_ffmpeg_player('victory.mp3')
+            Voice.player = Voice.voiceclient.create_ffmpeg_player('victory.mp3')
             Voice.player.start()
-        elif Voice.player.is_playing():
-            #Need to create queue functionality for this
-            return
         else:
             #something truly went wrong if we reach here
             return
@@ -47,9 +47,6 @@ class Voice:
     async def play(self,ctx,url):
         if Voice.voiceclient is None:
             await ctx.bot.send_message(ctx.message.channel, "Let me join first.")
-        elif Voice.player is not None and Voice.player.is_live():
-            #queue system needed
-            return
         else:
             Voice.player = await Voice.voiceclient.create_ytdl_player(url)
             Voice.player.start()
