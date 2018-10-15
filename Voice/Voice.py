@@ -48,9 +48,6 @@ class Voice:
     async def play(self,ctx,url):
         if Voice.voiceclient is None:
             await ctx.bot.send_message(ctx.message.channel, "Let me join first.")
-        elif Voice.player.is_playing():
-            #need to create queue functionality for this
-            return
         else:
             Voice.player = create_ytdl_player(url)
             Voice.player.start()
