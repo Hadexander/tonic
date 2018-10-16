@@ -27,6 +27,15 @@ class Voice:
             Voice.voiceclient=None
         return
 
+    async def _userinchannel(self,ctx):
+        """Checks if user is in channel or same channel as bot. (Take that Nico!)"""
+        if ctx.message.author.voice.voice_channel is None:
+            return False
+        elif ctx.message.author.voice.voice_channel is not ctx.bot.voice.voice_channel:
+            return False
+        else:
+            return True
+
     @commands.command(pass_context=True)
     async def playtest(self,ctx):
         if Voice.voiceclient is None:
@@ -46,14 +55,15 @@ class Voice:
             return
         return
 
-    async def play(self,ctx,url):
+    async def play(self,ctx,url,afterf):
         """Plays youtube links. IE 'https://www.youtube.com/watch?v=mPMC3GYpBHg' """
         if Voice.voiceclient is None:
             await ctx.bot.send_message(ctx.message.channel, "Let me join first.")
             await self.join(ctx)
-        Voice.player = await Voice.voiceclient.create_ytdl_player(url)
-        Voice.player.volume = Voice.volume
-        Voice.player.start()
+        if self._userinchannel(ctx):
+            Voice.player = await Voice.voiceclient.create_ytdl_player(url)
+            Voice.player.volume = Voice.volume
+            Voice.player.start()
         return
 
     async def pause(self,ctx):
@@ -91,15 +101,12 @@ class Voice:
     async def stop(self,ctx):
         """Stops current song."""
         if Voice.voiceclient is None:
-            await ctx.bot.send_message(ctx.message.channel, "Can't stop things if I'm not there")
-            return
+            return False
         if not Voice.player.is_playing():
-            await ctx.bot.send_message(ctx.message.channel, "Not even playing anything :sus:")
-            return
+            return False
         else:
             Voice.player.stop()
-            await ctx.bot.send_message(ctx.message.channel, "Stopping!")
-            return
+            return True
 
     def format_volume_bar(self, value):
         """Returns the volume bar string. Expects value = [0.0-2.0]"""
@@ -108,14 +115,14 @@ class Voice:
         bar = "```{}{} {:.0f}%```".format('█' * full, '-' * (length - full), value * 50)
         return bar
 
+
     async def setvolume(self,ctx,vol):
         """Sets global volume of stream."""
         if vol > 200 or vol < 0:
-            await ctx.bot.send_message(ctx.message.channel, "Please set volume higher than 0 and lower than 200")
-            return
+            return False
         else:
             Voice.volume = vol/100
             if Voice.player is not None:
                 Voice.player.volume = Voice.volume
-                return
-            return
+                return True
+            return True

@@ -4,6 +4,7 @@ from discord.ext import commands
 class Queue:
     Voice = Voice()
     QueueURL=[]
+
     @commands.command(pass_context=True)
     async def join(self,ctx):
         """Bot joins current user's channel"""
@@ -45,7 +46,7 @@ class Queue:
     @commands.command(pass_context=True)
     async def play(self,ctx,url):
         """Plays youtube links. IE 'https://www.youtube.com/watch?v=mPMC3GYpBHg' """
-        if Queue.Voice.voiceclient is None:
+        if Queue.Voice.player is None:
             self._addqueue(url)
             await Queue.Voice.play(ctx,Queue.QueueURL[0])
             self._removequeue()
@@ -59,7 +60,10 @@ class Queue:
     async def next(self,ctx):
         """Plays song next in queue."""
         if Queue.Voice.voiceclient is None:
-            await ctx.bot.send_message(ctx.message.channel, 'Bruh, I\'m not even in a channel. :thonking:')
+            await ctx.bot.send_message(ctx.message.channel, 'Bruh, I\'m not even in a channel. :thinking:')
+            return
+        elif len(Queue.QueueURL) == 0:
+            await ctx.bot.send_message(ctx.message.channel, 'We ain\'t got no more tunes! Pass the AUX cord!!!!! :pray::skin-tone-4:')
             return
         elif Queue.Voice.player is None:
             await Queue.Voice.play(ctx,Queue.QueueURL[0])
@@ -81,7 +85,10 @@ class Queue:
     @commands.command(pass_context=True)
     async def stop(self,ctx):
         """Stops playback"""
-        await Queue.Voice.stop(ctx)
+        if await Queue.Voice.stop(ctx):
+            await ctx.bot.send_message(ctx.message.channel, "Stopping!")
+        else:
+            await ctx.bot.send_message(ctx.message.channel, "No...")
         return
 
     @commands.command(pass_context=True)
