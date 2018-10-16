@@ -92,7 +92,9 @@ class Voice:
         """Stops current song."""
         if Voice.voiceclient is None:
             await ctx.bot.send_message(ctx.message.channel, "Can't stop things if I'm not there")
-            return            await ctx.bot.send_message(ctx.message.channel, "Not even playing anything :sus:")
+            return
+        if not Voice.player.is_playing():        
+            await ctx.bot.send_message(ctx.message.channel, "Not even playing anything :sus:")
             return
         else:
             Voice.player.stop()

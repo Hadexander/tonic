@@ -37,6 +37,12 @@ class Queue:
         return
 
     @commands.command(pass_context=True)
+    async def queue(self,ctx):
+        """Shows current queued items"""
+        await ctx.bot.send_message(ctx.message.channel, "We have about {} songs in queue".format(len(Queue.QueueURL)) )
+        await ctx.bot.send_message(ctx.message.channel, Queue.QueueURL)
+
+    @commands.command(pass_context=True)
     async def play(self,ctx,url):
         """Plays youtube links. IE 'https://www.youtube.com/watch?v=mPMC3GYpBHg' """
         if Queue.Voice.voiceclient is None:
@@ -45,7 +51,7 @@ class Queue:
             self._removequeue()
             return
         else:
-            await ctx.bot.send_message(ctx.message.channel, "I'm already playing something but I'll it to the queue")
+            await ctx.bot.send_message(ctx.message.channel, "I'm already playing something but I'll add it to the queue!")
             self._addqueue(url)
             return
 
@@ -57,10 +63,12 @@ class Queue:
             return
         elif Queue.Voice.player is None:
             await Queue.Voice.play(ctx,Queue.QueueURL[0])
+            self._removequeue()
             return
         else:
             await Queue.Voice.stop(ctx)
             await Queue.Voice.play(ctx,Queue.QueueURL[0])
+            self._removequeue()
             await ctx.bot.send_message(ctx.message.channel, 'Here we go skipping again!')
             return
 
