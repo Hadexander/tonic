@@ -95,5 +95,5 @@ class Queue:
         """Sets volume between 0 and 200."""
         vol = int(vol)
         await Queue.Voice.setvolume(ctx,vol)
-        await ctx.bot.send_message(ctx.message.channel, Queue.Voice.format_volume_bar(vol/100)
+        await ctx.bot.send_message(ctx.message.channel, Queue.Voice.format_volume_bar(vol/100))
         return
