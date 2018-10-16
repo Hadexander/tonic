@@ -45,6 +45,7 @@ class Queue:
             self._removequeue()
             return
         else:
+            await ctx.bot.send_message(ctx.message.channel, "I'm already playing something but I'll it to the queue")
             self._addqueue(url)
             return
 
