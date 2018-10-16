@@ -55,7 +55,7 @@ class Voice:
             return
         return
 
-    async def play(self,ctx,url,afterf):
+    async def play(self,ctx,url):
         """Plays youtube links. IE 'https://www.youtube.com/watch?v=mPMC3GYpBHg' """
         if Voice.voiceclient is None:
             await ctx.bot.send_message(ctx.message.channel, "Let me join first.")
