@@ -37,6 +37,12 @@ class Queue:
         await ctx.bot.send_message(ctx.message.channel, 'Music queue empty. Like this bottle of Gin.')
         return
 
+    def _is_queue_empty(self):
+        if len(Queue.QueueURL) == 0:
+            return True
+        else:
+            return False
+
     @commands.command(pass_context=True)
     async def queue(self,ctx):
         """Shows current queued items"""
@@ -51,6 +57,10 @@ class Queue:
             await Queue.Voice.play(ctx,Queue.QueueURL[0])
             self._removequeue()
             return
+        elif self._is_queue_empty():
+            self._addqueue(url)
+            await Queue.Voice.play(ctx,Queue.QueueURL[0])
+            self._removequeue()
         else:
             await ctx.bot.send_message(ctx.message.channel, "I'm already playing something but I'll add it to the queue!")
             self._addqueue(url)

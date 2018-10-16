@@ -27,7 +27,7 @@ class Voice:
             Voice.voiceclient=None
         return
 
-    async def _userinchannel(self,ctx):
+        def _userinchannel(self,ctx):
         """Checks if user is in channel or same channel as bot. (Take that Nico!)"""
         if ctx.message.author.voice.voice_channel is None:
             return False
