@@ -31,8 +31,8 @@ class Voice:
         """Checks if user is in channel or same channel as bot. (Take that Nico!)"""
         if ctx.message.author.voice.voice_channel is None:
                 return False
-        elif ctx.message.author.voice.voice_channel is not ctx.bot.voice.voice_channel:
-            return False
+        #elif ctx.message.author.voice.voice_channel is not ctx.bot.voice.voice_channel:
+        #    return False
         else:
             return True
 
