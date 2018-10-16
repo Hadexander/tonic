@@ -93,13 +93,20 @@ class Voice:
         if Voice.voiceclient is None:
             await ctx.bot.send_message(ctx.message.channel, "Can't stop things if I'm not there")
             return
-        if not Voice.player.is_playing():        
+        if not Voice.player.is_playing():
             await ctx.bot.send_message(ctx.message.channel, "Not even playing anything :sus:")
             return
         else:
             Voice.player.stop()
             await ctx.bot.send_message(ctx.message.channel, "Stopping!")
             return
+
+    def format_volume_bar(self, value):
+        """Returns the volume bar string. Expects value = [0.0-2.0]"""
+        length = 20
+        full = int(value / 2.0 * length)
+        bar = "```{}{} {:.0f}%```".format('█' * full, '-' * (length - full), value * 50)
+        return bar
 
     async def setvolume(self,ctx,vol):
         """Sets global volume of stream."""
@@ -110,7 +117,5 @@ class Voice:
             Voice.volume = vol/100
             if Voice.player is not None:
                 Voice.player.volume = Voice.volume
-                await ctx.bot.send_message(ctx.message.channel, "Volume is set to" + str(Voice.volume))
                 return
-            await ctx.bot.send_message(ctx.message.channel, "Volume is set to" + str(Voice.volume))
             return
