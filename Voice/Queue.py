@@ -54,7 +54,7 @@ class Queue:
         if Queue.Voice.voiceclient is None:
             await ctx.bot.send_message(ctx.message.channel, 'Bruh, I\'m not even in a channel. :thonking:')
             return
-        if Queue.Voice.player is None:
+        elif Queue.Voice.player is None:
             await Queue.Voice.play(ctx,Queue.QueueURL[0])
             return
         else:
@@ -86,5 +86,4 @@ class Queue:
         """Sets volume between 0 and 200."""
         vol = int(vol)
         await Queue.Voice.setvolume(ctx,vol)
-        await ctx.bot.send_message(ctx.message.channel, 'volume input = '+ str(vol))
         return

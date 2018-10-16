@@ -61,7 +61,7 @@ class Voice:
         if Voice.voiceclient is None:
             await ctx.bot.send_message(ctx.message.channel, "Pause? When I'm not there? ....Really?")
             return
-        if Voice.player is None or not Voice.player.is_playing():
+        elif Voice.player is None or not Voice.player.is_playing():
             await ctx.bot.send_message(ctx.message.channel, "Not even playing anything :sus:")
             return
         else:
@@ -74,7 +74,7 @@ class Voice:
         if Voice.voiceclient is None:
             await ctx.bot.send_message(ctx.message.channel, "Resume? When I'm not there? ....Really?")
             return
-        if Voice.player is None or Voice.player.is_playing():
+        elif Voice.player is None or Voice.player.is_playing():
             await ctx.bot.send_message(ctx.message.channel, "I'm not playing anything or I'm already playing something.")
             return
         else:
@@ -87,7 +87,7 @@ class Voice:
         if Voice.voiceclient is None:
             await ctx.bot.send_message(ctx.message.channel, "Can't stop things if I'm not there")
             return
-        if Voice.player is None or not Voice.player.is_playing():
+        elif Voice.player is None or not Voice.player.is_playing():
             await ctx.bot.send_message(ctx.message.channel, "Not even playing anything :sus:")
             return
         else:
