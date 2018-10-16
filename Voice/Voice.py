@@ -102,8 +102,9 @@ class Voice:
             return
         else:
             Voice.volume = vol/100
-            await ctx.bot.send_message(ctx.message.channel, "Volume is set to" + Voice.volume)
             if Voice.player is not None:
                 Voice.player.volume = Voice.volume
+                await ctx.bot.send_message(ctx.message.channel, "Volume is set to" + str(Voice.volume))
                 return
+            await ctx.bot.send_message(ctx.message.channel, "Volume is set to" + str(Voice.volume))
             return

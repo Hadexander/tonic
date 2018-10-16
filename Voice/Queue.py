@@ -80,11 +80,11 @@ class Queue:
         """Resumes playback"""
         await Queue.Voice.resume(ctx)
         return
-        
+
     @commands.command(pass_context=True)
     async def setvolume(self,ctx, vol):
         """Sets volume between 0 and 200."""
         vol = int(vol)
-        await ctx.bot.send_message(ctx.message.channel, 'volume input = '+ vol)
         await Queue.Voice.setvolume(ctx,vol)
+        await ctx.bot.send_message(ctx.message.channel, 'volume input = '+ str(vol))
         return
