@@ -98,7 +98,7 @@ class Queue:
         if await Queue.Voice.stop(ctx):
             await ctx.bot.send_message(ctx.message.channel, "Stopping!")
         else:
-            await ctx.bot.send_message(ctx.message.channel, "No...")
+            await ctx.bot.send_message(ctx.message.channel, "!em pos")
         return
 
     @commands.command(pass_context=True)
