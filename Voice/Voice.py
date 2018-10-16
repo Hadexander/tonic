@@ -8,7 +8,7 @@ class Voice:
     volume=0.5
     async def join(self,ctx):
         """Bot joins current user's channel"""
-        if ctx.message.author.voice is None:
+        if ctx.message.author.voice.voice_channel is None:
             await ctx.bot.send_message(ctx.message.channel, 'You ain\'t there. Can\'t connect')
             return
         await ctx.bot.join_voice_channel(ctx.message.author.voice.voice_channel)
@@ -68,7 +68,7 @@ class Voice:
             await ctx.bot.send_message(ctx.message.channel, "I'm not playing anything")
             return
         else:
-            await Voice.player.pause()
+            Voice.player.pause()
             await ctx.bot.send_message(ctx.message.channel, "Playback paused.")
             return
 
@@ -84,7 +84,7 @@ class Voice:
             await ctx.bot.send_message(ctx.message.channel, "I'm already playing something.")
             return
         else:
-            await Voice.player.resume()
+            Voice.player.resume()
             await ctx.bot.send_message(ctx.message.channel, "Playback paused.")
             return
 
@@ -95,7 +95,7 @@ class Voice:
             return            await ctx.bot.send_message(ctx.message.channel, "Not even playing anything :sus:")
             return
         else:
-            await Voice.player.stop()
+            Voice.player.stop()
             await ctx.bot.send_message(ctx.message.channel, "Stopping!")
             return
 
