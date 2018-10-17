@@ -57,7 +57,7 @@ class Queue:
             await Queue.Voice.play(ctx,Queue.QueueURL[0])
             self._removequeue()
             return
-        elif self._is_queue_empty():
+        elif self._is_queue_empty() and not Queue.Voice.player.is_playing():
             self._addqueue(url)
             await Queue.Voice.play(ctx,Queue.QueueURL[0])
             self._removequeue()
@@ -98,7 +98,7 @@ class Queue:
         if await Queue.Voice.stop(ctx):
             await ctx.bot.send_message(ctx.message.channel, "Stopping!")
         else:
-            await ctx.bot.send_message(ctx.message.channel, "!em pos")
+            await ctx.bot.send_message(ctx.message.channel, "No...")
         return
 
     @commands.command(pass_context=True)
