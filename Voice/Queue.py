@@ -9,8 +9,7 @@ class Queue:
     @commands.command(pass_context=True)
     async def join(self,ctx):
         """Bot joins current user's channel"""
-        if Voice.join(ctx):
-            await Queue.Voice.join(ctx)
+        if await Queue.Voice.join(ctx):
             await ctx.bot.send_message(ctx.message.channel, "Party time boys!")
             return True
         else:
