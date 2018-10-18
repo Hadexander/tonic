@@ -73,12 +73,17 @@ class Queue:
             await ctx.bot.send_message(ctx.message.channel, "I'm already playing something but I'll add it to the queue!")
             self._addqueue(url)
             return
+        if Queue.Voice.player is None:
+            validation_play_check = await Queue.Voice.play(ctx,Queue.QueueURL[0])
+            return
         if Queue.Voice.player.is_playing():
             await ctx.bot.send_message(ctx.message.channel, "I'm already playing something but I'll add it to the queue!")
             self._addqueue(url)
             return
-        join_s = await self.join(ctx)
         self._addqueue(url)
+        validation_play_check = await Queue.Voice.play(ctx,Queue.QueueURL[0])
+        if not validation_play_check:
+            await ctx.bot.send_message(ctx.message.channel, "Playback failed!")
         self._removequeue()
         return
 
