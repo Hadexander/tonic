@@ -21,7 +21,7 @@ class Queue:
         """Disconnects from current channel"""
         await self.Voice.disconnect(ctx)
         return
-'''
+
     def _userinchannel(self,ctx):
         """Checks if user is in channel or same channel as bot. (Take that Nico!). Hardcheck T/F """
         if ctx.message.author.voice.voice_channel is None:
@@ -30,7 +30,7 @@ class Queue:
             return False
         else:
             return True
-'''
+
     def _addqueue(self,yturl):
         """Adds url to a queue list in case a song is already playing"""
         self.QueueURL.append(yturl)
@@ -61,6 +61,7 @@ class Queue:
 
     @commands.command(pass_context=True)
     async def play(self,ctx,url):
+        if
         """Plays youtube links. IE 'https://www.youtube.com/watch?v=mPMC3GYpBHg' """
         #create ytdl instance
         #set quiet: True if needed
