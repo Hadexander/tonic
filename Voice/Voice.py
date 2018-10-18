@@ -13,7 +13,7 @@ class Voice:
             return False
         elif self.voiceclient is not None:
             if ctx.message.author.voice.voice_channel is not self.voiceclient.channel:
-                await ctx.bot.move_to(ctx.message.author.voice.voice_channel)
+                await self.voiceclient.move_to(ctx.message.author.voice.voice_channel)
                 return True
         else:
             await ctx.bot.join_voice_channel(ctx.message.author.voice.voice_channel)
