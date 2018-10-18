@@ -9,7 +9,7 @@ class Queue:
     @commands.command(pass_context=True)
     async def join(self,ctx):
         """Bot joins current user's channel"""
-        if await Queue.Voice.join(ctx):
+        if await self.Voice.join(ctx):
             await ctx.bot.send_message(ctx.message.channel, "Party time boys!")
             return True
         else:
@@ -19,27 +19,27 @@ class Queue:
     @commands.command(pass_context=True)
     async def disconnect(self,ctx):
         """Disconnects from current channel"""
-        await Queue.Voice.disconnect(ctx)
+        await self.Voice.disconnect(ctx)
         return
 
     def _addqueue(self,yturl):
         """Adds url to a queue list in case a song is already playing"""
-        Queue.QueueURL.append(yturl)
+        self.QueueURL.append(yturl)
         return
 
     def _removequeue(self):
         """Removes first item in queue list"""
-        Queue.QueueURL.pop(0)
+        self.QueueURL.pop(0)
         return
     @commands.command(pass_context=True)
     async def clear(self,ctx):
         """Clears entire queue. Becareful!"""
-        Queue.QueueURL.clear()
+        self.QueueURL.clear()
         await ctx.bot.send_message(ctx.message.channel, 'Music queue empty. Like this bottle of Gin.')
         return
 
     def _is_queue_empty(self):
-        if len(Queue.QueueURL) == 0:
+        if len(self.QueueURL) == 0:
             return True
         else:
             return False
@@ -47,8 +47,8 @@ class Queue:
     @commands.command(pass_context=True)
     async def queue(self,ctx):
         """Shows current queued items"""
-        await ctx.bot.send_message(ctx.message.channel, "We have about {} songs in queue".format(len(Queue.QueueURL)) )
-        await ctx.bot.send_message(ctx.message.channel, Queue.QueueURL)
+        await ctx.bot.send_message(ctx.message.channel, "We have about {} songs in queue".format(len(self.QueueURL)) )
+        await ctx.bot.send_message(ctx.message.channel, self.QueueURL)
 
     @commands.command(pass_context=True)
     async def play(self,ctx,url):
@@ -73,17 +73,17 @@ class Queue:
             await ctx.bot.send_message(ctx.message.channel, "I'm already playing something but I'll add it to the queue!")
             self._addqueue(url)
             return
-        if Queue.Voice.player is None:
+        if self.Voice.player is None:
             self._addqueue(url)
-            validation_play_check = await Queue.Voice.play(ctx,Queue.QueueURL[0])
+            validation_play_check = await self.Voice.play(ctx,self.QueueURL[0])
             self._removequeue()
             return
-        if Queue.Voice.player.is_playing():
+        if self.Voice.player.is_playing():
             await ctx.bot.send_message(ctx.message.channel, "I'm already playing something but I'll add it to the queue!")
             self._addqueue(url)
             return
         self._addqueue(url)
-        validation_play_check = await Queue.Voice.play(ctx,Queue.QueueURL[0])
+        validation_play_check = await self.Voice.play(ctx,self.QueueURL[0])
         if not validation_play_check:
             await ctx.bot.send_message(ctx.message.channel, "Playback failed!")
         self._removequeue()
@@ -93,19 +93,19 @@ class Queue:
     @commands.command(pass_context=True)
     async def next(self,ctx):
         """Plays song next in queue."""
-        if Queue.Voice.voiceclient is None:
+        if self.Voice.voiceclient is None:
             await ctx.bot.send_message(ctx.message.channel, 'Bruh, I\'m not even in a channel. :thinking:')
             return
-        elif len(Queue.QueueURL) == 0:
+        elif len(self.QueueURL) == 0:
             await ctx.bot.send_message(ctx.message.channel, 'We ain\'t got no more tunes! Pass the AUX cord!!!!! :pray::skin-tone-4:')
             return
-        elif Queue.Voice.player is None:
-            await Queue.Voice.play(ctx,Queue.QueueURL[0])
+        elif self.Voice.player is None:
+            await self.Voice.play(ctx,self.QueueURL[0])
             self._removequeue()
             return
         else:
-            await Queue.Voice.stop(ctx)
-            await Queue.Voice.play(ctx,Queue.QueueURL[0])
+            await self.Voice.stop(ctx)
+            await self.Voice.play(ctx,self.QueueURL[0])
             self._removequeue()
             await ctx.bot.send_message(ctx.message.channel, 'Here we go skipping again!')
             return
@@ -113,13 +113,13 @@ class Queue:
     @commands.command(pass_context=True)
     async def pause(self,ctx):
         """Pauses song"""
-        await Queue.Voice.pause(ctx)
+        await self.Voice.pause(ctx)
         return
 
     @commands.command(pass_context=True)
     async def stop(self,ctx):
         """Stops playback"""
-        if await Queue.Voice.stop(ctx):
+        if await self.Voice.stop(ctx):
             await ctx.bot.send_message(ctx.message.channel, "Stopping!")
         else:
             await ctx.bot.send_message(ctx.message.channel, "No...")
@@ -128,13 +128,13 @@ class Queue:
     @commands.command(pass_context=True)
     async def resume(self,ctx):
         """Resumes playback"""
-        await Queue.Voice.resume(ctx)
+        await self.Voice.resume(ctx)
         return
 
     @commands.command(pass_context=True)
     async def setvolume(self,ctx, vol):
         """Sets volume between 0 and 200."""
         vol = int(vol)
-        await Queue.Voice.setvolume(ctx,vol)
-        await ctx.bot.send_message(ctx.message.channel, Queue.Voice.format_volume_bar(vol/100))
+        await self.Voice.setvolume(ctx,vol)
+        await ctx.bot.send_message(ctx.message.channel, self.Voice.format_volume_bar(vol/100))
         return
