@@ -12,7 +12,7 @@ class Polling:
         for r in options:
             await ctx.bot.add_reaction(msg, r)
         await asyncio.sleep(60)
-        await ctx.bot.send_message(ctx.message.channel, "{}".format(len(msg.reactions)))
+        msg = await ctx.bot.get_message(ctx.message.channel, msg.id)
         results = {}
         for r in msg.reactions:
             emo = str(r.emoji)
@@ -20,4 +20,8 @@ class Polling:
                 results[emo] = r.count - (1 if r.me else 0)
         m = max(results.values())
         winners = [k for k,v in results.items() if v == m]
-        await ctx.bot.edit_message(msg, "{} [result:{}]".format(text, ''.join(winners)))
+        if len(winners) > 1:
+            final = 'tie'
+        else:
+            final = winners[0]
+        await ctx.bot.edit_message(msg, "{} [poll closed, result: {}]".format(text, final))
