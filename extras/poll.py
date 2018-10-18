@@ -15,6 +15,7 @@ class Polling:
         results = {}
         for r in msg.reactions:
             emo = str(r.emoji)
+            await ctx.bot.send_message(ctx.message.channel, emo)
             if emo in options:
                 results[emo] = r.count - (1 if r.me else 0)
         m = max(results.values())
