@@ -74,6 +74,7 @@ class Queue:
             self._addqueue(url)
             return
         if Queue.Voice.player is None:
+            self._addqueue(url)
             validation_play_check = await Queue.Voice.play(ctx,Queue.QueueURL[0])
             return
         if Queue.Voice.player.is_playing():
