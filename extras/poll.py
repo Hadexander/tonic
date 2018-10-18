@@ -12,10 +12,10 @@ class Polling:
         for r in options:
             await ctx.bot.add_reaction(msg, r)
         await asyncio.sleep(60)
+        await ctx.bot.send_message(ctx.message.channel, "{}".format(len(msg.reactions)))
         results = {}
         for r in msg.reactions:
             emo = str(r.emoji)
-            await ctx.bot.send_message(ctx.message.channel, emo)
             if emo in options:
                 results[emo] = r.count - (1 if r.me else 0)
         m = max(results.values())
