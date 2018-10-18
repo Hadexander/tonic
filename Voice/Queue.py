@@ -76,6 +76,7 @@ class Queue:
         if Queue.Voice.player is None:
             self._addqueue(url)
             validation_play_check = await Queue.Voice.play(ctx,Queue.QueueURL[0])
+            self._removequeue()
             return
         if Queue.Voice.player.is_playing():
             await ctx.bot.send_message(ctx.message.channel, "I'm already playing something but I'll add it to the queue!")
