@@ -61,7 +61,6 @@ class Queue:
 
     @commands.command(pass_context=True)
     async def play(self,ctx,url):
-        if
         """Plays youtube links. IE 'https://www.youtube.com/watch?v=mPMC3GYpBHg' """
         #create ytdl instance
         #set quiet: True if needed
