@@ -1,6 +1,7 @@
+from youtube_dl import YoutubeDL
+from youtube_dl.utils import DownloadError
 from Voice.Voice import Voice
 from discord.ext import commands
-import youtube_dl
 class Queue:
     Voice = Voice()
     QueueURL=[]
@@ -8,12 +9,13 @@ class Queue:
     @commands.command(pass_context=True)
     async def join(self,ctx):
         """Bot joins current user's channel"""
-        if Voice.voiceclient is None:
+        if Voice.join(ctx):
             await Queue.Voice.join(ctx)
-            return
+            await ctx.bot.send_message(ctx.message.channel, "Party time boys!")
+            return True
         else:
-            await ctx.bot.send_message(ctx.message.channel, 'Bruh, I\'m already here')
-            return
+            await ctx.bot.send_message(ctx.message.channel, 'This ain\'t it Chief')
+            return False
 
     @commands.command(pass_context=True)
     async def disconnect(self,ctx):
@@ -52,19 +54,35 @@ class Queue:
     @commands.command(pass_context=True)
     async def play(self,ctx,url):
         """Plays youtube links. IE 'https://www.youtube.com/watch?v=mPMC3GYpBHg' """
+        #create ytdl instance
+        #set quiet: True if needed
+        ytdl_opts = {'quiet': False, 'noplaylist': True, 'playlist_items': '1'}
+        ytdl = YoutubeDL(ytdl_opts)
+        join_s = True
         validation_play_check = False
-        if Queue.Voice.player is None:
-            self._addqueue(url)
-            validation_play_check = await Queue.Voice.play(ctx,Queue.QueueURL[0])
-        elif self._is_queue_empty() and not Queue.Voice.player.is_playing():
-            self._addqueue(url)
-            validation_play_check = await Queue.Voice.play(ctx,Queue.QueueURL[0])
-        else:
+        try:
+            info = ytdl.extract_info(url, download=False)
+        except DownloadError:
+            #url was bullshit
+            await ctx.bot.send_message(ctx.message.channel, "Unsupported URL")
+            return
+        if info.get('entries'):
+            #it's a playlist
+            await ctx.bot.send_message(ctx.message.channel, "Entire playlists are not supported")
+            return
+        if not self._is_queue_empty():
             await ctx.bot.send_message(ctx.message.channel, "I'm already playing something but I'll add it to the queue!")
             self._addqueue(url)
             return
+        if Queue.Voice.player.is_playing():
+            await ctx.bot.send_message(ctx.message.channel, "I'm already playing something but I'll add it to the queue!")
+            self._addqueue(url)
+            return
+        join_s = await self.join(ctx)
+        self._addqueue(url)
         self._removequeue()
         return
+
 
     @commands.command(pass_context=True)
     async def next(self,ctx):

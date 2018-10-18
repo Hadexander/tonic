@@ -10,11 +10,15 @@ class Voice:
         """Bot joins current user's channel"""
         if ctx.message.author.voice.voice_channel is None:
             await ctx.bot.send_message(ctx.message.channel, 'You ain\'t there. Can\'t connect')
-            return
-        await ctx.bot.join_voice_channel(ctx.message.author.voice.voice_channel)
-        Voice.voiceclient = ctx.bot.voice_client_in(ctx.message.server)
-        await ctx.bot.send_message(ctx.message.channel, "Party time boys!")
-        return
+            return False
+        elif self.voiceclient is not None:
+            if ctx.message.author.voice.voice_channel is not self.voiceclient.channel:
+                await ctx.bot.move_to(ctx.message.author.voice.voice_channel)
+                return True
+        else:
+            await ctx.bot.join_voice_channel(ctx.message.author.voice.voice_channel)
+            Voice.voiceclient = ctx.bot.voice_client_in(ctx.message.server)
+            return True
 
     async def disconnect(self,ctx):
         """Disconnects from current channel"""
