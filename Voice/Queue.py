@@ -61,9 +61,6 @@ class Queue:
 
     @commands.command(pass_context=True)
     async def play(self,ctx,url):
-        if not self._userinchannel(ctx):
-            await ctx.bot.send_message(ctx.message.channel, "Nice try")
-            return
         """Plays youtube links. IE 'https://www.youtube.com/watch?v=mPMC3GYpBHg' """
         #create ytdl instance
         #set quiet: True if needed
