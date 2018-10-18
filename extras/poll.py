@@ -14,8 +14,9 @@ class Polling:
         await asyncio.sleep(60)
         results = {}
         for r in msg.reactions:
-            if str(r) in options:
-                results[str(r)] = r.count - (1 if r.me else 0)
+            emo = str(r.emoji)
+            if emo in options:
+                results[emo] = r.count - (1 if r.me else 0)
         m = max(results.values())
         winners = [k for k,v in results.items() if v == m]
         await ctx.bot.edit_message(msg, "{} [result:{}]".format(text, ''.join(winners)))
