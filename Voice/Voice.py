@@ -61,7 +61,10 @@ class Voice:
             await ctx.bot.send_message(ctx.message.channel, "Let me join first.")
             await self.join(ctx)
         if self._userinchannel(ctx):
-            Voice.player = await Voice.voiceclient.create_ytdl_player(url)
+            try:
+                Voice.player = await Voice.voiceclient.create_ytdl_player(url)
+            except:
+                raise BadArgument()
             Voice.player.volume = Voice.volume
             Voice.player.start()
         return
@@ -118,7 +121,7 @@ class Voice:
 
     async def setvolume(self,ctx,vol):
         """Sets global volume of stream."""
-        if vol > 200 or vol < 0:
+        if vol > 100 or vol < 0:
             return False
         else:
             Voice.volume = vol/100
