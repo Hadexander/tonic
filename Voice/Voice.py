@@ -64,9 +64,11 @@ class Voice:
             try:
                 Voice.player = await Voice.voiceclient.create_ytdl_player(url)
             except:
-                raise BadArgument()
+                #raise BadArgument()
+                return False
             Voice.player.volume = Voice.volume
             Voice.player.start()
+            return True
         return
 
     async def pause(self,ctx):

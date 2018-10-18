@@ -52,18 +52,23 @@ class Queue:
     @commands.command(pass_context=True)
     async def play(self,ctx,url):
         """Plays youtube links. IE 'https://www.youtube.com/watch?v=mPMC3GYpBHg' """
+        validation_play_check = False
         if Queue.Voice.player is None:
             self._addqueue(url)
-            await Queue.Voice.play(ctx,Queue.QueueURL[0])
-            self._removequeue()
-            return
+            validation_play_check = await Queue.Voice.play(ctx,Queue.QueueURL[0])
         elif self._is_queue_empty() and not Queue.Voice.player.is_playing():
             self._addqueue(url)
-            await Queue.Voice.play(ctx,Queue.QueueURL[0])
-            self._removequeue()
+            validation_play_check = await Queue.Voice.play(ctx,Queue.QueueURL[0])
         else:
             await ctx.bot.send_message(ctx.message.channel, "I'm already playing something but I'll add it to the queue!")
             self._addqueue(url)
+            return
+        if validation_play_check:
+            self._removequeue()
+            return
+        else:
+            await ctx.bot.send_message(ctx.message.channel, "Yo! Your AUX cord privlieges is being revoked after this one. :clap::skin-tone-4: ")
+            self._removequeue()
             return
 
     @commands.command(pass_context=True)
