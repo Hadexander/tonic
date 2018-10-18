@@ -70,6 +70,7 @@ class Queue:
             return
         if not self._is_queue_empty():
             await ctx.bot.send_message(ctx.message.channel, "I'm already playing something but I'll add it to the queue!")
+        self.join(ctx)
         self._addqueue(url)
         '''
         validation_play_check = False
