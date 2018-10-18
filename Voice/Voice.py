@@ -56,7 +56,8 @@ class Voice:
             await ctx.bot.send_message(ctx.message.channel, "Let me join first.")
             await self.join(ctx)
         try:
-            Voice.player = await Voice.voiceclient.create_ytdl_player(url)
+            ytdl_opts = {'format': 'bestaudio/best'}
+            Voice.player = await Voice.voiceclient.create_ytdl_player(url, ytdl_opts)
         except:
                 #raise BadArgument()
             return False
