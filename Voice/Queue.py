@@ -1,3 +1,5 @@
+from youtube_dl import YoutubeDL
+from youtube_dl.utils import DownloadError
 from Voice.Voice import Voice
 from discord.ext import commands
 
@@ -52,6 +54,24 @@ class Queue:
     @commands.command(pass_context=True)
     async def play(self,ctx,url):
         """Plays youtube links. IE 'https://www.youtube.com/watch?v=mPMC3GYpBHg' """
+        #create ytdl instance
+        #set quiet: True if needed
+        ytdl_opts = {'quiet': False, 'noplaylist': True, 'playlist_items': '1'}
+        ytdl = YoutubeDL(ytdl_opts)
+        try:
+            info = ytdl.extract_info(url, download=False)
+        except DownloadError:
+            #url was bullshit
+            await ctx.bot.send_message(ctx.message.channel, "Unsupported URL")
+            return
+        if info.get('entries'):
+            #it's a playlist
+            await ctx.bot.send_message(ctx.message.channel, "Entire playlists are not supported")
+            return
+        if not self._is_queue_empty():
+            await ctx.bot.send_message(ctx.message.channel, "I'm already playing something but I'll add it to the queue!")
+        self._addqueue(url)
+        '''
         validation_play_check = False
         if Queue.Voice.player is None:
             self._addqueue(url)
@@ -70,6 +90,7 @@ class Queue:
             await ctx.bot.send_message(ctx.message.channel, "Yo! Your AUX cord privlieges is being revoked after this one. :clap::skin-tone-4: ")
             self._removequeue()
             return
+        '''
 
     @commands.command(pass_context=True)
     async def next(self,ctx):
