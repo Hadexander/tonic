@@ -56,8 +56,9 @@ class Voice:
             await ctx.bot.send_message(ctx.message.channel, "Let me join first.")
             await self.join(ctx)
         try:
-            ytdl_opts = {'format': 'webm[abr>0]/bestaudio/best'}
+            ytdl_opts = {'format': 'bestaudio/best'}
             Voice.player = await Voice.voiceclient.create_ytdl_player(url, ytdl_opts)
+            await ctx.bot.send_message(ctx.message.channel, "Player created with dlurl {}".format(Voice.player.download_url))
         except:
                 #raise BadArgument()
             return False
