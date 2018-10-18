@@ -1,6 +1,6 @@
 from Voice.Voice import Voice
 from discord.ext import commands
-
+import youtube_dl
 class Queue:
     Voice = Voice()
     QueueURL=[]
@@ -63,13 +63,8 @@ class Queue:
             await ctx.bot.send_message(ctx.message.channel, "I'm already playing something but I'll add it to the queue!")
             self._addqueue(url)
             return
-        if validation_play_check:
-            self._removequeue()
-            return
-        else:
-            await ctx.bot.send_message(ctx.message.channel, "Yo! Your AUX cord privlieges is being revoked after this one. :clap::skin-tone-4: ")
-            self._removequeue()
-            return
+        self._removequeue()
+        return
 
     @commands.command(pass_context=True)
     async def next(self,ctx):
