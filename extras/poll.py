@@ -10,7 +10,7 @@ class Polling:
         msg = await ctx.bot.send_message(ctx.message.channel, text)
         options = ['👍', '👎']
         for r in options:
-            await ctx.bot.add_reaction(r)
+            await ctx.bot.add_reaction(msg, r)
         await asyncio.sleep(60)
         results = {}
         for r in msg.reactions:
