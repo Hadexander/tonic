@@ -55,15 +55,14 @@ class Voice:
         if Voice.voiceclient is None:
             await ctx.bot.send_message(ctx.message.channel, "Let me join first.")
             await self.join(ctx)
-        if self._userinchannel(ctx):
-            try:
-                Voice.player = await Voice.voiceclient.create_ytdl_player(url)
-            except:
+        try:
+            Voice.player = await Voice.voiceclient.create_ytdl_player(url)
+        except:
                 #raise BadArgument()
-                return False
-            Voice.player.volume = Voice.volume
-            Voice.player.start()
-            return True
+            return False
+        Voice.player.volume = Voice.volume
+        Voice.player.start()
+        return True
         return
 
     async def pause(self,ctx):
