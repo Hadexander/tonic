@@ -4,14 +4,18 @@ from discord.ext import commands
 
 class Polling:
     @commands.command(pass_context=True)
-    async def poll(self, ctx, *args):
-        """Starts a voting poll on the channel. Voting is done with reactions. Default duration is 60 seconds."""
-        text = '@here ' + ' '.join(args)
+    async def poll(self, ctx, question, duration=60):
+        """Starts a voting poll on the channel. Voting is done with reactions. Default duration is 60 seconds. Maximum duration is 3600 seconds."""
+        text = '@here ' + question
+        if duration > 3600:
+            duration = 3600
+        if duration < 0:
+            duration = 60
         msg = await ctx.bot.send_message(ctx.message.channel, text)
         options = ['👍', '👎']
         for r in options:
             await ctx.bot.add_reaction(msg, r)
-        await asyncio.sleep(60)
+        await asyncio.sleep(duration)
         msg = await ctx.bot.get_message(ctx.message.channel, msg.id)
         results = {}
         for r in msg.reactions:
