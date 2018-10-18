@@ -22,6 +22,15 @@ class Queue:
         await self.Voice.disconnect(ctx)
         return
 
+    def _userinchannel(self,ctx):
+        """Checks if user is in channel or same channel as bot. (Take that Nico!). Hardcheck T/F """
+        if ctx.message.author.voice.voice_channel is None:
+            return False
+        elif ctx.message.author.voice.voice_channel is not self.Voice.voiceclient.channel:
+            return False
+        else:
+            return True
+
     def _addqueue(self,yturl):
         """Adds url to a queue list in case a song is already playing"""
         self.QueueURL.append(yturl)
@@ -52,6 +61,8 @@ class Queue:
 
     @commands.command(pass_context=True)
     async def play(self,ctx,url):
+        if not _userinchannel(ctx):
+            await ctx.bot.send_message(ctx.message.channel, "Nice try")
         """Plays youtube links. IE 'https://www.youtube.com/watch?v=mPMC3GYpBHg' """
         #create ytdl instance
         #set quiet: True if needed
@@ -75,7 +86,7 @@ class Queue:
             return
         if self.Voice.player is None:
             self._addqueue(url)
-            validation_play_check = await self.Voice.play(ctx,self.QueueURL[0])
+            validation_play_check = await self.Voice.play(ctx,self.QueueURL[0],self.next(ctx))
             self._removequeue()
             return
         if self.Voice.player.is_playing():
@@ -83,7 +94,7 @@ class Queue:
             self._addqueue(url)
             return
         self._addqueue(url)
-        validation_play_check = await self.Voice.play(ctx,self.QueueURL[0])
+        validation_play_check = await self.Voice.play(ctx,self.QueueURL[0],self.next(ctx))
         if not validation_play_check:
             await ctx.bot.send_message(ctx.message.channel, "Playback failed!")
         self._removequeue()
@@ -100,12 +111,12 @@ class Queue:
             await ctx.bot.send_message(ctx.message.channel, 'We ain\'t got no more tunes! Pass the AUX cord!!!!! :pray::skin-tone-4:')
             return
         elif self.Voice.player is None:
-            await self.Voice.play(ctx,self.QueueURL[0])
+            await self.Voice.play(ctx,self.QueueURL[0],self.next(ctx))
             self._removequeue()
             return
         else:
             await self.Voice.stop(ctx)
-            await self.Voice.play(ctx,self.QueueURL[0])
+            await self.Voice.play(ctx,self.QueueURL[0],self.next(ctx))
             self._removequeue()
             await ctx.bot.send_message(ctx.message.channel, 'Here we go skipping again!')
             return

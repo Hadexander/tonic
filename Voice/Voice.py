@@ -31,15 +31,6 @@ class Voice:
             Voice.voiceclient=None
         return
 
-    def _userinchannel(self,ctx):
-        """Checks if user is in channel or same channel as bot. (Take that Nico!)"""
-        if ctx.message.author.voice.voice_channel is None:
-                return False
-        #elif ctx.message.author.voice.voice_channel is not ctx.bot.voice.voice_channel:
-        #    return False
-        else:
-            return True
-
     @commands.command(pass_context=True)
     async def playtest(self,ctx):
         if Voice.voiceclient is None:
@@ -59,14 +50,14 @@ class Voice:
             return
         return
 
-    async def play(self,ctx,url):
+    async def play(self,ctx,url,afterfunction):
         """Plays youtube links. IE 'https://www.youtube.com/watch?v=mPMC3GYpBHg' """
         if Voice.voiceclient is None:
             await ctx.bot.send_message(ctx.message.channel, "Let me join first.")
             await self.join(ctx)
         if self._userinchannel(ctx):
             try:
-                Voice.player = await Voice.voiceclient.create_ytdl_player(url)
+                Voice.player = await Voice.voiceclient.create_ytdl_player(url, after =afterfunction)
             except:
                 #raise BadArgument()
                 return False
