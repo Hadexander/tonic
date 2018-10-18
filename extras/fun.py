@@ -79,3 +79,10 @@ class Fun:
         for frame in frames[1:]:
             await asyncio.sleep(1)
             await ctx.bot.edit_message(msg, frame)
+    
+    @commands.command(pass_context=True)
+    async def bother(self, ctx, user: discord.Member):
+        """A very mean thing to do."""
+        for i in range(10):
+            msg =  await ctx.bot.send_message(ctx.message.channel, user.mention)
+            await ctx.bot.delete_message(msg)
