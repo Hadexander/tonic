@@ -87,7 +87,7 @@ class Queue:
             return
         if self.Voice.player is None:
             self._addqueue(url)
-            validation_play_check = await self.Voice.play(ctx,self.QueueURL[0],self.next(ctx))
+            validation_play_check = await self.Voice.play(ctx,self.QueueURL[0])
             self._removequeue()
             return
         if self.Voice.player.is_playing():
@@ -95,7 +95,7 @@ class Queue:
             self._addqueue(url)
             return
         self._addqueue(url)
-        validation_play_check = await self.Voice.play(ctx,self.QueueURL[0],self.next(ctx))
+        validation_play_check = await self.Voice.play(ctx,self.QueueURL[0])
         if not validation_play_check:
             await ctx.bot.send_message(ctx.message.channel, "Playback failed!")
         self._removequeue()
@@ -112,12 +112,12 @@ class Queue:
             await ctx.bot.send_message(ctx.message.channel, 'We ain\'t got no more tunes! Pass the AUX cord!!!!! :pray::skin-tone-4:')
             return
         elif self.Voice.player is None:
-            await self.Voice.play(ctx,self.QueueURL[0],self.next(ctx))
+            await self.Voice.play(ctx,self.QueueURL[0])
             self._removequeue()
             return
         else:
             await self.Voice.stop(ctx)
-            await self.Voice.play(ctx,self.QueueURL[0],self.next(ctx))
+            await self.Voice.play(ctx,self.QueueURL[0])
             self._removequeue()
             await ctx.bot.send_message(ctx.message.channel, 'Here we go skipping again!')
             return

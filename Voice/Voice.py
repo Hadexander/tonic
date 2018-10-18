@@ -50,14 +50,14 @@ class Voice:
             return
         return
 
-    async def play(self,ctx,url,afterfunction):
+    async def play(self,ctx,url):
         """Plays youtube links. IE 'https://www.youtube.com/watch?v=mPMC3GYpBHg' """
         if Voice.voiceclient is None:
             await ctx.bot.send_message(ctx.message.channel, "Let me join first.")
             await self.join(ctx)
         if self._userinchannel(ctx):
             try:
-                Voice.player = await Voice.voiceclient.create_ytdl_player(url, after =afterfunction)
+                Voice.player = await Voice.voiceclient.create_ytdl_player(url)
             except:
                 #raise BadArgument()
                 return False
