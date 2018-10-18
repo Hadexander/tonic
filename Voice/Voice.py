@@ -115,7 +115,7 @@ class Voice:
         """Returns the volume bar string. Expects value = [0.0-2.0]"""
         length = 20
         full = int(value / 2.0 * length)
-        bar = "```{}{} {:.0f}%```".format('█' * full, '-' * (length - full), value * 50)
+        bar = "``{}{} {:.0f}%``".format('█' * full, '-' * (length - full), value * 100)
         return bar
 
 
