@@ -83,6 +83,6 @@ class Fun:
     @commands.command(pass_context=True)
     async def bother(self, ctx, user: discord.Member):
         """A very mean thing to do."""
-        for i in range(10):
+        for i in range(5):
             msg =  await ctx.bot.send_message(ctx.message.channel, user.mention)
             await ctx.bot.delete_message(msg)
