@@ -18,12 +18,12 @@ class Player:
             if ctx.message.author.voice.voice_channel is not self.voiceclient.channel:
                 await self.voiceclient.move_to(ctx.message.author.voice.voice_channel)
                 return True'''
-        else:
-            await ctx.bot.join_voice_channel(ctx.message.author.voice.voice_channel)
-            voiceclient = ctx.bot.voice_client_in(ctx.message.server)
-            self.voiceclient={servername:voiceclient}
-            #Voice.voiceclient = ctx.bot.voice_client_in(ctx.message.server)
-            return True
+
+        await ctx.bot.join_voice_channel(ctx.message.author.voice.voice_channel)
+        voiceclient = ctx.bot.voice_client_in(ctx.message.server)
+        self.voiceclient={servername:voiceclient}
+        #Voice.voiceclient = ctx.bot.voice_client_in(ctx.message.server)
+        return True
 '''
     @commands.command(pass_context=True)
     async def disconnect(self,ctx):
