@@ -1,5 +1,3 @@
-from Voice.Voice import Voice
-from Voice.Queue import Queue
+from Voice.Player import Player
 def setup(bot):
-    bot.add_cog(Voice())
     bot.add_cog(Queue())

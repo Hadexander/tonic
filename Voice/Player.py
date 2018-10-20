@@ -1,25 +1,37 @@
 from youtube_dl import YoutubeDL
 from youtube_dl.utils import DownloadError
-from Voice.Voice import Voice
 from discord.ext import commands
-class Queue:
-    Voice = Voice()
-    QueueURL=[]
+class Player:
+    QueueURL={}
+    voiceclient={}
+    player={}
 
     @commands.command(pass_context=True)
     async def join(self,ctx):
         """Bot joins current user's channel"""
-        if await self.Voice.join(ctx):
-            await ctx.bot.send_message(ctx.message.channel, "Party time boys!")
-            return True
-        else:
-            await ctx.bot.send_message(ctx.message.channel, 'This ain\'t it Chief')
+        if ctx.message.author.voice.voice_channel is None:
+            await ctx.bot.send_message(ctx.message.channel, 'You ain\'t there. Can\'t connect')
             return False
-
+        elif self.voiceclient is not None:
+            if ctx.message.author.voice.voice_channel is not self.voiceclient.channel:
+                await self.voiceclient.move_to(ctx.message.author.voice.voice_channel)
+                return True
+        else:
+            await ctx.bot.join_voice_channel(ctx.message.author.voice.voice_channel)
+            self.voiceclient={ctx.message.server:ctx.bot.voice_client_in(ctx.message.server)}
+            #Voice.voiceclient = ctx.bot.voice_client_in(ctx.message.server)
+            return True
+'''
     @commands.command(pass_context=True)
     async def disconnect(self,ctx):
         """Disconnects from current channel"""
-        await self.Voice.disconnect(ctx)
+        if Voice.voiceclient is None:
+            await ctx.bot.send_message(ctx.message.channel, "I'm not even in the channel...? :thinking:")
+            return
+        else:
+            await ctx.bot.send_message(ctx.message.channel, "Crunk time over. Wu-tang out!")
+            await Voice.voiceclient.disconnect()
+            Voice.voiceclient=None
         return
 
     def _userinchannel(self,ctx):
@@ -40,6 +52,7 @@ class Queue:
         """Removes first item in queue list"""
         self.QueueURL.pop(0)
         return
+
     @commands.command(pass_context=True)
     async def clear(self,ctx):
         """Clears entire queue. Becareful!"""
@@ -54,10 +67,25 @@ class Queue:
             return False
 
     @commands.command(pass_context=True)
-    async def queue(self,ctx):
+    async def queue(self,ctx,afterfunction):
         """Shows current queued items"""
         await ctx.bot.send_message(ctx.message.channel, "We have about {} songs in queue".format(len(self.QueueURL)) )
         await ctx.bot.send_message(ctx.message.channel, self.QueueURL)
+
+    async def _play(self,ctx,url):
+        """Plays youtube links. IE 'https://www.youtube.com/watch?v=mPMC3GYpBHg' """
+        if Voice.voiceclient is None:
+            await ctx.bot.send_message(ctx.message.channel, "Let me join first.")
+            await self.join(ctx)
+        try:
+            ytdl_opts = {'format': 'bestaudio/webm[abr>0]/best'}
+            Voice.player = await Voice.voiceclient.create_ytdl_player(url, ytdl_options=ytdl_opts)
+        except:
+                #raise BadArgument()
+            return False
+        Voice.player.volume = Voice.volume
+        Voice.player.start()
+        return True
 
     @commands.command(pass_context=True)
     async def play(self,ctx,url):
@@ -84,7 +112,7 @@ class Queue:
             return
         if self.Voice.player is None:
             self._addqueue(url)
-            validation_play_check = await self.Voice.play(ctx,self.QueueURL[0])
+            validation_play_check = await self._play(ctx,self.QueueURL[0])
             self._removequeue()
             return
         if self.Voice.player.is_playing():
@@ -92,7 +120,7 @@ class Queue:
             self._addqueue(url)
             return
         self._addqueue(url)
-        validation_play_check = await self.Voice.play(ctx,self.QueueURL[0])
+        validation_play_check = await self._play(ctx,self.QueueURL[0])
         if not validation_play_check:
             await ctx.bot.send_message(ctx.message.channel, "Playback failed!")
         self._removequeue()
@@ -122,28 +150,65 @@ class Queue:
     @commands.command(pass_context=True)
     async def pause(self,ctx):
         """Pauses song"""
-        await self.Voice.pause(ctx)
-        return
+        if Voice.voiceclient is None:
+            await ctx.bot.send_message(ctx.message.channel, "Pause? When I'm not there? ....Really?")
+            return
+        elif Voice.player is None:
+            await ctx.bot.send_message(ctx.message.channel, "I'm not playing anything")
+            return
+        elif not Voice.player.is_playing():
+            await ctx.bot.send_message(ctx.message.channel, "I'm not playing anything")
+            return
+        else:
+            Voice.player.pause()
+            await ctx.bot.send_message(ctx.message.channel, "Playback paused.")
+            return
 
     @commands.command(pass_context=True)
     async def stop(self,ctx):
         """Stops playback"""
-        if await self.Voice.stop(ctx):
-            await ctx.bot.send_message(ctx.message.channel, "Stopping!")
+        if Voice.voiceclient is None:
+            return False
+        if not Voice.player.is_playing():
+            return False
         else:
-            await ctx.bot.send_message(ctx.message.channel, "No...")
-        return
+            Voice.player.stop()
+            return True
 
     @commands.command(pass_context=True)
     async def resume(self,ctx):
         """Resumes playback"""
-        await self.Voice.resume(ctx)
-        return
+        if Voice.voiceclient is None:
+            await ctx.bot.send_message(ctx.message.channel, "Resume? When I'm not there? ....Really?")
+            return
+        elif Voice.player is None:
+            await ctx.bot.send_message(ctx.message.channel, "I'm not playing anything")
+            return
+        elif Voice.player.is_playing():
+            await ctx.bot.send_message(ctx.message.channel, "I'm already playing something.")
+            return
+        else:
+            Voice.player.resume()
+            await ctx.bot.send_message(ctx.message.channel, "Playback paused.")
+            return
+    def format_volume_bar(self, value):
+        """Returns the volume bar string. Expects value = [0.0-2.0]"""
+        length = 20
+        full = int(value / 2.0 * length)
+        bar = "``{}{} {:.0f}%``".format('█' * full, '-' * (length - full), value * 100)
+        return bar
 
     @commands.command(pass_context=True)
     async def setvolume(self,ctx, vol):
         """Sets volume between 0 and 200."""
         vol = int(vol)
-        await self.Voice.setvolume(ctx,vol)
-        await ctx.bot.send_message(ctx.message.channel, self.Voice.format_volume_bar(vol/100))
+        if vol > 200 or vol < 0:
+            return False
+        else:
+            Voice.volume = vol/100
+            if Voice.player is not None:
+                Voice.player.volume = Voice.volume
+                return True
+            return True
         return
+'''
