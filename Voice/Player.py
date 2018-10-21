@@ -7,8 +7,8 @@ class Player:
     voiceclients={}
     players={}
     volumes={}
-    @commands.command(pass_context=True)
-    async def join(self,ctx):
+
+    async def _join(self,ctx):
         """Bot joins current user's channel"""
         servername = ctx.message.server.name
         voice = None
@@ -27,8 +27,8 @@ class Player:
             #Voice.voiceclient = ctx.bot.voice_client_in(ctx.message.server)
             return True
 
-    @commands.command(pass_context=True)
-    async def disconnect(self,ctx):
+
+    async def _disconnect(self,ctx):
         """Disconnects from current channel"""
         servername = ctx.message.server.name
         if servername not in self.voiceclients:
@@ -59,6 +59,11 @@ class Player:
         self.QueueURL.pop(0)
         return
 
+    def _is_queue_empty(self):
+        if len(self.QueueURL) == 0:
+            return True
+        else:
+            return False
     @commands.command(pass_context=True)
     async def clear(self,ctx):
         """Clears entire queue. Becareful!"""
@@ -66,11 +71,15 @@ class Player:
         await ctx.bot.send_message(ctx.message.channel, 'Music queue empty. Like this bottle of Gin.')
         return
 
-    def _is_queue_empty(self):
-        if len(self.QueueURL) == 0:
-            return True
-        else:
-            return False
+    @commands.command(pass_context=True)
+    async def join(self,ctx):
+        await self._join(ctx)
+        return
+
+    @commands.command(pass_context=True)
+    async def disconnect(self,ctx):
+        await self._disconnect(ctx)
+        return
 
     @commands.command(pass_context=True)
     async def queue(self,ctx):
@@ -98,7 +107,7 @@ class Player:
         """Plays youtube links. IE 'https://www.youtube.com/watch?v=mPMC3GYpBHg' """
         servername = ctx.message.server.name
         if servername not in self.voiceclients:
-            await self.join(ctx)
+            await self._join(ctx)
         try:
             ytdl_opts = {'format': 'bestaudio/webm[abr>0]/best'}
             self.players[servername] = await self.voiceclients[servername].create_ytdl_player(url, ytdl_options=ytdl_opts, after=lambda: self._autoplay(ctx))
