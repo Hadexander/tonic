@@ -135,7 +135,7 @@ class Player:
         except DownloadError:
             #url was bullshit
             await ctx.bot.send_message(ctx.message.channel, "Unsupported URL, I'll try to find a video.")
-            yt_search = {'ytsearch:{}'.format(ctx), 'quiet': False, 'noplaylist': True, 'playlist_items': '1'}
+            yt_search = {'ytsearch:%s'%(ctx), 'quiet': False, 'noplaylist': True, 'playlist_items': '1'}
             ytdl = YoutubeDL(yt_search)
             print(ytdl)
             return ytdl
