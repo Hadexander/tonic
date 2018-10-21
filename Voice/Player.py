@@ -9,7 +9,7 @@ class Player:
     @commands.command(pass_context=True)
     async def join(self,ctx):
         """Bot joins current user's channel"""
-        servername = ctx.message.server
+        servername = ctx.message.server.name
         voice = None
         if ctx.message.author.voice.voice_channel is None:
             await ctx.bot.send_message(ctx.message.channel, 'You ain\'t there. Can\'t connect')
@@ -26,7 +26,7 @@ class Player:
             await ctx.bot.send_message(ctx.message.channel, self.voiceclients)
             #Voice.voiceclient = ctx.bot.voice_client_in(ctx.message.server)
             return True
-
+'''
     @commands.command(pass_context=True)
     async def disconnect(self,ctx):
         """Disconnects from current channel"""
@@ -132,7 +132,7 @@ class Player:
             await ctx.bot.send_message(ctx.message.channel, "Playback failed!")
         self._removequeue()
         return
-'''
+
 
     @commands.command(pass_context=True)
     async def next(self,ctx):
