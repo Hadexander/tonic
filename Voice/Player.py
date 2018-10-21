@@ -80,6 +80,7 @@ class Player:
 
     async def _play(self,ctx,url):
         """Plays youtube links. IE 'https://www.youtube.com/watch?v=mPMC3GYpBHg' """
+        servername = ctx.message.server.name
         if servername not in self.voiceclients:
             await self.join(ctx)
         try:
