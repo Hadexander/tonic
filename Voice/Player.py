@@ -102,6 +102,7 @@ class Player:
         join_s = True
         validation_play_check = False
         servername = ctx.message.server.name
+        await ctx.bot.send_message(ctx.message.channel, self.voiceclients)
         try:
             info = ytdl.extract_info(url, download=False)
         except DownloadError:
@@ -126,7 +127,6 @@ class Player:
             self._addqueue(url)
             return
         self._addqueue(url)
-        await ctx.bot.send_message(ctx.message.channel, self.voiceclients)
         validation_play_check = await self._play(servername,self.QueueURL[0])
         if not validation_play_check:
             await ctx.bot.send_message(ctx.message.channel, "Playback failed!")
