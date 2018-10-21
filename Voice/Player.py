@@ -77,8 +77,8 @@ class Player:
         """Shows current queued items"""
         await ctx.bot.send_message(ctx.message.channel, "We have about {} songs in queue".format(len(self.QueueURL)) )
         await ctx.bot.send_message(ctx.message.channel, self.QueueURL)
-        
-    @commands.command(pass_context=True)"Just a quick test"
+
+    @commands.command(pass_context=True)#playtest
     async def _play(self,ctx,url):
         """Plays youtube links. IE 'https://www.youtube.com/watch?v=mPMC3GYpBHg' """
         if ctx.message.server not in self.voiceclients:
