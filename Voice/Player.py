@@ -90,7 +90,7 @@ class Player:
                 #raise BadArgument()
             return False
         self.players[ctx.message.server].volume = self.volumes[ctx.message.server]
-        self.player[ctx.message.server].start()
+        self.players[ctx.message.server].start()
         return True
 '''
     @commands.command(pass_context=True)
