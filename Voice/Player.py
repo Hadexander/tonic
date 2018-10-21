@@ -103,7 +103,7 @@ class Player:
         join_s = True
         validation_play_check = False
         servername = ctx.message.server.name
-        await ctx.bot.send_message(ctx.message.channel, self.voiceclients)
+        await ctx.bot.send_message(ctx.message.channel, self.players)
         try:
             info = ytdl.extract_info(url, download=False)
         except DownloadError:
@@ -123,10 +123,11 @@ class Player:
             validation_play_check = await self._play(ctx,self.QueueURL[0])
             self._removequeue()
             return
-        '''if self.players[servername].is_playing():
-            await ctx.bot.send_message(ctx.message.channel, "I'm already playing something but I'll add it to the queue!")
-            self._addqueue(url)
-            return'''
+        if servername in self.players: #This is gross, fix later.
+            if self.players[servername].is_playing():
+                await ctx.bot.send_message(ctx.message.channel, "I'm already playing something but I'll add it to the queue!")
+                self._addqueue(url)
+                return
         self._addqueue(url)
         validation_play_check = await self._play(ctx,self.QueueURL[0])
         if not validation_play_check:
@@ -134,27 +135,28 @@ class Player:
         self._removequeue()
         return
 
-'''
+
     @commands.command(pass_context=True)
     async def next(self,ctx):
         """Plays song next in queue."""
-        if self.Voice.voiceclient is None:
+        servername = ctx.message.server.name
+        if servername not in self.voiceclients:
             await ctx.bot.send_message(ctx.message.channel, 'Bruh, I\'m not even in a channel. :thinking:')
             return
-        elif len(self.QueueURL) == 0:
+        elif self._is_queue_empty():
             await ctx.bot.send_message(ctx.message.channel, 'We ain\'t got no more tunes! Pass the AUX cord!!!!! :pray::skin-tone-4:')
             return
-        elif self.Voice.player is None:
-            await self.Voice.play(ctx,self.QueueURL[0])
+        elif servername not in self.players:
+            await self.voiceclients[servername]._play(ctx,self.QueueURL[0])
             self._removequeue()
             return
         else:
-            await self.Voice.stop(ctx)
-            await self.Voice.play(ctx,self.QueueURL[0])
+            self.players[servername].stop()
+            await self._play(ctx,self.QueueURL[0])
             self._removequeue()
             await ctx.bot.send_message(ctx.message.channel, 'Here we go skipping again!')
             return
-
+'''
     @commands.command(pass_context=True)
     async def pause(self,ctx):
         """Pauses song"""
