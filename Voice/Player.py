@@ -83,7 +83,7 @@ class Player:
         ytdl_opts = {'format': 'bestaudio/webm[abr>0]/best'}
         if self._is_queue_empty():
             return
-        corocall = self.voiceclients[servername].create_ytdl_player(self.QueueURL[0], ytdl_options=ytdl_opts, after=lambda: _autoplay(servername))
+        corocall = self.voiceclients[servername].create_ytdl_player(self.QueueURL[0], ytdl_options=ytdl_opts, after=lambda: self._autoplay(ctx))
         scheduling = asyncio.run_coroutine_threadsafe(corocall,ctx.bot.loop)
         try:
             self.players[servername] = scheduling.result()
