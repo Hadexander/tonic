@@ -26,11 +26,11 @@ class Player:
             await ctx.bot.send_message(ctx.message.channel, self.voiceclients)
             #Voice.voiceclient = ctx.bot.voice_client_in(ctx.message.server)
             return True
-'''
+
     @commands.command(pass_context=True)
     async def disconnect(self,ctx):
         """Disconnects from current channel"""
-        servername = ctx.message.server
+        servername = ctx.message.server.name
         if servername not in self.voiceclients:
             await ctx.bot.send_message(ctx.message.channel, "I'm not even in the channel...? :thinking:")
             return
@@ -80,7 +80,7 @@ class Player:
 
     async def _play(self,ctx,url):
         """Plays youtube links. IE 'https://www.youtube.com/watch?v=mPMC3GYpBHg' """
-        servername = ctx.message.server
+        servername = ctx.message.server.name
         if servername not in self.voiceclients:
             await self.join(ctx)
         try:
@@ -102,7 +102,7 @@ class Player:
         ytdl = YoutubeDL(ytdl_opts)
         join_s = True
         validation_play_check = False
-        servername = ctx.message.server
+        servername = ctx.message.server.name
         try:
             info = ytdl.extract_info(url, download=False)
         except DownloadError:
@@ -132,7 +132,7 @@ class Player:
             await ctx.bot.send_message(ctx.message.channel, "Playback failed!")
         self._removequeue()
         return
-
+'''
 
     @commands.command(pass_context=True)
     async def next(self,ctx):
