@@ -78,9 +78,8 @@ class Player:
         await ctx.bot.send_message(ctx.message.channel, "We have about {} songs in queue".format(len(self.QueueURL)) )
         await ctx.bot.send_message(ctx.message.channel, self.QueueURL)
 
-    async def _play(self,ctx,url):
+    async def _play(self,servername,url):
         """Plays youtube links. IE 'https://www.youtube.com/watch?v=mPMC3GYpBHg' """
-        servername = ctx.message.server.name
         if servername not in self.voiceclients:
             await self.join(ctx)
         try:
@@ -89,10 +88,9 @@ class Player:
         except:
                 #raise BadArgument()
             return False
-        '''
         self.players[servername].volume = self.volumes[servername]
         self.players[servername].start()
-        return True'''
+        return True
 
     @commands.command(pass_context=True)
     async def play(self,ctx,url):
@@ -120,7 +118,7 @@ class Player:
             return
         if servername not in self.voiceclients:
             self._addqueue(url)
-            validation_play_check = await self._play(ctx,self.QueueURL[0])
+            validation_play_check = await self._play(servername,self.QueueURL[0])
             self._removequeue()
             return
         if self.players[servername].is_playing():
@@ -128,7 +126,7 @@ class Player:
             self._addqueue(url)
             return
         self._addqueue(url)
-        validation_play_check = await self._play(ctx,self.QueueURL[0])
+        validation_play_check = await self._play(servername,self.QueueURL[0])
         if not validation_play_check:
             await ctx.bot.send_message(ctx.message.channel, "Playback failed!")
         self._removequeue()
