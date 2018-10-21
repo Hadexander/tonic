@@ -42,9 +42,10 @@ class Player:
 
     def _userinchannel(self,ctx):
         """Checks if user is in channel or same channel as bot. (Take that Nico!). Hardcheck T/F """
+        servername = ctx.message.server.name
         if ctx.message.author.voice.voice_channel is None:
             return False
-        elif ctx.message.author.voice.voice_channel is not self.Voice.voiceclient.channel:
+        elif ctx.message.author.voice.voice_channel is not self.voiceclients[servername].channel:
             return False
         else:
             return True
@@ -64,6 +65,7 @@ class Player:
             return True
         else:
             return False
+
     @commands.command(pass_context=True)
     async def clear(self,ctx):
         """Clears entire queue. Becareful!"""
@@ -174,6 +176,9 @@ class Player:
             await self.voiceclients[servername]._play(ctx,self.QueueURL[0])
             self._removequeue()
             return
+        elif not self._userinchannel(ctx):
+            await ctx.bot.send_message(ctx.message.channel, "Nice try. :information_desk_person::skin-tone-4: ")
+            return
         else:
             self.players[servername].stop()
             await self._play(ctx,self.QueueURL[0])
@@ -194,6 +199,9 @@ class Player:
         elif not self.players[servername].is_playing():
             await ctx.bot.send_message(ctx.message.channel, "I'm not playing anything")
             return
+        elif not self._userinchannel(ctx):
+            await ctx.bot.send_message(ctx.message.channel, "Nice try. :information_desk_person::skin-tone-4: ")
+            return
         else:
             self.players[servername].pause()
             await ctx.bot.send_message(ctx.message.channel, "Playback paused.")
@@ -209,6 +217,9 @@ class Player:
             return False
         if not self.players[servername].is_playing():
             return False
+        elif not self._userinchannel(ctx):
+            await ctx.bot.send_message(ctx.message.channel, "Nice try. :information_desk_person::skin-tone-4: ")
+            return
         else:
             self.players[servername].stop()
             return True
@@ -225,6 +236,9 @@ class Player:
             return
         elif self.players[servername].is_playing():
             await ctx.bot.send_message(ctx.message.channel, "I'm already playing something.")
+            return
+        elif not self._userinchannel(ctx):
+            await ctx.bot.send_message(ctx.message.channel, "Nice try. :information_desk_person::skin-tone-4: ")
             return
         else:
             self.players[servername].resume()
