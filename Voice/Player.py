@@ -223,6 +223,7 @@ class Player:
             return False
         else:
             self.volumes[servername] = vol/100
+            await ctx.bot.send_message(ctx.message.channel, self.format_volume_bar(self.volumes[servername]))
             if servername in self.players:
                 self.players[servername] = self.volumes[servername]
                 return True
