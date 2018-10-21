@@ -73,7 +73,7 @@ class Player:
             return False
 
     @commands.command(pass_context=True)
-    async def queue(self,ctx,afterfunction):
+    async def queue(self,ctx):
         """Shows current queued items"""
         await ctx.bot.send_message(ctx.message.channel, "We have about {} songs in queue".format(len(self.QueueURL)) )
         await ctx.bot.send_message(ctx.message.channel, self.QueueURL)
@@ -156,51 +156,57 @@ class Player:
             self._removequeue()
             await ctx.bot.send_message(ctx.message.channel, 'Here we go skipping again!')
             return
-'''
+
     @commands.command(pass_context=True)
     async def pause(self,ctx):
         """Pauses song"""
-        if Voice.voiceclient is None:
+        servername = ctx.message.server.name
+        if servername not in self.voiceclients:
             await ctx.bot.send_message(ctx.message.channel, "Pause? When I'm not there? ....Really?")
             return
-        elif Voice.player is None:
+        elif servername not in self.players:
             await ctx.bot.send_message(ctx.message.channel, "I'm not playing anything")
             return
-        elif not Voice.player.is_playing():
+        elif not self.players[servername].is_playing():
             await ctx.bot.send_message(ctx.message.channel, "I'm not playing anything")
             return
         else:
-            Voice.player.pause()
+            self.players[servername].pause()
             await ctx.bot.send_message(ctx.message.channel, "Playback paused.")
             return
 
     @commands.command(pass_context=True)
     async def stop(self,ctx):
         """Stops playback"""
-        if Voice.voiceclient is None:
+        servername = ctx.message.server.name
+        if servername not in self.voiceclients:
             return False
-        if not Voice.player.is_playing():
+        elif servername not in self.players:
+            return False
+        if not self.players[servername].is_playing():
             return False
         else:
-            Voice.player.stop()
+            self.players[servername].stop()
             return True
 
     @commands.command(pass_context=True)
     async def resume(self,ctx):
         """Resumes playback"""
-        if Voice.voiceclient is None:
+        servername = ctx.message.server.name
+        if servername not in self.voiceclients:
             await ctx.bot.send_message(ctx.message.channel, "Resume? When I'm not there? ....Really?")
             return
-        elif Voice.player is None:
+        elif servername not in self.players:
             await ctx.bot.send_message(ctx.message.channel, "I'm not playing anything")
             return
-        elif Voice.player.is_playing():
+        elif self.players[servername].is_playing():
             await ctx.bot.send_message(ctx.message.channel, "I'm already playing something.")
             return
         else:
-            Voice.player.resume()
+            self.players[servername].resume()
             await ctx.bot.send_message(ctx.message.channel, "Playback paused.")
             return
+
     def format_volume_bar(self, value):
         """Returns the volume bar string. Expects value = [0.0-2.0]"""
         length = 20
@@ -211,14 +217,14 @@ class Player:
     @commands.command(pass_context=True)
     async def setvolume(self,ctx, vol):
         """Sets volume between 0 and 200."""
+        servername = ctx.message.server.name
         vol = int(vol)
         if vol > 200 or vol < 0:
             return False
         else:
-            Voice.volume = vol/100
-            if Voice.player is not None:
-                Voice.player.volume = Voice.volume
+            self.volumes[servername] = vol/100
+            if servername in self.players:
+                self.players[servername] = self.volumes[servername]
                 return True
             return True
         return
-'''
