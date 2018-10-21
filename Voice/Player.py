@@ -89,9 +89,10 @@ class Player:
         except:
                 #raise BadArgument()
             return False
+        '''
         self.players[servername].volume = self.volumes[servername]
         self.players[servername].start()
-        return True
+        return True'''
 
     @commands.command(pass_context=True)
     async def play(self,ctx,url):
