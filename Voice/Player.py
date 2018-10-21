@@ -134,7 +134,9 @@ class Player:
             info = ytdl.extract_info(url, download=False)
         except DownloadError:
             #url was bullshit
-            await ctx.bot.send_message(ctx.message.channel, "Unsupported URL")
+            await ctx.bot.send_message(ctx.message.channel, "Unsupported URL, I'll try to find a video.")
+            yt_search = {'default_search': True, 'quiet': False, 'noplaylist': True, 'playlist_items': '1'}
+            ytdl = YoutubeDL(yt_search)
             return
         if info.get('entries'):
             #it's a playlist
