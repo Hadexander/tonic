@@ -22,7 +22,7 @@ class Player:
             await ctx.bot.join_voice_channel(ctx.message.author.voice.voice_channel)
             voice = ctx.bot.voice_client_in(ctx.message.server)
             self.voiceclients[servername] = voice
-            self.volumes[servername]= 50
+            self.volumes[servername] = 50
             await ctx.bot.send_message(ctx.message.channel, self.voiceclients)
             #Voice.voiceclient = ctx.bot.voice_client_in(ctx.message.server)
             return True
@@ -77,18 +77,19 @@ class Player:
         """Shows current queued items"""
         await ctx.bot.send_message(ctx.message.channel, "We have about {} songs in queue".format(len(self.QueueURL)) )
         await ctx.bot.send_message(ctx.message.channel, self.QueueURL)
-
+        
+    @commands.command(pass_context=True)"Just a quick test"
     async def _play(self,ctx,url):
         """Plays youtube links. IE 'https://www.youtube.com/watch?v=mPMC3GYpBHg' """
         if ctx.message.server not in self.voiceclients:
             await self.join(ctx)
         try:
             ytdl_opts = {'format': 'bestaudio/webm[abr>0]/best'}
-            Voice.player = await Voice.voiceclient.create_ytdl_player(url, ytdl_options=ytdl_opts)
+            self.players[ctx.message.server] = await self.voiceclients[ctx.message.server].create_ytdl_player(url, ytdl_options=ytdl_opts)
         except:
                 #raise BadArgument()
             return False
-        Voice.player.volume = Voice.volume
+        self.players[ctx.message.server].volume = self.volumes[ctx.message.server]
         Voice.player.start()
         return True
 '''
