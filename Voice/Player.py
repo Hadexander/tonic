@@ -137,6 +137,7 @@ class Player:
             await ctx.bot.send_message(ctx.message.channel, "Unsupported URL, I'll try to find a video.")
             yt_search = {'ytsearch:{}'.format(ctx), 'quiet': False, 'noplaylist': True, 'playlist_items': '1'}
             ytdl = YoutubeDL(yt_search)
+            print(ytdl)
             return ytdl
         if info.get('entries'):
             #it's a playlist
