@@ -84,7 +84,8 @@ class Player:
             await self.join(ctx)
         try:
             ytdl_opts = {'format': 'bestaudio/webm[abr>0]/best'}
-            self.players[servername] = await self.voiceclients[servername].create_ytdl_player(url, ytdl_options=ytdl_opts)
+            #self.players[servername] = await self.voiceclients[servername].create_ytdl_player(url, ytdl_options=ytdl_opts)
+            await self.voiceclients[servername].create_ytdl_player(url, ytdl_options=ytdl_opts).start()
         except:
                 #raise BadArgument()
             return False
