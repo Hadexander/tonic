@@ -87,7 +87,8 @@ class Player:
         scheduling = asyncio.run_coroutine_threadsafe(corocall,ctx.bot.loop)
         try:
             self.players[servername] = scheduling.result()
-        except:
+        except Exception as e:
+            print(e)
             return #oh no.
         self._removequeue()
         return
