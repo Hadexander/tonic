@@ -240,7 +240,7 @@ class Player:
             self.volumes[servername] = vol/100
             await ctx.bot.send_message(ctx.message.channel, self.format_volume_bar(self.volumes[servername]))
             if servername in self.players:
-                self.players[servername] = self.volumes[servername]
+                self.players[servername].volume = self.volumes[servername]
                 return True
             return True
         return
