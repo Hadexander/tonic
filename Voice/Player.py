@@ -82,10 +82,12 @@ class Player:
         """Plays youtube links. IE 'https://www.youtube.com/watch?v=mPMC3GYpBHg' """
         if servername not in self.voiceclients:
             await self.join(ctx)
+            await ctx.bot.send_message(ctx.message.channel, "Join debug")
         try:
             ytdl_opts = {'format': 'bestaudio/webm[abr>0]/best'}
             #self.players[servername] = await self.voiceclients[servername].create_ytdl_player(url, ytdl_options=ytdl_opts)
             await self.voiceclients[servername].create_ytdl_player(url, ytdl_options=ytdl_opts).start()
+            await ctx.bot.send_message(ctx.message.channel, self.voiceclients)
         except:
                 #raise BadArgument()
             return False
