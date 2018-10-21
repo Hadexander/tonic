@@ -138,8 +138,7 @@ class Player:
             search_kw = str(ctx.message.content)
             yt_search = {'quiet': False, 'noplaylist': True, 'playlist_items': '1', 'default_search':'ytsearch1'}
             ytdl = YoutubeDL(yt_search)
-            finally:
-                info = ytdl.extract_info(search_kw, download=False)
+            info = ytdl.extract_info(search_kw, download=False)
         if info.get('entries'):
             #it's a playlist
             await ctx.bot.send_message(ctx.message.channel, "Entire playlists are not supported")
