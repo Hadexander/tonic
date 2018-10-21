@@ -80,7 +80,7 @@ class Player:
     def _autoplay(self,servername):
         if self._is_queue_empty():
             return
-        self.players[servername] = await self.voiceclients[servername].create_ytdl_player(self.QueueURL[0], ytdl_options=ytdl_opts, after=lambda: self._autoplay(servername))
+        self.players[servername] = await self.voiceclients[servername].create_ytdl_player(self.QueueURL[0], ytdl_options=ytdl_opts, after=lambda: _autoplay(servername))
         self._removequeue()
         return
 
