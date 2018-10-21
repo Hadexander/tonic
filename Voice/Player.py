@@ -77,8 +77,11 @@ class Player:
         await ctx.bot.send_message(ctx.message.channel, "We have about {} songs in queue".format(len(self.QueueURL)) )
         await ctx.bot.send_message(ctx.message.channel, self.QueueURL)
 
-    async def _autoplay(self,ctx):
-        await ctx.bot.send_message(ctx.message.channel, "Autoplay test message")
+    def _autoplay(self,servername):
+        if self._is_queue_empty():
+            return
+        self.players[servername] = await self.voiceclients[servername].create_ytdl_player(self.QueueURL[0], ytdl_options=ytdl_opts, after=lambda: self._autoplay(servername))
+        self._removequeue()
         return
 
     async def _play(self,ctx,url):
@@ -88,7 +91,7 @@ class Player:
             await self.join(ctx)
         try:
             ytdl_opts = {'format': 'bestaudio/webm[abr>0]/best'}
-            self.players[servername] = await self.voiceclients[servername].create_ytdl_player(url, ytdl_options=ytdl_opts, after=lambda: self._autoplay(ctx))
+            self.players[servername] = await self.voiceclients[servername].create_ytdl_player(url, ytdl_options=ytdl_opts, after=lambda: self._autoplay(servername))
         except:
                 #raise BadArgument()
             return False
