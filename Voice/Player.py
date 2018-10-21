@@ -80,16 +80,17 @@ class Player:
 
     async def _play(self,ctx,url):
         """Plays youtube links. IE 'https://www.youtube.com/watch?v=mPMC3GYpBHg' """
-        if ctx.message.server not in self.voiceclients:
+        servername = ctx.message.server
+        if servername not in self.voiceclients:
             await self.join(ctx)
         try:
             ytdl_opts = {'format': 'bestaudio/webm[abr>0]/best'}
-            self.players[ctx.message.server] = await self.voiceclients[ctx.message.server].create_ytdl_player(url, ytdl_options=ytdl_opts)
+            self.players[servername] = await self.voiceclients[servername].create_ytdl_player(url, ytdl_options=ytdl_opts)
         except:
                 #raise BadArgument()
             return False
-        self.players[ctx.message.server].volume = self.volumes[ctx.message.server]
-        self.players[ctx.message.server].start()
+        self.players[servername].volume = self.volumes[servername]
+        self.players[servername].start()
         return True
 
     @commands.command(pass_context=True)
