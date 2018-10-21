@@ -23,7 +23,6 @@ class Player:
             voice = ctx.bot.voice_client_in(ctx.message.server)
             self.voiceclients[servername] = voice
             self.volumes[servername] = .5
-            await ctx.bot.send_message(ctx.message.channel, self.voiceclients)
             #Voice.voiceclient = ctx.bot.voice_client_in(ctx.message.server)
             return True
 
@@ -78,6 +77,10 @@ class Player:
         await ctx.bot.send_message(ctx.message.channel, "We have about {} songs in queue".format(len(self.QueueURL)) )
         await ctx.bot.send_message(ctx.message.channel, self.QueueURL)
 
+    def _autoplay(self,ctx):
+        await ctx.bot.send_message(ctx.message.channel, "Autoplay test message")
+        return
+        
     async def _play(self,ctx,url):
         """Plays youtube links. IE 'https://www.youtube.com/watch?v=mPMC3GYpBHg' """
         servername = ctx.message.server.name
@@ -85,7 +88,7 @@ class Player:
             await self.join(ctx)
         try:
             ytdl_opts = {'format': 'bestaudio/webm[abr>0]/best'}
-            self.players[servername] = await self.voiceclients[servername].create_ytdl_player(url, ytdl_options=ytdl_opts)
+            self.players[servername] = await self.voiceclients[servername].create_ytdl_player(url, ytdl_options=ytdl_opts, after=lambda: self._autoplay(ctx))
         except:
                 #raise BadArgument()
             return False
@@ -103,7 +106,6 @@ class Player:
         join_s = True
         validation_play_check = False
         servername = ctx.message.server.name
-        await ctx.bot.send_message(ctx.message.channel, self.players)
         try:
             info = ytdl.extract_info(url, download=False)
         except DownloadError:
