@@ -20,7 +20,7 @@ class Player:
                 return True
         else:
             await ctx.bot.join_voice_channel(ctx.message.author.voice.voice_channel)
-            self.voiceclient = ctx.bot.voice_client_in(ctx.message.server)
+            voice = ctx.bot.voice_client_in(ctx.message.server)
             self.voiceclient={servername:voice}
             await ctx.bot.send_message(ctx.message.channel, self.voiceclient)
             #Voice.voiceclient = ctx.bot.voice_client_in(ctx.message.server)
