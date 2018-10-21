@@ -3,7 +3,7 @@ from youtube_dl.utils import DownloadError
 from discord.ext import commands
 class Player:
     QueueURL={}
-    voiceclient={}
+    voiceclients={}
     player={}
 
     @commands.command(pass_context=True)
@@ -14,30 +14,30 @@ class Player:
         if ctx.message.author.voice.voice_channel is None:
             await ctx.bot.send_message(ctx.message.channel, 'You ain\'t there. Can\'t connect')
             return False
-        elif servername in self.voiceclient:
-            if ctx.message.author.voice.voice_channel is not self.voiceclient[servername].channel:
-                await self.voiceclient[servername].move_to(ctx.message.author.voice.voice_channel)
+        elif servername in self.voiceclients:
+            if ctx.message.author.voice.voice_channel is not self.voiceclients[servername].channel:
+                await self.voiceclients[servername].move_to(ctx.message.author.voice.voice_channel)
                 return True
         else:
             await ctx.bot.join_voice_channel(ctx.message.author.voice.voice_channel)
             voice = ctx.bot.voice_client_in(ctx.message.server)
-            self.voiceclient={servername:voice}
+            self.voiceclients={servername:voice}
             await ctx.bot.send_message(ctx.message.channel, self.voiceclient)
             #Voice.voiceclient = ctx.bot.voice_client_in(ctx.message.server)
             return True
-'''
+
     @commands.command(pass_context=True)
     async def disconnect(self,ctx):
         """Disconnects from current channel"""
-        if Voice.voiceclient is None:
+        if self.voiceclients not in ctx.message.server:
             await ctx.bot.send_message(ctx.message.channel, "I'm not even in the channel...? :thinking:")
             return
         else:
             await ctx.bot.send_message(ctx.message.channel, "Crunk time over. Wu-tang out!")
-            await Voice.voiceclient.disconnect()
-            Voice.voiceclient=None
+            await self.voiceclients[ctx.message.server].disconnect()
+            del self.voiceclients[ctx.message.server]
         return
-
+'''
     def _userinchannel(self,ctx):
         """Checks if user is in channel or same channel as bot. (Take that Nico!). Hardcheck T/F """
         if ctx.message.author.voice.voice_channel is None:
