@@ -14,7 +14,7 @@ class Player:
         if ctx.message.author.voice.voice_channel is None:
             await ctx.bot.send_message(ctx.message.channel, 'You ain\'t there. Can\'t connect')
             return False
-        elif servername is in voiceclient:
+        elif servername in voiceclient:
             if ctx.message.author.voice.voice_channel is not self.voiceclient[servername].channel:
                 await self.voiceclient[servername].move_to(ctx.message.author.voice.voice_channel)
                 return True
