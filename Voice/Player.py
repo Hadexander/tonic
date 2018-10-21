@@ -86,8 +86,9 @@ class Player:
         try:
             ytdl_opts = {'format': 'bestaudio/webm[abr>0]/best'}
             #self.players[servername] = await self.voiceclients[servername].create_ytdl_player(url, ytdl_options=ytdl_opts)
-            await self.voiceclients[servername].create_ytdl_player(url, ytdl_options=ytdl_opts).start()
             await ctx.bot.send_message(ctx.message.channel, self.voiceclients)
+            await self.voiceclients[servername].create_ytdl_player(url, ytdl_options=ytdl_opts).start()
+
         except:
                 #raise BadArgument()
             return False
