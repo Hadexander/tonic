@@ -135,9 +135,9 @@ class Player:
         except DownloadError:
             #url was bullshit
             await ctx.bot.send_message(ctx.message.channel, "Unsupported URL, I'll try to find a video.")
-            yt_search = {'default_search': True, 'quiet': False, 'noplaylist': True, 'playlist_items': '1'}
+            yt_search = {'ytsearch:{}'.format(ctx), 'quiet': False, 'noplaylist': True, 'playlist_items': '1'}
             ytdl = YoutubeDL(yt_search)
-            return
+            return ytdl
         if info.get('entries'):
             #it's a playlist
             await ctx.bot.send_message(ctx.message.channel, "Entire playlists are not supported")
