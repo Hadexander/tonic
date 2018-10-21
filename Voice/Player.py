@@ -2,10 +2,10 @@ from youtube_dl import YoutubeDL
 from youtube_dl.utils import DownloadError
 from discord.ext import commands
 class Player:
-    QueueURL={}
+    QueueURL=[]
     voiceclients={}
-    player={}
-
+    players={}
+    volumes={}
     @commands.command(pass_context=True)
     async def join(self,ctx):
         """Bot joins current user's channel"""
@@ -21,7 +21,8 @@ class Player:
         else:
             await ctx.bot.join_voice_channel(ctx.message.author.voice.voice_channel)
             voice = ctx.bot.voice_client_in(ctx.message.server)
-            self.voiceclients={servername:voice}
+            self.voiceclients[servername] = voice
+            self.volumes[servername]= 50
             await ctx.bot.send_message(ctx.message.channel, self.voiceclients)
             #Voice.voiceclient = ctx.bot.voice_client_in(ctx.message.server)
             return True
@@ -38,7 +39,7 @@ class Player:
             await self.voiceclients[servername].disconnect()
             del self.voiceclients[servername]
         return
-'''
+
     def _userinchannel(self,ctx):
         """Checks if user is in channel or same channel as bot. (Take that Nico!). Hardcheck T/F """
         if ctx.message.author.voice.voice_channel is None:
@@ -79,8 +80,7 @@ class Player:
 
     async def _play(self,ctx,url):
         """Plays youtube links. IE 'https://www.youtube.com/watch?v=mPMC3GYpBHg' """
-        if Voice.voiceclient is None:
-            await ctx.bot.send_message(ctx.message.channel, "Let me join first.")
+        if ctx.message.server not in self.voiceclients:
             await self.join(ctx)
         try:
             ytdl_opts = {'format': 'bestaudio/webm[abr>0]/best'}
@@ -91,7 +91,7 @@ class Player:
         Voice.player.volume = Voice.volume
         Voice.player.start()
         return True
-
+'''
     @commands.command(pass_context=True)
     async def play(self,ctx,url):
         """Plays youtube links. IE 'https://www.youtube.com/watch?v=mPMC3GYpBHg' """
