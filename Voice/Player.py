@@ -1,6 +1,7 @@
 from youtube_dl import YoutubeDL
 from youtube_dl.utils import DownloadError
 from discord.ext import commands
+import asyncio
 class Player:
     QueueURL=[]
     voiceclients={}
@@ -77,10 +78,17 @@ class Player:
         await ctx.bot.send_message(ctx.message.channel, "We have about {} songs in queue".format(len(self.QueueURL)) )
         await ctx.bot.send_message(ctx.message.channel, self.QueueURL)
 
-    def _autoplay(self,servername):
+    def _autoplay(self,ctx):
+        servername = ctx.message.server.name
         if self._is_queue_empty():
             return
-        self.players[servername] = await self.voiceclients[servername].create_ytdl_player(self.QueueURL[0], ytdl_options=ytdl_opts, after=lambda: _autoplay(servername))
+        #self.players[servername] = await self.voiceclients[servername].create_ytdl_player(self.QueueURL[0], ytdl_options=ytdl_opts, after=lambda: _autoplay(servername))
+        corocall = self.voiceclients[servername].create_ytdl_player(self.QueueURL[0], ytdl_options=ytdl_opts, after=lambda: _autoplay(servername))
+        scheduling = asyncio.run_coroutine_threadsafe(corocall,ctx.bot.loop)
+        try:
+            self.players[servername] = scheduling.result()
+        except:
+            return #oh no.
         self._removequeue()
         return
 
@@ -91,7 +99,7 @@ class Player:
             await self.join(ctx)
         try:
             ytdl_opts = {'format': 'bestaudio/webm[abr>0]/best'}
-            self.players[servername] = await self.voiceclients[servername].create_ytdl_player(url, ytdl_options=ytdl_opts, after=lambda: self._autoplay(servername))
+            self.players[servername] = await self.voiceclients[servername].create_ytdl_player(url, ytdl_options=ytdl_opts, after=lambda: self._autoplay(ctx))
         except:
                 #raise BadArgument()
             return False
