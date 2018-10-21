@@ -140,6 +140,8 @@ class Player:
             yt_search = {'default_search':'ytsearch1', 'quiet':False}
             ytdl = YoutubeDL(yt_search)
             info = ytdl.extract_info(search_kw, download=False)
+            key, value = info.popitem()
+            info = value['webpage_url']
             print(info)
         if info.get('entries'):
             #it's a playlist
