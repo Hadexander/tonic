@@ -10,20 +10,20 @@ class Player:
     async def join(self,ctx):
         """Bot joins current user's channel"""
         servername = ctx.message.server
-        voiceclient = None
+        voice = None
         if ctx.message.author.voice.voice_channel is None:
             await ctx.bot.send_message(ctx.message.channel, 'You ain\'t there. Can\'t connect')
             return False
-        '''elif self.voiceclient is not None:
-            if ctx.message.author.voice.voice_channel is not self.voiceclient.channel:
-                await self.voiceclient.move_to(ctx.message.author.voice.voice_channel)
-                return True'''
-
-        await ctx.bot.join_voice_channel(ctx.message.author.voice.voice_channel)
-        voiceclient = ctx.bot.voice_client_in(ctx.message.server)
-        self.voiceclient={servername:voiceclient}
-        #Voice.voiceclient = ctx.bot.voice_client_in(ctx.message.server)
-        return True
+        elif servername is in voiceclient:
+            if ctx.message.author.voice.voice_channel is not self.voiceclient[servername].channel:
+                await self.voiceclient[servername].move_to(ctx.message.author.voice.voice_channel)
+                return True
+        else:
+            await ctx.bot.join_voice_channel(ctx.message.author.voice.voice_channel)
+            voiceclient = ctx.bot.voice_client_in(ctx.message.server)
+            self.voiceclient={servername:voice}
+            #Voice.voiceclient = ctx.bot.voice_client_in(ctx.message.server)
+            return True
 '''
     @commands.command(pass_context=True)
     async def disconnect(self,ctx):
