@@ -14,13 +14,13 @@ class Player:
         if ctx.message.author.voice.voice_channel is None:
             await ctx.bot.send_message(ctx.message.channel, 'You ain\'t there. Can\'t connect')
             return False
-        elif servername in voiceclient:
+        elif servername in self.voiceclient:
             if ctx.message.author.voice.voice_channel is not self.voiceclient[servername].channel:
                 await self.voiceclient[servername].move_to(ctx.message.author.voice.voice_channel)
                 return True
         else:
             await ctx.bot.join_voice_channel(ctx.message.author.voice.voice_channel)
-            voiceclient = ctx.bot.voice_client_in(ctx.message.server)
+            self.voiceclient = ctx.bot.voice_client_in(ctx.message.server)
             self.voiceclient={servername:voice}
             #Voice.voiceclient = ctx.bot.voice_client_in(ctx.message.server)
             return True
