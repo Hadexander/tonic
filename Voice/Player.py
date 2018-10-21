@@ -22,20 +22,21 @@ class Player:
             await ctx.bot.join_voice_channel(ctx.message.author.voice.voice_channel)
             voice = ctx.bot.voice_client_in(ctx.message.server)
             self.voiceclients={servername:voice}
-            await ctx.bot.send_message(ctx.message.channel, self.voiceclient)
+            await ctx.bot.send_message(ctx.message.channel, self.voiceclients)
             #Voice.voiceclient = ctx.bot.voice_client_in(ctx.message.server)
             return True
 
     @commands.command(pass_context=True)
     async def disconnect(self,ctx):
         """Disconnects from current channel"""
-        if self.voiceclients not in ctx.message.server:
+        servername = ctx.message.server
+        if self.voiceclients not in servername:
             await ctx.bot.send_message(ctx.message.channel, "I'm not even in the channel...? :thinking:")
             return
         else:
             await ctx.bot.send_message(ctx.message.channel, "Crunk time over. Wu-tang out!")
-            await self.voiceclients[ctx.message.server].disconnect()
-            del self.voiceclients[ctx.message.server]
+            await self.voiceclients[servername].disconnect()
+            del self.voiceclients[servername]
         return
 '''
     def _userinchannel(self,ctx):
