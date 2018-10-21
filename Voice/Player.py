@@ -22,7 +22,7 @@ class Player:
             await ctx.bot.join_voice_channel(ctx.message.author.voice.voice_channel)
             voice = ctx.bot.voice_client_in(ctx.message.server)
             self.voiceclients[servername] = voice
-            self.volumes[servername] = 50
+            self.volumes[servername] = .5
             await ctx.bot.send_message(ctx.message.channel, self.voiceclients)
             #Voice.voiceclient = ctx.bot.voice_client_in(ctx.message.server)
             return True
@@ -78,7 +78,6 @@ class Player:
         await ctx.bot.send_message(ctx.message.channel, "We have about {} songs in queue".format(len(self.QueueURL)) )
         await ctx.bot.send_message(ctx.message.channel, self.QueueURL)
 
-    @commands.command(pass_context=True)#playtest
     async def _play(self,ctx,url):
         """Plays youtube links. IE 'https://www.youtube.com/watch?v=mPMC3GYpBHg' """
         if ctx.message.server not in self.voiceclients:
@@ -92,7 +91,7 @@ class Player:
         self.players[ctx.message.server].volume = self.volumes[ctx.message.server]
         self.players[ctx.message.server].start()
         return True
-'''
+
     @commands.command(pass_context=True)
     async def play(self,ctx,url):
         """Plays youtube links. IE 'https://www.youtube.com/watch?v=mPMC3GYpBHg' """
@@ -102,6 +101,7 @@ class Player:
         ytdl = YoutubeDL(ytdl_opts)
         join_s = True
         validation_play_check = False
+        servername = ctx.message.server
         try:
             info = ytdl.extract_info(url, download=False)
         except DownloadError:
@@ -116,12 +116,12 @@ class Player:
             await ctx.bot.send_message(ctx.message.channel, "I'm already playing something but I'll add it to the queue!")
             self._addqueue(url)
             return
-        if self.Voice.player is None:
+        if servername not in self.voiceclients:
             self._addqueue(url)
             validation_play_check = await self._play(ctx,self.QueueURL[0])
             self._removequeue()
             return
-        if self.Voice.player.is_playing():
+        if self.players[servername].is_playing():
             await ctx.bot.send_message(ctx.message.channel, "I'm already playing something but I'll add it to the queue!")
             self._addqueue(url)
             return
@@ -131,7 +131,7 @@ class Player:
             await ctx.bot.send_message(ctx.message.channel, "Playback failed!")
         self._removequeue()
         return
-
+'''
 
     @commands.command(pass_context=True)
     async def next(self,ctx):
