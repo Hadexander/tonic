@@ -30,7 +30,7 @@ class Player:
     async def disconnect(self,ctx):
         """Disconnects from current channel"""
         servername = ctx.message.server
-        if self.voiceclients not in servername:
+        if servername not in self.voiceclients:
             await ctx.bot.send_message(ctx.message.channel, "I'm not even in the channel...? :thinking:")
             return
         else:
