@@ -122,10 +122,10 @@ class Player:
             validation_play_check = await self._play(ctx,self.QueueURL[0])
             self._removequeue()
             return
-        if self.players[servername].is_playing():
+        '''if self.players[servername].is_playing():
             await ctx.bot.send_message(ctx.message.channel, "I'm already playing something but I'll add it to the queue!")
             self._addqueue(url)
-            return
+            return'''
         self._addqueue(url)
         validation_play_check = await self._play(ctx,self.QueueURL[0])
         if not validation_play_check:
