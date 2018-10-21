@@ -90,6 +90,7 @@ class Player:
         except Exception as e:
             print(e)
             return #oh no.
+        self.players[servername].start()
         self._removequeue()
         return
 
