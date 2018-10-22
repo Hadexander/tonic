@@ -192,7 +192,7 @@ class Player:
             await ctx.bot.send_message(ctx.message.channel, "Nice try. :information_desk_person::skin-tone-4: ")
             return
         else:
-            self.players[servername].stop()
+            self.players[servername].pause()
             await self._play(ctx,self.QueueURL[0])
             self._removequeue()
             await ctx.bot.send_message(ctx.message.channel, 'Here we go skipping again!')
@@ -221,7 +221,7 @@ class Player:
 
     @commands.command(pass_context=True)
     async def stop(self,ctx):
-        """Stops playback"""
+        """Stops playback(This may break queue, sorry.)"""
         servername = ctx.message.server.name
         if servername not in self.voiceclients:
             return False
