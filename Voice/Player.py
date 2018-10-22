@@ -271,6 +271,8 @@ class Player:
         vol = int(vol)
         if vol > 200 or vol < 0:
             return False
+        elif not self._userinchannel(ctx):
+            return False
         else:
             self.volumes[servername] = vol/100
             await ctx.bot.send_message(ctx.message.channel, self.format_volume_bar(self.volumes[servername]))
