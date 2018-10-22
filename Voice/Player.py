@@ -185,7 +185,7 @@ class Player:
             await ctx.bot.send_message(ctx.message.channel, 'We ain\'t got no more tunes! Pass the AUX cord!!!!! :pray::skin-tone-4:')
             return
         elif servername not in self.players:
-            await self.voiceclients[servername]._play(ctx,self.QueueURL[0])
+            await self._play(ctx,self.QueueURL[0])
             self._removequeue()
             return
         elif not self._userinchannel(ctx):
