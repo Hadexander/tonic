@@ -127,7 +127,6 @@ class Player:
         #set quiet: True if needed
         ytdl_opts = {'quiet': False, 'noplaylist': True, 'playlist_items': '1'}
         ytdl = YoutubeDL(ytdl_opts)
-        join_s = True
         validation_play_check = False
         servername = ctx.message.server.name
         try:
@@ -140,10 +139,12 @@ class Player:
             yt_search = {'default_search':'ytsearch1', 'quiet':False}
             ytdl = YoutubeDL(yt_search)
             info = ytdl.extract_info(search_kw, download=False)
-            key, value = info.popitem()
-            info = value['webpage_url']
-            print(info)
-        if info.get('entries'):
+            if 'entries' not in info:
+                return
+            if len(info['entries']) <= 0:
+                return
+            info = info['entries'][0]
+        if 'entries' in info:
             #it's a playlist
             await ctx.bot.send_message(ctx.message.channel, "Entire playlists are not supported")
             return
