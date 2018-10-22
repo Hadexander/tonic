@@ -136,14 +136,18 @@ class Player:
             await ctx.bot.send_message(ctx.message.channel, "Unsupported URL, I'll try to find a video.")
             search_kw = str(ctx.message.content)
             search_kw = search_kw[5:]
+            await ctx.bot.send_message(ctx.message.channel, "searching: {}".format(search_kw))
             yt_search = {'default_search':'ytsearch1', 'quiet':False}
             ytdl = YoutubeDL(yt_search)
             info = ytdl.extract_info(search_kw, download=False)
             if 'entries' not in info:
+                await ctx.bot.send_message(ctx.message.channel, "Critical failure.")
                 return
+            await ctx.bot.send_message(ctx.message.channel, "{} hits.".format(len(info['entries'])))
             if len(info['entries']) <= 0:
                 return
             info = info['entries'][0]
+            url = info.get('webpage_url')
         if 'entries' in info:
             #it's a playlist
             await ctx.bot.send_message(ctx.message.channel, "Entire playlists are not supported")
