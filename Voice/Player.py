@@ -93,6 +93,7 @@ class Player:
         servername = ctx.message.server.name
         ytdl_opts = {'format': 'bestaudio/webm[abr>0]/best'}
         if self._is_queue_empty():
+            asyncio.run_coroutine_threadsafe(self._disconnect(ctx),ctx.bot.loop).result()
             return
         corocall = self.voiceclients[servername].create_ytdl_player(self.QueueURL[0], ytdl_options=ytdl_opts, after=lambda: self._autoplay(ctx))
         scheduling = asyncio.run_coroutine_threadsafe(corocall,ctx.bot.loop)
@@ -218,23 +219,6 @@ class Player:
             self.players[servername].pause()
             await ctx.bot.send_message(ctx.message.channel, "Playback paused.")
             return
-
-    @commands.command(pass_context=True)
-    async def stop(self,ctx):
-        """Stops playback(This may break queue, sorry.)"""
-        servername = ctx.message.server.name
-        if servername not in self.voiceclients:
-            return False
-        elif servername not in self.players:
-            return False
-        if not self.players[servername].is_playing():
-            return False
-        elif not self._userinchannel(ctx):
-            await ctx.bot.send_message(ctx.message.channel, "Nice try. :information_desk_person::skin-tone-4: ")
-            return
-        else:
-            self.players[servername].stop()
-            return True
 
     @commands.command(pass_context=True)
     async def resume(self,ctx):
