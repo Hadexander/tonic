@@ -66,7 +66,7 @@ class Player:
         msg = ""
         i = 1
         for item in que:
-            line = "``{} {} [{}]``".format(i, item[1], item[2].nick)
+            line = "``*{} {}* [{}]``\n".format(i, item[1], item[2].name)
             i += 1
             msg += line
         await ctx.bot.send_message(ctx.message.channel, msg)
