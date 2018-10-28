@@ -4,6 +4,7 @@ from youtube_dl.utils import DownloadError
 from discord.ext import commands
 from discord import Game
 import asyncio
+import functools
 
 class Player:
     _default_options = {'quiet':False, 'noplaylist':True, 'playlist_items':'1', 'format':'bestaudio/webm[abr>0]/best'}
@@ -115,12 +116,12 @@ class Player:
         srv['player'].volume = srv['volume']
         srv['player'].start()
     
-    def _find(self, search_str):
+    async def _find(self, bot, search_str):
         """Performs a youtube search. Returns ytdl entry or None."""
         ytdl = YoutubeDL(self._search_options)
         try:
-            info = ytdl.extract_info(search_str, download=False)
-            #functools partial etc?
+            func = functools.partial(ytdl.extract_info, search_str, download=False)
+            info = await bot.loop.run_in_executor(None, func)
         except DownloadError:
             #couldn't find results
             return None
@@ -147,7 +148,7 @@ class Player:
         except DownloadError:
             #url was bullshit
             search_kw = ctx.message.content[5:]
-            info = self._find(search_kw)
+            info = await self._find(search_kw)
             if not info:
                 #no hits
                 await ctx.bot.send_message(ctx.message.channel, "No media found.")
