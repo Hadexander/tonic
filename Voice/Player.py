@@ -65,9 +65,7 @@ class Player:
         que = srv['queue']
         msg = ""
         i = 1
-        async for item in que:
-            await ctx.bot.send_message(ctx.message.channel, item[1])
-            await ctx.bot.send_message(ctx.message.channel, item[2].nick)
+        for item in que:
             line = "``{} {} [{}]``".format(i, item[1], item[2].nick)
             i += 1
             msg += line
