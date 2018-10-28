@@ -1,5 +1,7 @@
 import imghdr
 import aiohttp
+import asyncio
+import shlex
 from discord.ext import commands
 from storage.lookups import find_user
 from util.checks import require_owner_access
@@ -38,8 +40,27 @@ class Maintenance:
 
     @commands.command(pass_context=True)
     @commands.check(require_owner_access)
-    async def evolve(self, ctx):
-        """Orders me to restart and update from git."""
-        msg = 'Getting some improvements! I\'ll be back as soon as possible!'
-        await ctx.bot.send_message(ctx.message.channel, msg)
-        await ctx.bot.close()
+    async def dev(self, ctx, command, branch_name=None):
+        """Developer commands:
+        branch - find out which branch I'm on
+        evolve - get updates from current branch and restart
+        evolve <branch_name> - change to a different branch, update and restart"""
+        if command == 'branch':
+            shell = await asyncio.create_subprocess_shell("git rev-parse --abbrev-ref HEAD", stdout=asyncio.subprocess.PIPE)
+            stdout, stderr = await shell.communicate()
+            bname = stdout.decode().strip()
+            await ctx.bot.send_message(ctx.message.channel, "Current branch: {}".format(bname))
+        elif command == 'evolve':
+            msg = "Grabbing the latest updates."
+            if branch_name:
+                shell = await asyncio.create_subprocess_shell("git checkout {}".format(shlex.quote(branch_name)))
+                code = await shell.wait()
+                if code != 0:
+                    await ctx.bot.send_message(ctx.message.channel, "Couldn't change to branch: {}".format(branch_name))
+                    return
+                else:
+                    msg = "Changed to branch: {}. {}".format(branch_name, msg)
+            await ctx.bot.send_message(ctx.message.channel, msg)
+            await ctx.bot.close()
+        else:
+            raise commands.MissingRequiredArgument()
