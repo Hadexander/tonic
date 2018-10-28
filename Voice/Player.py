@@ -148,7 +148,7 @@ class Player:
         except DownloadError:
             #url was bullshit
             search_kw = ctx.message.content[5:]
-            info = await self._find(search_kw)
+            info = await self._find(ctx.bot, search_kw)
             if not info:
                 #no hits
                 await ctx.bot.send_message(ctx.message.channel, "No media found.")
