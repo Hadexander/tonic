@@ -53,6 +53,8 @@ class Maintenance:
         elif command == 'evolve':
             msg = "Grabbing the latest updates."
             if branch_name:
+                shell = await asyncio.create_subprocess_shell("git fetch")
+                await shell.wait()
                 shell = await asyncio.create_subprocess_shell("git checkout {}".format(shlex.quote(branch_name)))
                 code = await shell.wait()
                 if code != 0:
