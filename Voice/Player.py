@@ -94,9 +94,10 @@ class Player:
             srv['player'] = await srv['voice'].create_ffmpeg_player(url)
         except:
             #shit's fucked
-            return
+            return 1
         srv['player'].volume = srv['volume']
         srv['player'].start()
+        return 0
     
     def _find(self, search_str):
         """Performs a youtube search. Returns ytdl entry or None."""
@@ -150,7 +151,9 @@ class Player:
             await self._join(ctx.bot, server_id, requester.voice.voice_channel)
         #start playback unless already playing
         if not self.is_playing(server_id):
-            await self._play(ctx.bot, server_id, download_url)
+            await ctx.bot.send_message(ctx.message.channel, "playing")
+            ret = await self._play(ctx.bot, server_id, download_url)
+            await ctx.bot.send_message(ctx.message.channel, str(ret))
     '''
     @commands.command(pass_context=True)
     async def next(self,ctx):
