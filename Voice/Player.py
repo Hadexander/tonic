@@ -66,8 +66,10 @@ class Player:
         msg = ""
         i = 1
         async for item in que:
+            await ctx.bot.send_message(ctx.message.channel, item[1])
+            await ctx.bot.send_message(ctx.message.channel, item[2].nick)
             line = "``{} {} [{}]``".format(i, item[1], item[2].nick)
-            i = i + 1
+            i += 1
             msg += line
         await ctx.bot.send_message(ctx.message.channel, msg)
     
