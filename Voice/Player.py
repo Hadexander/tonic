@@ -57,27 +57,40 @@ class Player:
         if len(srv['queue']) <= 0:
             return None
         return srv['queue'].popleft()
+
+    def get_nick(self, user):
+        nick = user.nick
+        if not nick:
+            nick = user.name
+        return nick
     
     @commands.command(pass_context=True)
     async def queue(self, ctx):
         """Shows currently queued items."""
         srv = self.get_server_dict(ctx.message.server.id)
         que = srv['queue']
-        msg = ""
+        msg = "``**▶ {}** [{}]``\n".format(srv['song'][1], self.get_nick(srv['song'][2]))
         i = 1
         for item in que:
-            line = "``*{} {}* [{}]``\n".format(i, item[1], item[2].name)
+            line = "``{} {} [{}]``\n".format(i, item[1], self.get_nick(item[2]))
             i += 1
             msg += line
         await ctx.bot.send_message(ctx.message.channel, msg)
     
-    def _play(self, server_id, url):
-        """Starts the ffmpeg player."""
+    def _play(self, server_id):
+        """Starts the ffmpeg player with the next song in queue."""
         srv = self.get_server_dict(server_id)
+        song = self.dequeue(server_id)
+        srv['song'] = song
+        if not song:
+            self._leave(server_id)
+            return
         try:
-            srv['player'] = srv['voice'].create_ffmpeg_player(url)
+            srv['player'] = srv['voice'].create_ffmpeg_player(song[0], after=lambda: self._play(server_id))
         except:
             #shit's fucked
+            #not sure what to do in this case?
+            self._leave(server_id)
             return
         srv['player'].volume = srv['volume']
         srv['player'].start()
@@ -134,7 +147,7 @@ class Player:
             await self._join(ctx.bot, server_id, requester.voice.voice_channel)
         #start playback unless already playing
         if not self.is_playing(server_id):
-            self._play(server_id, download_url)
+            self._play(server_id)
     '''
     @commands.command(pass_context=True)
     async def next(self,ctx):
