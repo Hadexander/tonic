@@ -40,6 +40,7 @@ class Player:
         srv = self.get_server_dict(server_id)
         if srv['voice'] and srv['voice'].channel:
             srv['voice'].disconnect()
+            srv['voice'] = None
 
     def user_in_channel(self, server_id, user):
         """Checks if both the user and bot are in the same channel."""
