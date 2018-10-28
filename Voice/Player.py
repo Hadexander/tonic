@@ -94,13 +94,15 @@ class Player:
     async def _finish_playback(self, bot, server_id):
         await self._leave(server_id)
         await bot.change_presence(game = None)
+        srv = self.get_server_dict(server_id)
+        srv['player'] = None
     
     async def _play(self, bot, server_id):
         """Starts the ffmpeg player with the next song in queue."""
         srv = self.get_server_dict(server_id)
         srv['song'] = self.dequeue(server_id)
         if not srv['song']:
-            self._finish_playback(bot, server_id)
+            await self._finish_playback(bot, server_id)
             return
         try:
             srv['player'] = srv['voice'].create_ffmpeg_player(srv['song'][0], after=lambda: self._after(bot, server_id))
@@ -108,7 +110,7 @@ class Player:
         except:
             #shit's fucked
             #not sure what to do in this case?
-            self._finish_playback(bot, server_id)
+            await self._finish_playback(bot, server_id)
             return
         srv['player'].volume = srv['volume']
         srv['player'].start()
@@ -185,49 +187,26 @@ class Player:
             srv['player'].stop()
         else:
             await self._play(ctx.bot, server_id)
-    '''
-    @commands.command(pass_context=True)
-    async def pause(self,ctx):
-        """Pauses song"""
-        server_id = ctx.message.server.id
-        if server_id not in self.voice_clients:
-            await ctx.bot.send_message(ctx.message.channel, "Pause? When I'm not there? ....Really?")
-            return
-        elif server_id not in self.players:
-            await ctx.bot.send_message(ctx.message.channel, "I'm not playing anything")
-            return
-        elif not self.players[server_id].is_playing():
-            await ctx.bot.send_message(ctx.message.channel, "I'm not playing anything")
-            return
-        elif not self.user_in_channel(ctx):
-            await ctx.bot.send_message(ctx.message.channel, "Nice try. :information_desk_person::skin-tone-4: ")
-            return
-        else:
-            self.players[server_id].pause()
-            await ctx.bot.send_message(ctx.message.channel, "Playback paused.")
-            return
 
     @commands.command(pass_context=True)
-    async def resume(self,ctx):
-        """Resumes playback"""
+    async def pause(self, ctx):
+        """Pauses song"""
         server_id = ctx.message.server.id
-        if server_id not in self.voice_clients:
-            await ctx.bot.send_message(ctx.message.channel, "Resume? When I'm not there? ....Really?")
+        srv = self.get_server_dict(server_id)
+        requester = ctx.message.author
+        #silentrly drop if not in voice
+        if not self.in_voice(server_id):
             return
-        elif server_id not in self.players:
-            await ctx.bot.send_message(ctx.message.channel, "I'm not playing anything")
+        #refuse if user not in the same channel
+        if not self.user_in_channel(server_id, requester):
+            vcname = self.get_server_dict(server_id)['voice'].channel.name
+            await ctx.bot.send_message(ctx.message.channel, "You can't control me outside of {}.".format(vcname))
             return
-        elif self.players[server_id].is_playing():
-            await ctx.bot.send_message(ctx.message.channel, "I'm already playing something.")
-            return
-        elif not self.user_in_channel(ctx):
-            await ctx.bot.send_message(ctx.message.channel, "Nice try. :information_desk_person::skin-tone-4: ")
-            return
+        if self.is_playing(server_id):
+            srv['player'].pause()
         else:
-            self.players[server_id].resume()
-            await ctx.bot.send_message(ctx.message.channel, "Playback paused.")
-            return
-    '''
+            srv['player'].resume()
+
     def format_volume_bar(self, value):
         """Returns the volume bar string. Expects value = [0.0-2.0]"""
         length = 20
