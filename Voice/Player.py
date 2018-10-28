@@ -39,7 +39,7 @@ class Player:
         """Leaves voice on a specific server."""
         srv = self.get_server_dict(server_id)
         if srv['voice'] and srv['voice'].channel:
-            srv['voice'].disconnect()
+            await srv['voice'].disconnect()
             srv['voice'] = None
 
     def user_in_channel(self, server_id, user):
@@ -78,20 +78,28 @@ class Player:
             msg += line
         await ctx.bot.send_message(ctx.message.channel, msg)
     
-    def _play(self, server_id):
+    def _after(self, bot, server_id):
+        coro = self._play(bot, server_id)
+        future = asyncio.run_coroutine_threadsafe(coro, bot.loop)
+        try:
+            future.result()
+        except:
+            #shit's more fucked
+            return
+    
+    async def _play(self, bot, server_id):
         """Starts the ffmpeg player with the next song in queue."""
         srv = self.get_server_dict(server_id)
-        song = self.dequeue(server_id)
-        srv['song'] = song
-        if not song:
-            self._leave(server_id)
+        srv['song'] = self.dequeue(server_id)
+        if not srv['song']:
+            await self._leave(server_id)
             return
         try:
-            srv['player'] = srv['voice'].create_ffmpeg_player(song[0], after=lambda: self._play(server_id))
+            srv['player'] = srv['voice'].create_ffmpeg_player(srv['song'][0], after=lambda: self._after(bot, server_id))
         except:
             #shit's fucked
             #not sure what to do in this case?
-            self._leave(server_id)
+            await self._leave(server_id)
             return
         srv['player'].volume = srv['volume']
         srv['player'].start()
@@ -148,7 +156,7 @@ class Player:
             await self._join(ctx.bot, server_id, requester.voice.voice_channel)
         #start playback unless already playing
         if not self.is_playing(server_id):
-            self._play(server_id)
+            await self._play(ctx.bot, server_id)
     '''
     @commands.command(pass_context=True)
     async def next(self,ctx):
