@@ -2,6 +2,7 @@ from collections import deque
 from youtube_dl import YoutubeDL
 from youtube_dl.utils import DownloadError
 from discord.ext import commands
+from discord import Game
 import asyncio
 
 class Player:
@@ -65,15 +66,18 @@ class Player:
             nick = user.name
         return nick
     
+    def format_song_display(self, prefix, title, username):
+        return "``{} {} [{}]``\n".format(prefix, title, username)
+    
     @commands.command(pass_context=True)
     async def queue(self, ctx):
         """Shows currently queued items."""
         srv = self.get_server_dict(ctx.message.server.id)
         que = srv['queue']
-        msg = "``**▶ {}** [{}]``\n".format(srv['song'][1], self.get_nick(srv['song'][2]))
+        msg = self.format_song_display('▶', srv['song'][1], self.get_nick(srv['song'][2]))
         i = 1
         for item in que:
-            line = "``{} {} [{}]``\n".format(i, item[1], self.get_nick(item[2]))
+            line = self.format_song_display(i, item[1], self.get_nick(item[2]))
             i += 1
             msg += line
         await ctx.bot.send_message(ctx.message.channel, msg)
@@ -86,20 +90,25 @@ class Player:
         except:
             #shit's more fucked
             return
+
+    async def _finish_playback(self, bot, server_id):
+        await self._leave(server_id)
+        await bot.change_presence(game = None)
     
     async def _play(self, bot, server_id):
         """Starts the ffmpeg player with the next song in queue."""
         srv = self.get_server_dict(server_id)
         srv['song'] = self.dequeue(server_id)
         if not srv['song']:
-            await self._leave(server_id)
+            self._finish_playback(bot, server_id)
             return
         try:
             srv['player'] = srv['voice'].create_ffmpeg_player(srv['song'][0], after=lambda: self._after(bot, server_id))
+            await bot.change_presence(game = Game(name=srv['song'][1]))
         except:
             #shit's fucked
             #not sure what to do in this case?
-            await self._leave(server_id)
+            self._finish_playback(bot, server_id)
             return
         srv['player'].volume = srv['volume']
         srv['player'].start()
@@ -157,31 +166,26 @@ class Player:
         #start playback unless already playing
         if not self.is_playing(server_id):
             await self._play(ctx.bot, server_id)
-    '''
+
     @commands.command(pass_context=True)
-    async def next(self,ctx):
+    async def next(self, ctx):
         """Skips to the next song in queue."""
         server_id = ctx.message.server.id
-        if server_id not in self.voice_clients:
-            await ctx.bot.send_message(ctx.message.channel, 'Bruh, I\'m not even in a channel. :thinking:')
+        srv = self.get_server_dict(server_id)
+        requester = ctx.message.author
+        #silentrly drop if not in voice
+        if not self.in_voice(server_id):
             return
-        elif self._is_queue_empty():
-            await ctx.bot.send_message(ctx.message.channel, 'We ain\'t got no more tunes! Pass the AUX cord!!!!! :pray::skin-tone-4:')
+        #refuse if user not in the same channel
+        if not self.user_in_channel(server_id, requester):
+            vcname = self.get_server_dict(server_id)['voice'].channel.name
+            await ctx.bot.send_message(ctx.message.channel, "You can't control me outside of {}.".format(vcname))
             return
-        elif server_id not in self.players:
-            await self._play(ctx,self.QueueURL[0])
-            self._removequeue()
-            return
-        elif not self.user_in_channel(ctx):
-            await ctx.bot.send_message(ctx.message.channel, "Nice try. :information_desk_person::skin-tone-4: ")
-            return
+        if self.is_playing(server_id):
+            srv['player'].stop()
         else:
-            self.players[server_id].pause()
-            await self._play(ctx,self.QueueURL[0])
-            self._removequeue()
-            await ctx.bot.send_message(ctx.message.channel, 'Here we go skipping again!')
-            return
-
+            await self._play(ctx.bot, server_id)
+    '''
     @commands.command(pass_context=True)
     async def pause(self,ctx):
         """Pauses song"""
