@@ -87,17 +87,16 @@ class Player:
         self._removequeue()
         return
     '''
-    async def _play(self, bot, server_id, url):
+    def _play(self, bot, server_id, url):
         """Starts the ffmpeg player."""
         srv = self.get_server_dict(server_id)
         try:
-            srv['player'] = await srv['voice'].create_ffmpeg_player(url)
+            srv['player'] = srv['voice'].create_ffmpeg_player(url)
         except:
             #shit's fucked
-            return 1
+            return
         srv['player'].volume = srv['volume']
         srv['player'].start()
-        return 0
     
     def _find(self, search_str):
         """Performs a youtube search. Returns ytdl entry or None."""
@@ -151,9 +150,7 @@ class Player:
             await self._join(ctx.bot, server_id, requester.voice.voice_channel)
         #start playback unless already playing
         if not self.is_playing(server_id):
-            await ctx.bot.send_message(ctx.message.channel, "playing")
-            ret = await self._play(ctx.bot, server_id, download_url)
-            await ctx.bot.send_message(ctx.message.channel, str(ret))
+            self._play(ctx.bot, server_id, download_url)
     '''
     @commands.command(pass_context=True)
     async def next(self,ctx):
