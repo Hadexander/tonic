@@ -147,10 +147,10 @@ class Player:
         await ctx.bot.send_message(ctx.message.channel, "``+ {}``".format(title))
         #join user's voice channel unless already in voice
         if not self.in_voice(server_id):
-            self._join(ctx.bot, server_id, requester.voice.voice_channel)
+            await self._join(ctx.bot, server_id, requester.voice.voice_channel)
         #start playback unless already playing
         if not self.is_playing(server_id):
-            self._play(ctx.bot, server_id, download_url)
+            await self._play(ctx.bot, server_id, download_url)
     '''
     @commands.command(pass_context=True)
     async def next(self,ctx):
