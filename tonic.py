@@ -1,5 +1,5 @@
 #! /usr/bin/python3
-import logging
+import sys
 import random
 import traceback
 import core
@@ -8,13 +8,6 @@ from discord.ext.commands import Bot, MissingRequiredArgument, BadArgument, NoPr
 from util.prefix import command_prefix
 from util.checks import VerificationError
 from storage.lookups import global_settings
-
-logger = logging.getLogger('discord')
-logger.setLevel(logging.INFO)
-memory_log_file = StringIO()
-handler = logging.StreamHandler(memory_log_file)
-handler.setFormatter(logging.Formatter('[%(levelname)s] %(message)s'))
-logger.addHandler(handler)
 
 bot = Bot(command_prefix)
 sass = ["I don't {} your {}.", "I can't {} a {}, you donut.",
@@ -46,6 +39,7 @@ async def on_command_error(error, ctx):
     else:
         traceback.print_exception(type(error), error, None)
 
-bot.memory_log_file = memory_log_file
+bot.memory_log_file = StringIO()
+sys.stdout = bot.memory_log_file
 core.setup(bot)
 bot.run(global_settings().discord_key)
