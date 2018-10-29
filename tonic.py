@@ -11,8 +11,9 @@ from storage.lookups import global_settings
 
 logger = logging.getLogger('discord')
 logger.setLevel(logging.INFO)
-memory_file = StringIO()
-handler = logging.StreamHandler(memory_file)
+memory_log_file = StringIO()
+handler = logging.StreamHandler(memory_log_file)
+handler.setFormatter(logging.Formatter('[%(levelname)s] %(message)s'))
 logger.addHandler(handler)
 
 bot = Bot(command_prefix)
@@ -45,6 +46,6 @@ async def on_command_error(error, ctx):
     else:
         traceback.print_exception(type(error), error, None)
 
-bot.memory_file = memory_file
+bot.memory_log_file = memory_log_file
 core.setup(bot)
 bot.run(global_settings().discord_key)
