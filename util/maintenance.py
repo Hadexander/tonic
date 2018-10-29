@@ -65,8 +65,5 @@ class Maintenance:
                     msg = "Changed to branch: {}. {}".format(branch_name, msg)
             await ctx.bot.send_message(ctx.message.channel, msg)
             await ctx.bot.close()
-        elif command == 'log':
-            await ctx.bot.send_message(ctx.message.channel, ctx.bot.memory_log_file.getvalue())
-            ctx.bot.memory_log_file.truncate(0)
         else:
             raise commands.MissingRequiredArgument()

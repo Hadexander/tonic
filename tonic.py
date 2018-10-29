@@ -1,5 +1,4 @@
 #! /usr/bin/python3
-import sys
 import random
 import traceback
 import core
@@ -39,7 +38,5 @@ async def on_command_error(error, ctx):
     else:
         traceback.print_exception(type(error), error, None)
 
-bot.memory_log_file = StringIO()
-sys.stdout = bot.memory_log_file
 core.setup(bot)
 bot.run(global_settings().discord_key)
