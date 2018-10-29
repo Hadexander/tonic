@@ -1,11 +1,19 @@
 #! /usr/bin/python3
+import logging
 import random
 import traceback
-from discord.ext.commands import Bot, MissingRequiredArgument, BadArgument, NoPrivateMessage, CommandNotFound
 import core
+from io import StringIO
+from discord.ext.commands import Bot, MissingRequiredArgument, BadArgument, NoPrivateMessage, CommandNotFound
 from util.prefix import command_prefix
 from util.checks import VerificationError
 from storage.lookups import global_settings
+
+logger = logging.getLogger('discord')
+logger.setLevel(logging.ERROR)
+memory_file = StringIO()
+handler = logging.StreamHandler(memory_file)
+logger.addHandler(handler)
 
 bot = Bot(command_prefix)
 sass = ["I don't {} your {}.", "I can't {} a {}, you donut.",
@@ -38,4 +46,5 @@ async def on_command_error(error, ctx):
         traceback.print_exception(type(error), error, None)
 
 core.setup(bot)
+bot.memory_file = memory_file
 bot.run(global_settings().discord_key)

@@ -44,7 +44,8 @@ class Maintenance:
         """Developer commands:
         branch - find out which branch I'm on
         evolve - get updates from current branch and restart
-        evolve <branch_name> - change to a different branch, update and restart"""
+        evolve <branch_name> - change to a different branch, update and restart
+        log - get error log (experimental)"""
         if command == 'branch':
             shell = await asyncio.create_subprocess_shell("git rev-parse --abbrev-ref HEAD", stdout=asyncio.subprocess.PIPE)
             stdout, stderr = await shell.communicate()
@@ -64,5 +65,7 @@ class Maintenance:
                     msg = "Changed to branch: {}. {}".format(branch_name, msg)
             await ctx.bot.send_message(ctx.message.channel, msg)
             await ctx.bot.close()
+        elif command == 'log':
+            await ctx.bot.send_message(ctx.message.channel, ctx.bot.memory_file.getvalue())
         else:
             raise commands.MissingRequiredArgument()
