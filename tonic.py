@@ -10,7 +10,7 @@ from util.checks import VerificationError
 from storage.lookups import global_settings
 
 logger = logging.getLogger('discord')
-logger.setLevel(logging.ERROR)
+logger.setLevel(logging.INFO)
 memory_file = StringIO()
 handler = logging.StreamHandler(memory_file)
 logger.addHandler(handler)
@@ -45,6 +45,6 @@ async def on_command_error(error, ctx):
     else:
         traceback.print_exception(type(error), error, None)
 
-core.setup(bot)
 bot.memory_file = memory_file
+core.setup(bot)
 bot.run(global_settings().discord_key)

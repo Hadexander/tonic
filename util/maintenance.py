@@ -66,6 +66,6 @@ class Maintenance:
             await ctx.bot.send_message(ctx.message.channel, msg)
             await ctx.bot.close()
         elif command == 'log':
-            await ctx.bot.send_message(ctx.message.channel, ctx.bot.memory_file.getvalue())
+            await ctx.bot.send_message(ctx.message.channel, ":\n"+ctx.bot.memory_file.getvalue())
         else:
             raise commands.MissingRequiredArgument()
