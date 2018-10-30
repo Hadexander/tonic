@@ -9,3 +9,4 @@ def setup(bot):
     github.setup(bot)
     extras.setup(bot)
     Voice.setup(bot)
+    frienBot.setup(bot)
