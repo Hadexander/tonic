@@ -1,4 +1,4 @@
-from discord.ext import commands
+from discord.ext import commands, client
 import asyncio, pickle
 import numpy as np
 
@@ -24,10 +24,10 @@ class Friendbot:
 
     @commands.command(pass_context=True)
     async def talk(self, ctx, word):
-        reply = talkSmack(word, 30)
+        reply = await talkSmack(word, 30)
         await client.send_message(ctx.message.channel, reply)
 
     @commands.command(pass_context=True)    
     async def rant(self, ctx, word):
-        reply = talkSmack(word, 90)
+        reply = await talkSmack(word, 90)
         await client.send_message(ctx.message.channel, reply)
