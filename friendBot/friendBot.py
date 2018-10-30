@@ -24,10 +24,10 @@ class Friendbot:
 
     @commands.command(pass_context=True)
     async def talk(self, ctx, word):
-        reply = talksmack(word, 30)
+        reply = talkSmack(word, 30)
         await client.send_message(message.channel, reply)
 
     @commands.command(pass_context=True)    
     async def rant(self, ctx, word):
-        reply = talksmack(word, 90)
+        reply = talkSmack(word, 90)
         await client.send_message(message.channel, reply)
