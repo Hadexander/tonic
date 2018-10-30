@@ -142,6 +142,7 @@ class Player:
             await ctx.bot.send_message(ctx.message.channel, "I'm already playing in {}. Get in.".format(vcname))
         #create ytdl instance
         #set quiet: True if needed
+        await ctx.bot.send_typing(ctx.message.channel)
         ytdl = YoutubeDL(self._default_options)
         try:
             info = ytdl.extract_info(url, download=False)
