@@ -1,4 +1,5 @@
-from discord.ext import commands, client
+import discord
+from discord.ext import commands
 import asyncio, pickle
 import numpy as np
 
