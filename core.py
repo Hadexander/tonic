@@ -3,10 +3,11 @@ import util
 import github
 import poe
 import Voice
+import friendBot
 def setup(bot):
     util.setup(bot)
     poe.setup(bot)
     github.setup(bot)
     extras.setup(bot)
     Voice.setup(bot)
-    frienBot.setup(bot)
+    friendBot.setup(bot)
