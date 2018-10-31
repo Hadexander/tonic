@@ -1,8 +1,9 @@
 #! /usr/bin/python3
 import random
 import traceback
-from discord.ext.commands import Bot, MissingRequiredArgument, BadArgument, NoPrivateMessage, CommandNotFound
 import core
+from io import StringIO
+from discord.ext.commands import Bot, MissingRequiredArgument, BadArgument, NoPrivateMessage, CommandNotFound
 from util.prefix import command_prefix
 from util.checks import VerificationError
 from storage.lookups import global_settings
