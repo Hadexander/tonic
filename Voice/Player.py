@@ -53,7 +53,7 @@ class Player:
     def enqueue(self, server_id, url, title, duration, username):
         """Adds song data to a given server's playback queue."""
         srv = self.get_server_dict(server_id)
-        srv['queue'].append( (url, title, username) )
+        srv['queue'].append( (url, title, duration, username) )
 
     def dequeue(self, server_id):
         """Returns first data tuple in a given server's queue or None."""
@@ -69,7 +69,7 @@ class Player:
         return nick
     
     def format_song_display(self, prefix, title, duration, username):
-        return "``{} {} {} [{}]``\n".format(prefix, title, duration, username)
+        return "``{} {} [{}] [{}]``\n".format(prefix, title, duration, username)
     
     @commands.command(pass_context=True)
     async def queue(self, ctx):
@@ -171,7 +171,7 @@ class Player:
                 duration = str(datetime.timedelta(seconds=seconds))
         #add to queue
         self.enqueue(server_id, download_url, title, duration, requester)
-        await ctx.bot.send_message(ctx.message.channel, "``+ {}``".format(title))
+        await ctx.bot.send_message(ctx.message.channel, self.format_song_display('+', title, duration, requester))
         #join user's voice channel unless already in voice
         if not self.in_voice(server_id):
             await self._join(ctx.bot, server_id, requester.voice.voice_channel)
