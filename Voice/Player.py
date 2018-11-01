@@ -8,8 +8,8 @@ from discord.ext import commands
 from discord import Game
 
 class Player:
-    _default_options = {'quiet':False, 'noplaylist':True, 'playlist_items':'1', 'format':'bestaudio/webm[abr>0]/worst'}
-    _search_options = {'default_search':'ytsearch1', 'quiet':False, 'noplaylist':True, 'playlist_items':'1', 'format':'bestaudio/webm[abr>0]/worst'}
+    _default_options = {'quiet':False, 'noplaylist':True, 'playlist_items':'1', 'format':'bestaudio/webm[abr>0]/best'}
+    _search_options = {'default_search':'ytsearch1', 'quiet':False, 'noplaylist':True, 'playlist_items':'1', 'format':'bestaudio/webm[abr>0]/best'}
     _servers = {}
 
     def get_server_dict(self, server_id):
@@ -50,10 +50,10 @@ class Player:
         srv = self.get_server_dict(server_id)
         return user.voice.voice_channel and srv['voice'] and user.voice.voice_channel == srv['voice'].channel
 
-    def enqueue(self, server_id, url, title, duration, username):
+    def enqueue(self, server_id, url, title, duration, user):
         """Adds song data to a given server's playback queue."""
         srv = self.get_server_dict(server_id)
-        srv['queue'].append( (url, title, duration, username) )
+        srv['queue'].append( (url, title, duration, user) )
 
     def dequeue(self, server_id):
         """Returns first data tuple in a given server's queue or None."""
@@ -68,18 +68,18 @@ class Player:
             nick = user.name
         return nick
     
-    def format_song_display(self, prefix, title, duration, username):
-        return "``{} {} [{}] [{}]``\n".format(prefix, title, duration, username)
+    def format_song_display(self, prefix, title, duration, user):
+        return "``{} {} [{}] [{}]``\n".format(prefix, title, duration, user)
     
     @commands.command(pass_context=True)
     async def queue(self, ctx):
         """Shows currently queued items."""
         srv = self.get_server_dict(ctx.message.server.id)
         que = srv['queue']
-        msg = self.format_song_display('▶', srv['song'][1], srv['song'][2], self.get_nick(srv['song'][3]))
+        msg = self.format_song_display('▶', srv['song'][1], srv['song'][2], srv['song'][3])
         i = 1
         for item in que:
-            line = self.format_song_display(i, item[1], item[2], self.get_nick(item[3]))
+            line = self.format_song_display(i, item[1], item[2], item[3])
             i += 1
             msg += line
         await ctx.bot.send_message(ctx.message.channel, msg)
@@ -107,7 +107,7 @@ class Player:
             await self._finish_playback(bot, server_id)
             return
         try:
-            srv['player'] = srv['voice'].create_ffmpeg_player(srv['song'][0], after=lambda: self._after(bot, server_id))
+            srv['player'] = srv['voice'].create_ffmpeg_player(srv['song'][0], options='-vn', after=lambda: self._after(bot, server_id))
             await bot.change_presence(game = Game(name=srv['song'][1]))
         except:
             #shit's fucked
@@ -169,9 +169,10 @@ class Player:
             seconds = info.get('duration')
             if seconds:
                 duration = str(datetime.timedelta(seconds=seconds))
+        nick = self.get_nick(requester)
         #add to queue
-        self.enqueue(server_id, download_url, title, duration, requester)
-        await ctx.bot.send_message(ctx.message.channel, self.format_song_display('+', title, duration, requester))
+        self.enqueue(server_id, download_url, title, duration, nick)
+        await ctx.bot.send_message(ctx.message.channel, self.format_song_display('+', title, duration, nick))
         #join user's voice channel unless already in voice
         if not self.in_voice(server_id):
             await self._join(ctx.bot, server_id, requester.voice.voice_channel)
