@@ -1,39 +1,11 @@
 import hashlib
-from storage import db
+from storage import db, settings
 import MySQLdb
-
-
-'''
-==============================================================================================
-Connection parameters shouldn't be here, change later.
-==============================================================================================
-'''
-xhost = "localhost"
-xport = 3306
-xuser = "tonic"
-xpasswd = "TheBartender24"
-xdb = "InnoDB"
-
-# conn = MySQLdb.connect(host=xhost, port=xport,
-#                       user=xuser, passwd=xpasswd, db=xdb)
-
-'''
-==============================================================================================
-==============================================================================================
-'''
-
 
 def hash(string: str):
     sha = hashlib.sha256()
     sha.update(string.encode())
     return sha.hexdigest()
-
-
-def global_settings():
-    obj = db.Settings(sha=hash(''))
-    db.pull(obj)
-    return obj
-
 
 def find_user(uid: str):
     user = db.User(sha=hash(uid))
@@ -48,9 +20,9 @@ def find_guild(uid: str):
 
 
 def find_emoji(name: str):
-
-    conn = MySQLdb.connect(host=xhost, port=xport,
-                           user=xuser, passwd=xpasswd, db=xdb)
+    conf = settings.load('MySQL')
+    conn = MySQLdb.connect(host=conf.get('host'), port=conf.get('port'),
+                           user=conf.get('user'), passwd=conf.get('password'), db=conf.get('dbname'))
 
     curs = conn.cursor()
     curs.callproc("GetEmoji", [name])
@@ -62,9 +34,9 @@ def find_emoji(name: str):
 
 
 def save_emoji(name: str, url: str):
-
-    conn = MySQLdb.connect(host=xhost, port=xport,
-                           user=xuser, passwd=xpasswd, db=xdb)
+    conf = settings.load('MySQL')
+    conn = MySQLdb.connect(host=conf.get('host'), port=conf.get('port'),
+                           user=conf.get('user'), passwd=conf.get('password'), db=conf.get('dbname'))
 
     curs = conn.cursor()
     curs.callproc("AddEmoji", [name, url])
@@ -76,9 +48,9 @@ def save_emoji(name: str, url: str):
 
 
 def delete_emoji(name: str):
-
-    conn = MySQLdb.connect(host=xhost, port=xport,
-                           user=xuser, passwd=xpasswd, db=xdb)
+    conf = settings.load('MySQL')
+    conn = MySQLdb.connect(host=conf.get('host'), port=conf.get('port'),
+                           user=conf.get('user'), passwd=conf.get('password'), db=conf.get('dbname'))
 
     curs = conn.cursor()
     curs.callproc("DeleteEmoji", [name])
@@ -90,9 +62,9 @@ def delete_emoji(name: str):
 
 
 def list_emojis():
-
-    conn = MySQLdb.connect(host=xhost, port=xport,
-                           user=xuser, passwd=xpasswd, db=xdb)
+    conf = settings.load('MySQL')
+    conn = MySQLdb.connect(host=conf.get('host'), port=conf.get('port'),
+                           user=conf.get('user'), passwd=conf.get('password'), db=conf.get('dbname'))
 
     curs = conn.cursor()
     curs.callproc("ListEmojis")

@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 import asyncio
 import aiohttp
-from storage.lookups import global_settings
+from storage import settings
 
 async def _update_access_token(settings):
     """Generates or updates an imgur API access token using imgur account data provided in settings."""
@@ -24,12 +24,13 @@ async def _update_access_token(settings):
 
 async def image_upload(url):
     """Uploads an image to imgur by url. Returns a link and image id on success, error message on failure."""
-    settings = global_settings()
-    await _update_access_token(settings)
+    config = settings.load('Imgur')
+    #disabled temporarily
+    #await _update_access_token(settings)
     async with aiohttp.ClientSession() as session:
         headers = {
-            'Authorization':'Client-ID '+settings.imgur_id,
-            'Authorization':'Bearer '+settings.imgur_access
+            'Authorization':'Client-ID '+config.get('id'),
+            'Authorization':'Bearer '+config.get('access')
         }
         body = {
             'image':url
@@ -44,10 +45,10 @@ async def image_upload(url):
 
 async def image_delete(id):
     """Deletes an image from imgur."""
-    settings = global_settings()
-    await _update_access_token(settings)
+    config = settings.load('Imgur')
+    #await _update_access_token(settings)
     async with aiohttp.ClientSession() as session:
         headers = {
-            'Authorization':'Bearer '+settings.imgur_access
+            'Authorization':'Bearer '+config.get('access')
         }
         await session.delete('https://api.imgur.com/3/image/'+id, headers=headers)

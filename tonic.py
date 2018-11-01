@@ -6,7 +6,7 @@ from io import StringIO
 from discord.ext.commands import Bot, MissingRequiredArgument, BadArgument, NoPrivateMessage, CommandNotFound
 from util.prefix import command_prefix
 from util.checks import VerificationError
-from storage.lookups import global_settings
+from storage import settings
 
 bot = Bot(command_prefix)
 sass = ["I don't {} your {}.", "I can't {} a {}, you donut.",
@@ -39,4 +39,5 @@ async def on_command_error(error, ctx):
         traceback.print_exception(type(error), error, None)
 
 core.setup(bot)
-bot.run(global_settings().discord_key)
+token = settings.load('Discord').get('token')
+bot.run(token)

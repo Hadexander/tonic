@@ -8,27 +8,6 @@ from sqlalchemy import inspect
 _engine = create_engine(dburl)
 Session = sessionmaker(bind=_engine)
 Base = declarative_base()
-class Settings(Base):
-    __tablename__ = 'settings'
-    sha = Column(String(64), primary_key = True)
-    discord_key = Column(String(59))
-    imgur_id = Column(String(15))
-    imgur_secret = Column(String(40))
-    imgur_refresh = Column(String(40))
-    imgur_access = Column(String(40))
-    imgur_expiration = Column(DateTime())
-
-    def __init__(self, **kwargs):
-        self.sha = kwargs.pop('sha', None)
-        self.discord_key = kwargs.pop('discord_key', None)
-        self.imgur_id = kwargs.pop('imgur_id', None)
-        self.imgur_secret = kwargs.pop('imgur_secret', None)
-        self.imgur_refresh = kwargs.pop('imgur_refresh', None)
-        self.imgur_access = kwargs.pop('imgur_access', None)
-        self.imgur_expiration = kwargs.pop('imgur_expiration', datetime.min)
-
-    def save(self):
-        merge(self)
 
 class User(Base):
     __tablename__ = 'users'
