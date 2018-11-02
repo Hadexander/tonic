@@ -40,8 +40,8 @@ async def on_command_error(error, ctx):
 # load submodules
 startup_modules = []
 
+print("Loading submodules...")
 for finder, name, ispkg in pkgutil.iter_modules('.'):
-    print("Loading submodules...")
     if ispkg:
         try:
             module = importlib.import_module(name)
@@ -50,8 +50,8 @@ for finder, name, ispkg in pkgutil.iter_modules('.'):
         except Exception as ex:
             print("[{}] could not be imported. Reason:\n{} {}".format(name, type(ex), str(ex)))
 
+print("Installing cogs...")
 for name in startup_modules:
-    print("Installing cogs...")
     bot.load_extension(name)
 
 bot.run(global_settings().discord_key)
