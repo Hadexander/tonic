@@ -1,245 +1,222 @@
+import asyncio
+import functools
+import datetime
+from collections import deque
 from youtube_dl import YoutubeDL
 from youtube_dl.utils import DownloadError
 from discord.ext import commands
-import asyncio
+from discord import Game
+
 class Player:
-    QueueURL=[]
-    voiceclients={}
-    players={}
-    volumes={}
+    _default_options = {'quiet':False, 'noplaylist':True, 'playlist_items':'1', 'format':'bestaudio/webm[abr>0]/best'}
+    _search_options = {'default_search':'ytsearch1', 'quiet':False, 'noplaylist':True, 'playlist_items':'1', 'format':'bestaudio/webm[abr>0]/best'}
+    _servers = {}
 
-    async def _join(self,ctx):
-        """Bot joins current user's channel"""
-        servername = ctx.message.server.name
-        voice = None
-        if ctx.message.author.voice.voice_channel is None:
-            await ctx.bot.send_message(ctx.message.channel, 'You ain\'t there. Can\'t connect')
-            return False
-        elif servername in self.voiceclients:
-            if ctx.message.author.voice.voice_channel is not self.voiceclients[servername].channel:
-                await self.voiceclients[servername].move_to(ctx.message.author.voice.voice_channel)
-                return True
-        else:
-            await ctx.bot.join_voice_channel(ctx.message.author.voice.voice_channel)
-            voice = ctx.bot.voice_client_in(ctx.message.server)
-            self.voiceclients[servername] = voice
-            self.volumes[servername] = .5
-            #Voice.voiceclient = ctx.bot.voice_client_in(ctx.message.server)
-            return True
+    def get_server_dict(self, server_id):
+        if server_id not in self._servers:
+            self._servers[server_id] = {'queue':deque(), 'volume':1.0, 'voice':None, 'player':None, 'song':None}
+        return self._servers[server_id]
+    
+    def in_voice(self, server_id):
+        """Returns True if in a voice channel on that server."""
+        srv = self.get_server_dict(server_id)
+        return srv['voice'] and srv['voice'].channel
 
+    def is_playing(self, server_id):
+        """Returns True if in voice and playing something on that server."""
+        srv = self.get_server_dict(server_id)
+        return srv['voice'] and srv['voice'].channel and srv['player'] and srv['player'].is_playing()
 
-    async def _disconnect(self,ctx):
-        """Disconnects from current channel"""
-        servername = ctx.message.server.name
-        if servername not in self.voiceclients:
-            await ctx.bot.send_message(ctx.message.channel, "I'm not even in the channel...? :thinking:")
+    async def _join(self, bot, server_id, voice_channel):
+        """Bot joins specific voice channel."""
+        if not voice_channel:
             return
+        srv = self.get_server_dict(server_id)
+        if srv['voice']:
+            if voice_channel != srv['voice'].channel:
+                await srv['voice'].move_to(voice_channel)
         else:
-            await ctx.bot.send_message(ctx.message.channel, "Crunk time over. Wu-tang out!")
-            await self.voiceclients[servername].disconnect()
-            del self.voiceclients[servername]
-        return
+            srv['voice'] = await bot.join_voice_channel(voice_channel)
 
-    def _userinchannel(self,ctx):
-        """Checks if user is in channel or same channel as bot. (Take that Nico!). Hardcheck T/F """
-        servername = ctx.message.server.name
-        if ctx.message.author.voice.voice_channel is None:
-            return False
-        elif ctx.message.author.voice.voice_channel is not self.voiceclients[servername].channel:
-            return False
-        else:
-            return True
+    async def _leave(self, server_id):
+        """Leaves voice on a specific server."""
+        srv = self.get_server_dict(server_id)
+        if srv['voice'] and srv['voice'].channel:
+            await srv['voice'].disconnect()
+            srv['voice'] = None
 
-    def _addqueue(self,yturl):
-        """Adds url to a queue list in case a song is already playing"""
-        self.QueueURL.append(yturl)
-        return
+    def user_in_channel(self, server_id, user):
+        """Checks if both the user and bot are in the same channel."""
+        srv = self.get_server_dict(server_id)
+        return user.voice.voice_channel and srv['voice'] and user.voice.voice_channel == srv['voice'].channel
 
-    def _removequeue(self):
-        """Removes first item in queue list"""
-        self.QueueURL.pop(0)
-        return
+    def enqueue(self, server_id, url, title, duration, user):
+        """Adds song data to a given server's playback queue."""
+        srv = self.get_server_dict(server_id)
+        srv['queue'].append( (url, title, duration, user) )
 
-    def _is_queue_empty(self):
-        if len(self.QueueURL) == 0:
-            return True
-        else:
-            return False
+    def dequeue(self, server_id):
+        """Returns first data tuple in a given server's queue or None."""
+        srv = self.get_server_dict(server_id)
+        if len(srv['queue']) <= 0:
+            return None
+        return srv['queue'].popleft()
 
+    def get_nick(self, user):
+        nick = user.nick
+        if not nick:
+            nick = user.name
+        return nick
+    
+    def format_song_display(self, prefix, title, duration, user):
+        return "``{} {} [{}] [{}]``\n".format(prefix, title, duration, user)
+    
     @commands.command(pass_context=True)
-    async def clear(self,ctx):
-        """Clears entire queue. Becareful!"""
-        self.QueueURL.clear()
-        await ctx.bot.send_message(ctx.message.channel, 'Music queue empty. Like this bottle of Gin.')
-        return
-
-    @commands.command(pass_context=True)
-    async def join(self,ctx):
-        await self._join(ctx)
-        return
-
-    @commands.command(pass_context=True)
-    async def disconnect(self,ctx):
-        await self._disconnect(ctx)
-        return
-
-    @commands.command(pass_context=True)
-    async def queue(self,ctx):
-        """Shows current queued items"""
-        await ctx.bot.send_message(ctx.message.channel, "We have about {} songs in queue".format(len(self.QueueURL)) )
-        await ctx.bot.send_message(ctx.message.channel, self.QueueURL)
-
-    def _autoplay(self,ctx):
-        servername = ctx.message.server.name
-        ytdl_opts = {'format': 'bestaudio/webm[abr>0]/best'}
-        if self._is_queue_empty():
-            asyncio.run_coroutine_threadsafe(self._disconnect(ctx),ctx.bot.loop).result()
-            return
-        corocall = self.voiceclients[servername].create_ytdl_player(self.QueueURL[0], ytdl_options=ytdl_opts, after=lambda: self._autoplay(ctx))
-        scheduling = asyncio.run_coroutine_threadsafe(corocall,ctx.bot.loop)
+    async def queue(self, ctx):
+        """Shows currently queued items."""
+        srv = self.get_server_dict(ctx.message.server.id)
+        que = srv['queue']
+        msg = self.format_song_display('▶', srv['song'][1], srv['song'][2], srv['song'][3])
+        i = 1
+        for item in que:
+            line = self.format_song_display(i, item[1], item[2], item[3])
+            i += 1
+            msg += line
+        await ctx.bot.send_message(ctx.message.channel, msg)
+    
+    def _after(self, bot, server_id):
+        coro = self._play(bot, server_id)
+        future = asyncio.run_coroutine_threadsafe(coro, bot.loop)
         try:
-            self.players[servername] = scheduling.result()
-        except Exception as e:
-            print(e)
-            return #oh no.
-        self.players[servername].start()
-        self._removequeue()
-        return
-
-    async def _play(self,ctx,url):
-        """Plays youtube links. IE 'https://www.youtube.com/watch?v=mPMC3GYpBHg' """
-        servername = ctx.message.server.name
-        if servername not in self.voiceclients:
-            await self._join(ctx)
-        try:
-            ytdl_opts = {'format': 'bestaudio/webm[abr>0]/best'}
-            self.players[servername] = await self.voiceclients[servername].create_ytdl_player(url, ytdl_options=ytdl_opts, after=lambda: self._autoplay(ctx))
+            future.result()
         except:
-                #raise BadArgument()
-            return False
-        self.players[servername].volume = self.volumes[servername]
-        self.players[servername].start()
-        return True
+            #shit's more fucked
+            return
+
+    async def _finish_playback(self, bot, server_id):
+        await self._leave(server_id)
+        await bot.change_presence(game = None)
+        srv = self.get_server_dict(server_id)
+        srv['player'] = None
+    
+    async def _play(self, bot, server_id):
+        """Starts the ffmpeg player with the next song in queue."""
+        srv = self.get_server_dict(server_id)
+        srv['song'] = self.dequeue(server_id)
+        if not srv['song']:
+            await self._finish_playback(bot, server_id)
+            return
+        try:
+            srv['player'] = srv['voice'].create_ffmpeg_player(srv['song'][0], after=lambda: self._after(bot, server_id))
+            await bot.change_presence(game = Game(name=srv['song'][1]))
+        except:
+            #shit's fucked
+            #not sure what to do in this case?
+            await self._finish_playback(bot, server_id)
+            return
+        srv['player'].volume = srv['volume']
+        srv['player'].start()
+    
+    async def _find(self, bot, search_str):
+        """Performs a youtube search. Returns ytdl entry or None."""
+        ytdl = YoutubeDL(self._search_options)
+        try:
+            func = functools.partial(ytdl.extract_info, search_str, download=False)
+            info = await bot.loop.run_in_executor(None, func)
+        except DownloadError:
+            #couldn't find results
+            return None
+        return info
 
     @commands.command(pass_context=True)
-    async def play(self,ctx,url):
-        """Plays youtube links. IE 'https://www.youtube.com/watch?v=mPMC3GYpBHg' """
+    async def play(self, ctx, url):
+        """Plays most media urls, such as youtube. If not given a url, attempts a youtube search with given text and plays the first result."""
+        server_id = ctx.message.server.id
+        requester = ctx.message.author
+        #refuse command if we don't know which voice channel to join
+        if not self.in_voice(server_id) and not requester.voice.voice_channel:
+            await ctx.bot.send_message(ctx.message.channel, "Dude, get in voice first.")
+            return
+        #warn user that the bot won't jump channels while playing
+        if self.in_voice(server_id) and not self.user_in_channel(server_id, requester):
+            vcname = self.get_server_dict(server_id)['voice'].channel.name
+            await ctx.bot.send_message(ctx.message.channel, "I'm already playing in {}. Get in.".format(vcname))
         #create ytdl instance
         #set quiet: True if needed
-        ytdl_opts = {'quiet': False, 'noplaylist': True, 'playlist_items': '1'}
-        ytdl = YoutubeDL(ytdl_opts)
-        validation_play_check = False
-        servername = ctx.message.server.name
+        await ctx.bot.send_typing(ctx.message.channel)
+        ytdl = YoutubeDL(self._default_options)
         try:
             info = ytdl.extract_info(url, download=False)
         except DownloadError:
             #url was bullshit
-            await ctx.bot.send_message(ctx.message.channel, "Unsupported URL, I'll try to find a video.")
-            search_kw = str(ctx.message.content)
-            search_kw = search_kw[5:]
-            await ctx.bot.send_message(ctx.message.channel, "searching: {}".format(search_kw))
-            yt_search = {'default_search':'ytsearch1', 'quiet':False}
-            ytdl = YoutubeDL(yt_search)
-            info = ytdl.extract_info(search_kw, download=False)
-            if 'entries' not in info:
-                await ctx.bot.send_message(ctx.message.channel, "Critical failure.")
-                return
-            await ctx.bot.send_message(ctx.message.channel, "{} hits.".format(len(info['entries'])))
-            if len(info['entries']) <= 0:
-                return
-            info = info['entries'][0]
-            url = info.get('webpage_url')
+            search_kw = ctx.message.content[5:]
+            info = await self._find(ctx.bot, search_kw)
+            if not info:
+                #no hits
+                await ctx.bot.send_message(ctx.message.channel, "No media found.")
         if 'entries' in info:
             #it's a playlist
-            await ctx.bot.send_message(ctx.message.channel, "Entire playlists are not supported")
-            return
-        if not self._is_queue_empty():
-            await ctx.bot.send_message(ctx.message.channel, "I'm already playing something but I'll add it to the queue!")
-            self._addqueue(url)
-            return
-        if servername not in self.voiceclients:
-            self._addqueue(url)
-            validation_play_check = await self._play(ctx,self.QueueURL[0])
-            self._removequeue()
-            return
-        if servername in self.players: #This is gross, fix later.
-            if self.players[servername].is_playing():
-                await ctx.bot.send_message(ctx.message.channel, "I'm already playing something but I'll add it to the queue!")
-                self._addqueue(url)
-                return
-        self._addqueue(url)
-        validation_play_check = await self._play(ctx,self.QueueURL[0])
-        if not validation_play_check:
-            await ctx.bot.send_message(ctx.message.channel, "Playback failed!")
-        self._removequeue()
-        return
-
+            #just grab the first item
+            info = info['entries'][0]
+        #at this point info['url'] should point to our preferred format
+        download_url = info['url']
+        #get media attributes
+        title = info.get('title')
+        duration = ''
+        if info.get('is_live'):
+            duration = 'LIVE'
+        else:
+            seconds = info.get('duration')
+            if seconds:
+                duration = str(datetime.timedelta(seconds=seconds))
+        nick = self.get_nick(requester)
+        #add to queue
+        self.enqueue(server_id, download_url, title, duration, nick)
+        await ctx.bot.send_message(ctx.message.channel, self.format_song_display('+', title, duration, nick))
+        #join user's voice channel unless already in voice
+        if not self.in_voice(server_id):
+            await self._join(ctx.bot, server_id, requester.voice.voice_channel)
+        #start playback unless already playing
+        if not self.is_playing(server_id):
+            await self._play(ctx.bot, server_id)
 
     @commands.command(pass_context=True)
-    async def next(self,ctx):
-        """Plays song next in queue."""
-        servername = ctx.message.server.name
-        if servername not in self.voiceclients:
-            await ctx.bot.send_message(ctx.message.channel, 'Bruh, I\'m not even in a channel. :thinking:')
+    async def next(self, ctx):
+        """Skips to the next song in queue."""
+        server_id = ctx.message.server.id
+        srv = self.get_server_dict(server_id)
+        requester = ctx.message.author
+        #silentrly drop if not in voice
+        if not self.in_voice(server_id):
             return
-        elif self._is_queue_empty():
-            await ctx.bot.send_message(ctx.message.channel, 'We ain\'t got no more tunes! Pass the AUX cord!!!!! :pray::skin-tone-4:')
+        #refuse if user not in the same channel
+        if not self.user_in_channel(server_id, requester):
+            vcname = self.get_server_dict(server_id)['voice'].channel.name
+            await ctx.bot.send_message(ctx.message.channel, "You can't control me outside of {}.".format(vcname))
             return
-        elif servername not in self.players:
-            await self._play(ctx,self.QueueURL[0])
-            self._removequeue()
-            return
-        elif not self._userinchannel(ctx):
-            await ctx.bot.send_message(ctx.message.channel, "Nice try. :information_desk_person::skin-tone-4: ")
-            return
+        if self.is_playing(server_id):
+            srv['player'].stop()
         else:
-            self.players[servername].pause()
-            await self._play(ctx,self.QueueURL[0])
-            self._removequeue()
-            await ctx.bot.send_message(ctx.message.channel, 'Here we go skipping again!')
-            return
+            await self._play(ctx.bot, server_id)
 
     @commands.command(pass_context=True)
-    async def pause(self,ctx):
-        """Pauses song"""
-        servername = ctx.message.server.name
-        if servername not in self.voiceclients:
-            await ctx.bot.send_message(ctx.message.channel, "Pause? When I'm not there? ....Really?")
+    async def pause(self, ctx):
+        """Pauses or resumes playback."""
+        server_id = ctx.message.server.id
+        srv = self.get_server_dict(server_id)
+        requester = ctx.message.author
+        #silentrly drop if not in voice
+        if not self.in_voice(server_id):
             return
-        elif servername not in self.players:
-            await ctx.bot.send_message(ctx.message.channel, "I'm not playing anything")
+        #refuse if user not in the same channel
+        if not self.user_in_channel(server_id, requester):
+            vcname = self.get_server_dict(server_id)['voice'].channel.name
+            await ctx.bot.send_message(ctx.message.channel, "You can't control me outside of {}.".format(vcname))
             return
-        elif not self.players[servername].is_playing():
-            await ctx.bot.send_message(ctx.message.channel, "I'm not playing anything")
-            return
-        elif not self._userinchannel(ctx):
-            await ctx.bot.send_message(ctx.message.channel, "Nice try. :information_desk_person::skin-tone-4: ")
-            return
+        if self.is_playing(server_id):
+            srv['player'].pause()
         else:
-            self.players[servername].pause()
-            await ctx.bot.send_message(ctx.message.channel, "Playback paused.")
-            return
-
-    @commands.command(pass_context=True)
-    async def resume(self,ctx):
-        """Resumes playback"""
-        servername = ctx.message.server.name
-        if servername not in self.voiceclients:
-            await ctx.bot.send_message(ctx.message.channel, "Resume? When I'm not there? ....Really?")
-            return
-        elif servername not in self.players:
-            await ctx.bot.send_message(ctx.message.channel, "I'm not playing anything")
-            return
-        elif self.players[servername].is_playing():
-            await ctx.bot.send_message(ctx.message.channel, "I'm already playing something.")
-            return
-        elif not self._userinchannel(ctx):
-            await ctx.bot.send_message(ctx.message.channel, "Nice try. :information_desk_person::skin-tone-4: ")
-            return
-        else:
-            self.players[servername].resume()
-            await ctx.bot.send_message(ctx.message.channel, "Playback paused.")
-            return
+            srv['player'].resume()
 
     def format_volume_bar(self, value):
         """Returns the volume bar string. Expects value = [0.0-2.0]"""
@@ -249,19 +226,13 @@ class Player:
         return bar
 
     @commands.command(pass_context=True)
-    async def setvolume(self,ctx, vol):
-        """Sets volume between 0 and 200."""
-        servername = ctx.message.server.name
+    async def volume(self, ctx, vol=-1):
+        """Sets playback volume between 0 and 200."""
+        server_id = ctx.message.server.id
+        srv = self.get_server_dict(server_id)
         vol = int(vol)
-        if vol > 200 or vol < 0:
-            return False
-        elif not self._userinchannel(ctx):
-            return False
-        else:
-            self.volumes[servername] = vol/100
-            await ctx.bot.send_message(ctx.message.channel, self.format_volume_bar(self.volumes[servername]))
-            if servername in self.players:
-                self.players[servername].volume = self.volumes[servername]
-                return True
-            return True
-        return
+        if self.user_in_channel(server_id, ctx.message.author) and vol <= 200 and vol >= 0:
+            srv['volume'] = vol/100
+            if srv['player']:
+                srv['player'].volume = srv['volume']
+        await ctx.bot.send_message(ctx.message.channel, self.format_volume_bar(srv['volume']))

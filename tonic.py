@@ -1,27 +1,27 @@
 #! /usr/bin/python3
 import random
 import traceback
+import pkgutil
+import importlib
 from discord.ext.commands import Bot, MissingRequiredArgument, BadArgument, NoPrivateMessage, CommandNotFound
-import core
 from util.prefix import command_prefix
 from util.checks import VerificationError
 from storage.lookups import global_settings
 
 bot = Bot(command_prefix)
+
+# event code remains here for now
 sass = ["I don't {} your {}.", "I can't {} a {}, you donut.",
         "No, you {} your {}.", "You should know that I can't {} a {} just like that..."]
 nope = ['No.', 'Nope.', 'Nah.', 'Your access level isn\'t high enough.']
-
 
 @bot.event
 async def on_ready():
     print('Ready (%s:%s)' % (bot.user.name, bot.user.id))
 
-
 @bot.event
 async def on_command_error(error, ctx):
     error = getattr(error, 'original', error)
-
     if(isinstance(error, VerificationError)):
         await ctx.bot.send_message(ctx.message.channel, random.choice(nope))
     elif(isinstance(error, MissingRequiredArgument)):
@@ -37,5 +37,21 @@ async def on_command_error(error, ctx):
     else:
         traceback.print_exception(type(error), error, None)
 
-core.setup(bot)
+# load submodules
+startup_modules = []
+
+print("Loading submodules...")
+for finder, name, ispkg in pkgutil.iter_modules('.'):
+    if ispkg:
+        try:
+            module = importlib.import_module(name)
+            if hasattr(module, 'setup'):
+                startup_modules.append(name)
+        except Exception as ex:
+            print("[{}] could not be imported. Reason:\n{} {}".format(name, type(ex), str(ex)))
+
+print("Installing cogs...")
+for name in startup_modules:
+    bot.load_extension(name)
+
 bot.run(global_settings().discord_key)
