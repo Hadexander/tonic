@@ -1,10 +1,11 @@
+import asyncio
+import functools
+import datetime
 from collections import deque
 from youtube_dl import YoutubeDL
 from youtube_dl.utils import DownloadError
 from discord.ext import commands
 from discord import Game
-import asyncio
-import functools
 
 class Player:
     _default_options = {'quiet':False, 'noplaylist':True, 'playlist_items':'1', 'format':'bestaudio/webm[abr>0]/best'}
@@ -49,10 +50,10 @@ class Player:
         srv = self.get_server_dict(server_id)
         return user.voice.voice_channel and srv['voice'] and user.voice.voice_channel == srv['voice'].channel
 
-    def enqueue(self, server_id, url, title, username):
+    def enqueue(self, server_id, url, title, duration, user):
         """Adds song data to a given server's playback queue."""
         srv = self.get_server_dict(server_id)
-        srv['queue'].append( (url, title, username) )
+        srv['queue'].append( (url, title, duration, user) )
 
     def dequeue(self, server_id):
         """Returns first data tuple in a given server's queue or None."""
@@ -67,18 +68,18 @@ class Player:
             nick = user.name
         return nick
     
-    def format_song_display(self, prefix, title, username):
-        return "``{} {} [{}]``\n".format(prefix, title, username)
+    def format_song_display(self, prefix, title, duration, user):
+        return "``{} {} [{}] [{}]``\n".format(prefix, title, duration, user)
     
     @commands.command(pass_context=True)
     async def queue(self, ctx):
         """Shows currently queued items."""
         srv = self.get_server_dict(ctx.message.server.id)
         que = srv['queue']
-        msg = self.format_song_display('▶', srv['song'][1], self.get_nick(srv['song'][2]))
+        msg = self.format_song_display('▶', srv['song'][1], srv['song'][2], srv['song'][3])
         i = 1
         for item in que:
-            line = self.format_song_display(i, item[1], self.get_nick(item[2]))
+            line = self.format_song_display(i, item[1], item[2], item[3])
             i += 1
             msg += line
         await ctx.bot.send_message(ctx.message.channel, msg)
@@ -161,9 +162,17 @@ class Player:
         download_url = info['url']
         #get media attributes
         title = info.get('title')
+        duration = ''
+        if info.get('is_live'):
+            duration = 'LIVE'
+        else:
+            seconds = info.get('duration')
+            if seconds:
+                duration = str(datetime.timedelta(seconds=seconds))
+        nick = self.get_nick(requester)
         #add to queue
-        self.enqueue(server_id, download_url, title, requester)
-        await ctx.bot.send_message(ctx.message.channel, "``+ {}``".format(title))
+        self.enqueue(server_id, download_url, title, duration, nick)
+        await ctx.bot.send_message(ctx.message.channel, self.format_song_display('+', title, duration, nick))
         #join user's voice channel unless already in voice
         if not self.in_voice(server_id):
             await self._join(ctx.bot, server_id, requester.voice.voice_channel)
@@ -192,7 +201,7 @@ class Player:
 
     @commands.command(pass_context=True)
     async def pause(self, ctx):
-        """Pauses song"""
+        """Pauses or resumes playback."""
         server_id = ctx.message.server.id
         srv = self.get_server_dict(server_id)
         requester = ctx.message.author
