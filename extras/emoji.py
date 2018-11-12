@@ -4,6 +4,7 @@ import discord
 from discord.ext import commands
 from extras.imgur import image_upload, image_delete
 from storage.db import Emoji as EmojiObj
+from storage.db import Guild
 from util.checks import no_private_message
 
 async def _get_content_type(url):
@@ -89,8 +90,7 @@ class Emoji:
     @commands.check(no_private_message)
     async def emlist(self, ctx):
         """Lists all emojis from my gallery."""
-
-        emojis = self.db.getall(EmojiObj, guild=ctx.message.server.id)
+        emojis = self.db.getall(EmojiObj, guild_id=ctx.message.server.id)
         e = []
         for n in emojis:
             e.append(n.name)
