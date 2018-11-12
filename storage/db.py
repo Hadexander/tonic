@@ -1,6 +1,6 @@
-from sqlalchemy import create_engine, Column, Integer, String, PickleType, Sequence
+from sqlalchemy import create_engine, Column, Integer, String, Sequence, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, relationship
 from sqlalchemy import inspect
 
 Base = declarative_base()
@@ -15,10 +15,13 @@ class Guild(Base):
     __tablename__ = 'guilds'
     id = Column(String(20), primary_key = True)
     prefix = Column(String(64))
+    emojis = relationship('Emoji', back_populates='guild')
 
 class Emoji(Base):
     __tablename__ = 'emojis'
     id = Column(Integer, Sequence('emoji_id_sequence'), primary_key = True)
+    guild_id = Column(String(20), ForeignKey('guilds.id'), nullable = False)
+    guild = relationship('Guild', back_populates='emojis')
     url = Column(String(64))
     name = Column(String(64))
 

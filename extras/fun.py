@@ -30,8 +30,9 @@ class Fun:
             msg = 'It\'s tails!'
             await ctx.bot.send_message(ctx.message.channel, msg)
 
-    _dice = re.compile('^(\d+)?d(\d+)([+-]\d+)?')
+    _dice = re.compile(r'^(\d+)?d(\d+)([+-]\d+)?')
     _dicelimit = 100
+    _displaylimit = 20
     @commands.command(pass_context=True)
     async def roll(self, ctx, NdM):
         """Roll N dice with M sides each. Supports dice notation NdM[+-X]"""
@@ -45,7 +46,7 @@ class Fun:
         x = args[2]
         if n:
             n = int(n)
-            if n <= 0:
+            if n <= 0 or n > self._dicelimit:
                 raise BadArgument()
         else:
             n = 1
@@ -58,7 +59,7 @@ class Fun:
             x = int(x)
             result += x
         response = response.format(NdM, result)
-        if n <= self._dicelimit:
+        if n <= self._displaylimit:
             response += "\n{}".format(str(rolls))
         await ctx.bot.send_message(ctx.message.channel, response.format(NdM, result))
 

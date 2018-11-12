@@ -4,6 +4,7 @@ import discord
 from discord.ext import commands
 from extras.imgur import image_upload, image_delete
 from storage.db import Emoji as EmojiObj
+from util.checks import no_private_message
 
 async def _get_content_type(url):
     """Checks page header and returns MIME content type."""
@@ -33,9 +34,11 @@ class Emoji:
         self.db = bot.database
     
     @commands.command(pass_context=True)
+    @commands.check(no_private_message)
     async def emsave(self, ctx, name, url=None):
         """Saves an emoji to my gallery. Can be a URL or direct attachment. Or you could just use this command right after an image is posted."""
-        e = self.db.get(EmojiObj, name=name)
+        # check if emoji exists
+        e = self.db.get(EmojiObj, guild=ctx.message.server.id, name=name)
         if e:
             await ctx.bot.send_message(ctx.message.channel, '{} already exists'.format(name))
             return
@@ -60,34 +63,38 @@ class Emoji:
         if 'error' in data:
             await ctx.bot.send_message(ctx.message.channel, '{}. Gallery copy failed: {}'.format(name, data['error']))
         else:
-            e = EmojiObj(name=name, url=data['link'])
+            e = EmojiObj(guild=ctx.message.server.id, name=name, url=data['link'])
             self.db.add(e)
             self.db.commit()
             await ctx.bot.send_message(ctx.message.channel, 'Saved {}.'.format(name))
 
     @commands.command(pass_context=True)
+    @commands.check(no_private_message)
     async def em(self, ctx, name):
         """Repost an emoji from my gallery."""
-        e = self.db.get(EmojiObj, name=name)
+        e = self.db.get(EmojiObj, guild=ctx.message.server.id, name=name)
         if e:
             await ctx.bot.send_message(ctx.message.channel, embed=_emoji_embed(e))
 
     @commands.command(pass_context=True)
+    @commands.check(no_private_message)
     async def emdelete(self, ctx, name):
         """Removes an emoji from my gallery."""
-        e = self.db.get(EmojiObj, name=name)
+        e = self.db.get(EmojiObj, guild=ctx.message.server.id, name=name)
         self.db.delete(e)
         self.db.commit()
         await ctx.bot.send_message(ctx.message.channel, "Deleted {}".format(name))
 
     @commands.command(pass_context=True)
+    @commands.check(no_private_message)
     async def emlist(self, ctx):
         """Lists all emojis from my gallery."""
 
-        emojis = self.db.getall(EmojiObj)
+        emojis = self.db.getall(EmojiObj, guild=ctx.message.server.id)
         e = []
         for n in emojis:
             e.append(n.name)
+        e.sort()
 
         max_e = len(e)
         row_e = int(math.ceil(max_e / 3))
