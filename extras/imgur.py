@@ -10,7 +10,7 @@ async def _update_access_token(config):
     now = datetime.now()
     exp_str = config.get('expiration')
     try:
-        exp = datetime.strptime(exp_str, time_format)
+        exp = datetime.strptime(str(exp_str), time_format)
     except ValueError:
         exp = None
     if not exp or exp < now:
@@ -33,7 +33,7 @@ async def _update_access_token(config):
 async def image_upload(url):
     """Uploads an image to imgur by url. Returns a link and image id on success, error message on failure."""
     config = settings.load('Imgur')
-    await _update_access_token(settings)
+    await _update_access_token(config)
     async with aiohttp.ClientSession() as session:
         headers = {
             #'Authorization':'Client-ID '+config.get('id'),
@@ -53,7 +53,7 @@ async def image_upload(url):
 async def image_delete(id):
     """Deletes an image from imgur."""
     config = settings.load('Imgur')
-    await _update_access_token(settings)
+    await _update_access_token(config)
     async with aiohttp.ClientSession() as session:
         headers = {
             'Authorization':'Bearer '+config.get('access')

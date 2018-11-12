@@ -1,10 +1,9 @@
+import math
 import aiohttp
 import discord
 from discord.ext import commands
 from extras.imgur import image_upload, image_delete
-from storage.lookups import find_emoji, save_emoji, delete_emoji, list_emojis
-import math
-
+from storage.db import Emoji as EmojiObj
 
 async def _get_content_type(url):
     """Checks page header and returns MIME content type."""
@@ -23,68 +22,72 @@ async def _validate_url_image(url):
 def _emoji_embed(emoji):
     """Generates a discord embed for an image."""
     embed = discord.Embed()
-    embed.set_image(url=emoji[0])
-    embed.set_footer(text=emoji[1])
+    embed.set_image(url=emoji.url)
+    embed.set_footer(text=emoji.name)
     return embed
 
 
 class Emoji:
+    def __init__(self, bot):
+        self.bot = bot
+        self.db = bot.database
+    
     @commands.command(pass_context=True)
     async def emsave(self, ctx, name, url=None):
         """Saves an emoji to my gallery. Can be a URL or direct attachment. Or you could just use this command right after an image is posted."""
-
+        e = self.db.get(EmojiObj, name=name)
+        if e:
+            await ctx.bot.send_message(ctx.message.channel, '{} already exists'.format(name))
+            return
         # attempt to find a valid image url
         try:
-            if(not url):
+            if not url:
                 # if url argument is missing, check attachments and message history
-                if(ctx.message.attachments):
+                if ctx.message.attachments:
                     url = ctx.message.attachments[0]['url']
                 else:
                     async for log in ctx.bot.logs_from(ctx.message.channel, limit=1, before=ctx.message):
-                        if(log.attachments):
+                        if log.attachments:
                             url = log.attachments[0]['url']
                         else:
                             url = log.content
             await _validate_url_image(url)
-        except(TypeError, ValueError, discord.Forbidden, discord.NotFound, discord.HTTPException):
+        except (TypeError, ValueError, discord.Forbidden, discord.NotFound, discord.HTTPException):
             await ctx.bot.send_message(ctx.message.channel, 'No valid image found.')
             return
         # upload image if found
         data = await image_upload(url)
-        if('error' in data):
+        if 'error' in data:
             await ctx.bot.send_message(ctx.message.channel, '{}. Gallery copy failed: {}'.format(name, data['error']))
         else:
-            e = save_emoji(name, data['link'])
-            if(e == name):
-                await ctx.bot.send_message(ctx.message.channel, 'Saved {}.'.format(name))
-            else:
-                embed = discord.Embed(description=e)
-                await ctx.bot.send_message(ctx.message.channel, embed=embed)
+            e = EmojiObj(name=name, url=data['link'])
+            self.db.add(e)
+            self.db.commit()
+            await ctx.bot.send_message(ctx.message.channel, 'Saved {}.'.format(name))
 
     @commands.command(pass_context=True)
     async def em(self, ctx, name):
         """Repost an emoji from my gallery."""
-        e = find_emoji(name)
-        if(e):
-            try:
-                arr = [e, name]
-                await ctx.bot.send_message(ctx.message.channel, embed=_emoji_embed(arr))
-            except:
-                embed = discord.Embed(description=e)
-                await ctx.bot.send_message(ctx.message.channel, embed=embed)
+        e = self.db.get(EmojiObj, name=name)
+        if e:
+            await ctx.bot.send_message(ctx.message.channel, embed=_emoji_embed(e))
 
     @commands.command(pass_context=True)
     async def emdelete(self, ctx, name):
         """Removes an emoji from my gallery."""
-        e = delete_emoji(name)
-        embed = discord.Embed(description=e)
-        await ctx.bot.send_message(ctx.message.channel, embed=embed)
+        e = self.db.get(EmojiObj, name=name)
+        self.db.delete(e)
+        self.db.commit()
+        await ctx.bot.send_message(ctx.message.channel, "Deleted {}".format(name))
 
     @commands.command(pass_context=True)
     async def emlist(self, ctx):
         """Lists all emojis from my gallery."""
 
-        e = str(list_emojis()).split(",")
+        emojis = self.db.getall(EmojiObj)
+        e = []
+        for n in emojis:
+            e.append(n.name)
 
         max_e = len(e)
         row_e = int(math.ceil(max_e / 3))

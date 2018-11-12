@@ -1,35 +1,15 @@
-import discord
-from discord.ext import commands
-from storage.lookups import find_guild
-from util.checks import no_private_message, require_server_permissions
+from storage.db import Guild
 
 prefix_cache = dict()
 
-async def serverwide_prefix(server):
-    if not server:
-        return '!'
-    if server not in prefix_cache:
-        guild = find_guild(server.id)
-        prefix_cache[server.id] = guild.prefix
-    return prefix_cache[server.id]
+def prefix_changed(gid):
+    del prefix_cache[gid]
 
-async def command_prefix(bot, message):
-    plist = []
-    swp = await serverwide_prefix(message.server)
-    if(swp):
-        plist.extend(swp)
-    plist.append(bot.user.mention+' ')
-    return plist
-
-@commands.command(pass_context=True)
-@commands.check(no_private_message)
-@commands.check(require_server_permissions)
-async def prefix(ctx, *args):
-    """Changes my command prefix string on this server."""
-    guild = find_guild(ctx.message.server.id)
-    guild.prefix = args
-    guild.save()
-    if(guild.prefix):
-        await ctx.bot.send_message(ctx.message.channel, 'Command prefixes changed to {}'.format(' '.join(guild.prefix)))
-    else:
-        await ctx.bot.send_message(ctx.message.channel, 'Command prefix disabled. I will still respond to {}'.format(ctx.bot.user.mention))
+def command_prefix(bot, message):
+    if not message.server:
+        return [bot.user.mention+' ', '!']
+    gid = message.server.id
+    if gid not in prefix_cache:
+        guild = bot.database.get(Guild, id=gid)
+        prefix_cache[gid] = [bot.user.mention+' ', guild.prefix]
+    return prefix_cache[gid]

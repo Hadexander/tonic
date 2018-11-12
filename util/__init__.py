@@ -1,12 +1,7 @@
-from util.maintenance import Maintenance
-from util.prefix import prefix
-from util.randomgeneration import tonictoken
-from util.info import info
-
-_no_category = [info, prefix, tonictoken]
+from .maintenance import Maintenance
+from .info import info
 
 def setup(bot):
-    for cmd in _no_category:
-        bot.add_command(cmd)
-    bot.add_cog(Maintenance())
+    bot.add_command(info)
+    bot.add_cog(Maintenance(bot))
     

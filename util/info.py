@@ -5,7 +5,7 @@ from util.prefix import command_prefix
 @command(pass_context=True)
 async def info(ctx):
     """Shows general information about me."""
-    prefixes = await command_prefix(ctx.bot, ctx.message)
+    prefixes = command_prefix(ctx.bot, ctx.message)
     msg = """```Hello, I am Tonic - your diligent bartender.
                 I am using discord.py v{}.
                 I am currently servicing {} servers.

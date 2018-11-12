@@ -2,10 +2,10 @@ import re
 import aiohttp
 import discord
 from discord.ext import commands
+from storage.db import User
 from PIL import Image, ImageDraw, ImageFont
 from lxml import etree
 from io import BytesIO
-from storage.lookups import find_user
 
 github_font = ImageFont.truetype('arial.ttf', size=12)
 
@@ -65,9 +65,13 @@ async def embed_mygit(ctx, message, name):
     await ctx.bot.delete_message(message)
 
 class Github:
+    def __init__(self, bot):
+        self.bot = bot
+        self.db = bot.database
+
     @commands.command(pass_context=True)
     async def mygit(self, ctx):
-        user = find_user(ctx.message.author.id)
+        user = self.db.get(User, id=ctx.message.author.id)
         if not user.github:
             await ctx.bot.send_message(ctx.message.channel, 'You need to register your github profile first.')
             return
@@ -90,6 +94,6 @@ class Github:
 
     @commands.command(pass_context=True)
     async def gitprofile(self, ctx, name):
-        user = find_user(ctx.message.author.id)
+        user = self.db.get(User, id=ctx.message.author.id)
         user.github = name
         user.save()

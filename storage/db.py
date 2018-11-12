@@ -1,88 +1,52 @@
-from datetime import datetime
-from sqlalchemy import create_engine, Column, Integer, String, PickleType, DateTime
+from sqlalchemy import create_engine, Column, Integer, String, PickleType, Sequence
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-from config import *
 from sqlalchemy import inspect
 
-_engine = create_engine(dburl)
-Session = sessionmaker(bind=_engine)
 Base = declarative_base()
 
 class User(Base):
     __tablename__ = 'users'
-    sha = Column(String(64), primary_key = True)
+    id = Column(String(20), primary_key = True)
     access = Column(Integer, default=0)
-    github = Column(String(40))
-
-    def __init__(self, **kwargs):
-        self.sha = kwargs.pop('sha', None)
-        self.access = kwargs.pop('access', 0)
-        self.github = kwargs.pop('github', None)
-
-    def save(self):
-        merge(self)
+    github = Column(String(64))
 
 class Guild(Base):
     __tablename__ = 'guilds'
-    sha = Column(String(64), primary_key = True)
-    prefix = Column(PickleType())
-
-    def __init__(self, **kwargs):
-        self.sha = kwargs.get('sha', None)
-        self.prefix = kwargs.get('prefix', None)
-
-    def save(self):
-        merge(self)
+    id = Column(String(20), primary_key = True)
+    prefix = Column(String(64))
 
 class Emoji(Base):
     __tablename__ = 'emojis'
-    sha = Column(String(64), primary_key = True)
+    id = Column(Integer, Sequence('emoji_id_sequence'), primary_key = True)
     url = Column(String(64))
     name = Column(String(64))
-    id = Column(String(16))
 
-    def __init__(self, **kwargs):
-        self.sha = kwargs.get('sha', None)
-        self.url = kwargs.get('url', None)
-        self.name = kwargs.get('name', None)
-        self.id = kwargs.get('id', None)
-
-    def save(self):
-        merge(self)
+class DatabaseInterface:
+    def __init__(self, url):
+        engine = create_engine(url)
+        Session = sessionmaker(bind=engine)
+        self.session = Session()
     
-    def remove(self):
-        delete(self)
-
-def validate_dbo(dbo):
-    if(len(getattr(dbo, 'sha', '')) != 64):
-        raise ValueError('Invalid DBO/SHA: '+repr(dbo))
-
-def merge(dbo):
-    """Merge object into the db. Must have valid sha."""
-    validate_dbo(dbo)
-    session = Session()
-    session.merge(dbo)
-    session.commit()
-    session.close()
-
-def pull(dbo):
-    """Populate object with data from the db. Must have valid sha. If sha doesn't exist in the db, no fields get pulled."""
-    validate_dbo(dbo)
-    session = Session()
-    query = session.query(type(dbo)).filter(type(dbo).sha == dbo.sha)
-    i = query.one_or_none()
-    if(i):
-        for attr in i.__dict__:
-            setattr(dbo, attr, getattr(i, attr))
-    session.close()
-
-def delete(dbo):
-    """Delete object from the db."""
-    validate_dbo(dbo)
-    session = Session()
-    session.delete(dbo)
-    session.commit()
-    session.close()
-
-Base.metadata.create_all(_engine)
+    def getall(self, Table, **kwargs):
+        q = self.session.query(Table)
+        for key in kwargs:
+            q = q.filter(getattr(Table, key) == kwargs[key])
+        return q
+    
+    def get(self, Table, **kwargs):
+        q = self.getall(Table, **kwargs)
+        return q.first()
+    
+    def add(self, obj):
+        self.session.add(obj)
+        return None
+    
+    def count(self, Table):
+        return self.session.query(Table).count()
+    
+    def delete(self, obj):
+        self.session.delete(obj)
+    
+    def commit(self):
+        self.session.commit()

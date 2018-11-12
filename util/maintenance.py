@@ -3,14 +3,19 @@ import aiohttp
 import asyncio
 import shlex
 from discord.ext import commands
-from storage.lookups import find_user
-from util.checks import require_owner_access
+from storage.db import User, Guild
+from .checks import require_owner_access, no_private_message, require_server_permissions
+from .prefix import prefix_changed
 
 class Maintenance:
+    def __init__(self, bot):
+        self.bot = bot
+        self.db = bot.database
+    
     @commands.command(pass_context=True)
     async def access(self, ctx):
         """Tells you your access level."""
-        user = find_user(ctx.message.author.id)
+        user = self.db.get(User, id=ctx.message.author.id)
         level = 'user'
         if(user.access > 9000):
             level = 'owner'
@@ -41,7 +46,7 @@ class Maintenance:
     @commands.command(pass_context=True)
     @commands.check(require_owner_access)
     async def dev(self, ctx, command, branch_name=None):
-        """Developer commands:
+        """Developer commands.
         branch - find out which branch I'm on
         evolve - get updates from current branch and restart
         evolve <branch_name> - change to a different branch, update and restart"""
@@ -66,3 +71,19 @@ class Maintenance:
             await ctx.bot.close()
         else:
             raise commands.MissingRequiredArgument()
+    
+    @commands.command(pass_context=True)
+    @commands.check(no_private_message)
+    @commands.check(require_server_permissions)
+    async def prefix(self, ctx, string=None):
+        """Changes my command prefix string on this server."""
+        guild_id = ctx.message.server.id
+        guild = self.db.get(Guild, id=guild_id)
+        guild.prefix = string
+        prefix_changed(guild_id)
+        self.db.commit()
+        if(guild.prefix):
+            await ctx.bot.send_message(ctx.message.channel, f"Command prefix changed to {guild.prefix}")
+        else:
+            await ctx.bot.send_message(ctx.message.channel, f"Command prefix disabled. I will still respond to {ctx.bot.user.mention}")
+    

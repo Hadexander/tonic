@@ -7,8 +7,12 @@ from discord.ext.commands import Bot, MissingRequiredArgument, BadArgument, NoPr
 from util.prefix import command_prefix
 from util.checks import VerificationError
 from storage import settings
+from storage.db import DatabaseInterface
 
 bot = Bot(command_prefix)
+
+dburl = settings.load('Database').get('url')
+bot.database = DatabaseInterface(dburl)
 
 # event code remains here for now
 sass = ["I don't {} your {}.", "I can't {} a {}, you donut.",
@@ -35,7 +39,7 @@ async def on_command_error(error, ctx):
     elif(isinstance(error, NoPrivateMessage)):
         await ctx.bot.send_message(ctx.message.channel, 'This command must be used in a channel.')
     else:
-        traceback.print_exception(type(error), error, None)
+        traceback.print_exception(type(error), error, error.__traceback__)
 
 # load submodules
 startup_modules = []
