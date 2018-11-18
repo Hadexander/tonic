@@ -141,6 +141,7 @@ class Player:
         if self.in_voice(server_id) and not self.user_in_channel(server_id, requester):
             vcname = self.get_server_dict(server_id)['voice'].channel.name
             await ctx.bot.send_message(ctx.message.channel, "I'm already playing in {}. Get in.".format(vcname))
+            return
         #create ytdl instance
         #set quiet: True if needed
         await ctx.bot.send_typing(ctx.message.channel)
