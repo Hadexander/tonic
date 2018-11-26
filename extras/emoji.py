@@ -33,7 +33,7 @@ class Emoji:
     def __init__(self, bot):
         self.bot = bot
         self.db = bot.database
-    
+
     @commands.command(pass_context=True)
     @commands.check(no_private_message)
     async def emsave(self, ctx, name, url=None):
@@ -73,7 +73,7 @@ class Emoji:
     @commands.check(no_private_message)
     async def em(self, ctx, name):
         """Repost an emoji from my gallery."""
-        e = self.db.get(EmojiObj, guild=ctx.message.server.id, name=name)
+        e = self.db.get(EmojiObj, guild_id=ctx.message.server.id, name=name)
         if e:
             await ctx.bot.send_message(ctx.message.channel, embed=_emoji_embed(e))
 
