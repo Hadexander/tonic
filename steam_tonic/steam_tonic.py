@@ -28,8 +28,8 @@ class Steam_Tonic:
         return game
 
     @commands.command(pass_context=True)
-    async def gameinfo(self,ctx, gameid):
-        game = self._gamesearch_(gameid)
+    async def gameinfo(self,ctx,appid):
+        game = self._gamesearch_(appid)
         ctx.bot.send_message("Game: ", game['game'],
         "Developer: ", game['developer'],
         "Publisher: ", game['publisher'],
