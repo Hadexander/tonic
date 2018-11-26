@@ -39,7 +39,7 @@ class Emoji:
     async def emsave(self, ctx, name, url=None):
         """Saves an emoji to my gallery. Can be a URL or direct attachment. Or you could just use this command right after an image is posted."""
         # check if emoji exists
-        e = self.db.get(EmojiObj, guild=ctx.message.server.id, name=name)
+        e = self.db.get(EmojiObj, guild_id=ctx.message.server.id, name=name)
         if e:
             await ctx.bot.send_message(ctx.message.channel, '{} already exists'.format(name))
             return
@@ -64,7 +64,7 @@ class Emoji:
         if 'error' in data:
             await ctx.bot.send_message(ctx.message.channel, '{}. Gallery copy failed: {}'.format(name, data['error']))
         else:
-            e = EmojiObj(guild=ctx.message.server.id, name=name, url=data['link'])
+            e = EmojiObj(guild_id=ctx.message.server.id, name=name, url=data['link'])
             self.db.add(e)
             self.db.commit()
             await ctx.bot.send_message(ctx.message.channel, 'Saved {}.'.format(name))
@@ -81,7 +81,7 @@ class Emoji:
     @commands.check(no_private_message)
     async def emdelete(self, ctx, name):
         """Removes an emoji from my gallery."""
-        e = self.db.get(EmojiObj, guild=ctx.message.server.id, name=name)
+        e = self.db.get(EmojiObj, guild_id=ctx.message.server.id, name=name)
         self.db.delete(e)
         self.db.commit()
         await ctx.bot.send_message(ctx.message.channel, "Deleted {}".format(name))
