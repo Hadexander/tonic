@@ -1,15 +1,18 @@
 from steam import SteamClient
 from discord.ext import commands
 from storage import settings
-#Load "config" file.
-config = settings.load('Steam')
-#Create Steam Client, Login as Bot....
-s_tonic = SteamClient()
-s_username = config.get('steam_u')
-s_password = config.get('steam_p')
-s_tonic.cli_login(s_username,s_password)
+
 
 class Steam_Tonic:
+
+    def __init__(self):
+        #Load "config" file.
+        config = settings.load('Steam')
+        #Create Steam Client, Login as Bot....
+        s_tonic = SteamClient()
+        s_username = config.get('steam_u')
+        s_password = config.get('steam_p')
+        s_tonic.cli_login(s_username,s_password)
     #Returns Game Dict info
     def _gamesearch_(self,appid):
         #Get Game Info...its a huge file.
