@@ -19,7 +19,7 @@ class Steam_Tonic:
         s_json = s_tonic.get_product_info([appid])
         if "developer_url" in s_json['apps'][appid]['extended']:
             developer_url = s_json['apps'][appid]['extended']['developer_url']
-        if "metacrtic_score" in s_json['apps'][appid]['common']
+        if "metacrtic_score" in s_json['apps'][appid]['common']:
             metascore = s_json['apps'][appid]['common']['metacrtic_score']
         game = {
         "game": s_json['apps'][appid]['common']['name'],
