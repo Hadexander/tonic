@@ -20,6 +20,7 @@ class Steam_Tonic:
         appid = int(appid)
         developer_url = "No url"
         metascore ="No score"
+        print(appid)
         s_json = self.s_tonic.get_product_info([appid])
         if "developer_url" in s_json['apps'][appid]['extended']:
             developer_url = s_json['apps'][appid]['extended']['developer_url']
