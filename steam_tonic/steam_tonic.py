@@ -1,7 +1,8 @@
 from steam import SteamClient
 from discord.ext import commands
-#from steam import WEBAPI
-
+from storage import settings
+#Load "config" file.
+config = settings.load('Steam')
 #Create Steam Client, Login as Bot....
 s_tonic = SteamClient()
 s_username = config.get('steam_u')
