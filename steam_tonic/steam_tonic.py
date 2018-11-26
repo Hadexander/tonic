@@ -4,22 +4,23 @@ from storage import settings
 
 
 class Steam_Tonic:
-
+    s_tonic = None
     def __init__(self):
         #Load "config" file.
         config = settings.load('Steam')
         #Create Steam Client, Login as Bot....
-        s_tonic = SteamClient()
+        self.s_tonic = SteamClient()
         s_username = config.get('steam_u')
         s_password = config.get('steam_p')
-        s_tonic.cli_login(s_username,s_password)
+        result = self.s_tonic.cli_login(s_username,s_password)
+        print(result)
     #Returns Game Dict info
     def _gamesearch_(self,appid):
         #Get Game Info...its a huge file.
         appid = int(appid)
         developer_url = "No url"
         metascore ="No score"
-        s_json = s_tonic.get_product_info([appid])
+        s_json = self.s_tonic.get_product_info([appid])
         if "developer_url" in s_json['apps'][appid]['extended']:
             developer_url = s_json['apps'][appid]['extended']['developer_url']
         if "metacrtic_score" in s_json['apps'][appid]['common']:
