@@ -14,12 +14,15 @@ class Steam_Tonic:
     def _gamesearch_(self,appid):
         #Get Game Info...its a huge file.
         appid = int(appid)
-        s_json = s_tonic.get_product_info(appid)
+        developer_url = ""
+        s_json = s_tonic.get_product_info([appid])
+        if "developer_url" in s_json['apps'][appid]['extended']:
+            developer_url = s_json['apps'][appid]['extended']['developer_url'])
         game = {
         "game": s_json['apps'][appid]['common']['name'],
         "developer": s_json['apps'][appid]['extended']['developer'],
         "publisher": s_json['apps'][appid]['extended']['publisher'],
-        "website": s_json['apps'][appid]['extended']['developer_url'],
+        "website": developer_url,
         "metascore": s_json['apps'][appid]['common']['metacrtic_score']
         }
         return game
