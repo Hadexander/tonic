@@ -13,6 +13,7 @@ class Steam_Tonic:
     #Returns Game Dict info
     def _gamesearch_(self,appid):
         #Get Game Info...its a huge file.
+        appid = int(appid)
         s_json = s_tonic.get_product_info(appid)
         game = {
         "game": s_json['apps'][107410]['common']['name'],
