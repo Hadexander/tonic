@@ -24,10 +24,8 @@ class Steam:
     @commands.command(pass_context=True)
     async def gameinfo(self,ctx):
         game = self._gamesearch_(ctx.message.content)
-        ctx.bot.send_message("\`\`\`
-        Game: ", game['game'],
+        ctx.bot.send_message("Game: ", game['game'],
         "Developer: ", game['developer'],
         "Publisher: ", game['publisher'],
         "Developer Website: ", game['website'],
-        "Metacritic Score: ", game['metascore'],"
-        \`\`\`")
+        "Metacritic Score: ", game['metascore'])
