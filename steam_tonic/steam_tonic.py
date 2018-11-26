@@ -16,11 +16,11 @@ class Steam_Tonic:
         appid = int(appid)
         s_json = s_tonic.get_product_info(appid)
         game = {
-        "game": s_json['apps'][107410]['common']['name'],
-        "developer": s_json['apps'][107410]['extended']['developer'],
-        "publisher": s_json['apps'][107410]['extended']['publisher'],
-        "website": s_json['apps'][107410]['extended']['developer_url'],
-        "metascore": s_json['apps'][107410]['common']['metacrtic_score']
+        "game": s_json['apps'][appid]['common']['name'],
+        "developer": s_json['apps'][appid]['extended']['developer'],
+        "publisher": s_json['apps'][appid]['extended']['publisher'],
+        "website": s_json['apps'][appid]['extended']['developer_url'],
+        "metascore": s_json['apps'][appid]['common']['metacrtic_score']
         }
         return game
 
