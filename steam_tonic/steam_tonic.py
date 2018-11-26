@@ -33,8 +33,6 @@ class Steam_Tonic:
     @commands.command(pass_context=True)
     async def gameinfo(self,ctx,appid):
         game = self._gamesearch_(appid)
-        ctx.bot.send_message("Game: ", game['game'],
-        "Developer: ", game['developer'],
-        "Publisher: ", game['publisher'],
-        "Developer Website: ", game['website'],
-        "Metacritic Score: ", game['metascore'])
+        message = "Game: {} \n Developer: {} \n Publisher: {} \n Developer Website: {} \n Metacrtic Score: {}".format(
+        game['game'], game['developer'], game['publisher'], game['website'], game['metascore'])
+        ctx.bot.send_message(message)
