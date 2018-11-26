@@ -17,7 +17,7 @@ class Steam_Tonic:
         developer_url = ""
         s_json = s_tonic.get_product_info([appid])
         if "developer_url" in s_json['apps'][appid]['extended']:
-            developer_url = s_json['apps'][appid]['extended']['developer_url'])
+            developer_url = s_json['apps'][appid]['extended']['developer_url']
         game = {
         "game": s_json['apps'][appid]['common']['name'],
         "developer": s_json['apps'][appid]['extended']['developer'],
