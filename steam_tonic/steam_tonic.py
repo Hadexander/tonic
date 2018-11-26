@@ -1,4 +1,5 @@
 from steam import SteamClient
+from discord.ext import commands
 #from steam import WEBAPI
 
 #Create Steam Client, Login as Bot....
@@ -7,7 +8,7 @@ s_username = config.get('steam_u')
 s_password = config.get('steam_p')
 s_tonic.cli_login(s_username,s_password)
 
-class Steam:
+class Steam_Tonic:
     #Returns Game Dict info
     def _gamesearch_(self,appid):
         #Get Game Info...its a huge file.
