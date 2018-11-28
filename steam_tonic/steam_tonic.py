@@ -18,4 +18,4 @@ class Steam_Tonic:
         response[appid]['data']['short_description'],
         response[appid]['data']['price_overview']['final_formatted'])
         print(message)
-        ctx.bot.send_message(ctx.message.channel,'```%s```'%message)
+        await ctx.bot.send_message(ctx.message.channel,'```%s```'%message)
