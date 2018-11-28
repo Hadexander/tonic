@@ -14,6 +14,8 @@ class Steam_Tonic:
         if response is None or 'data' not in response[appid]:
             await ctx.bot.send_message(ctx.message.channel, "Game not found")
             return
+        if response[appid]['data'] == 'movie':
+            return
         #Builds data from response
         message = "Game: {} \n Developer: {} \n Publisher: {} \n Description: {} \n Price(USD): {}".format(
         response[appid]['data']['name'],
@@ -23,7 +25,7 @@ class Steam_Tonic:
         response[appid]['data']['price_overview']['final_formatted'])
         image = discord.Embed()
         image.set_image(url=response[appid]['data']['header_image'])
-        image.set_footer(url='https://store.steampowered.com/app/%s'%appid)
+        image.set_footer(text='https://store.steampowered.com/app/%s'%appid)
         await ctx.bot.send_message(ctx.message.channel, embed=image)
         await ctx.bot.send_message(ctx.message.channel,'```%s```'%message)
         return
