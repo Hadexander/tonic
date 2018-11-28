@@ -17,7 +17,7 @@ class Steam_Tonic:
         if response[appid]['data']['type'] == 'movie':
             return
         #Builds data from response
-        message = "Game: {} \n Developer: {} \n Publisher: {} \n Description: {} \n Price(USD): {}".format(
+        message = "Game: {} \n Developer: {} \n Publisher: {} \n Description: {} \n Price(EUR): {}".format(
         response[appid]['data']['name'],
         response[appid]['data']['developers'][0],
         response[appid]['data']['publishers'][0],
