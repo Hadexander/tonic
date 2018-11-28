@@ -20,7 +20,7 @@ class Steam_Tonic:
         #Is the game free?
         if  response[appid]['data']['is_free']:
             price = "Free!"
-        else if 'price_overview' in response[appid]['data'] :
+        elif 'price_overview' in response[appid]['data'] :
             price = response[appid]['data']['price_overview']['final_formatted']
         else:
             price = "TBA"
