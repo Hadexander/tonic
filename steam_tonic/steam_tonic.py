@@ -38,7 +38,7 @@ class Steam_Tonic:
                 metacritic_url = response[appid]['data']['metacritic']['url']
         #Build Genre table
         for genre in response[appid]['data']['genres']:
-            genres+="{} ".format(genre[g_count]['description'])
+            genres+="{} ".format(genre['description'])
             g_count+=1
         #Builds data from response
         g_name = response[appid]['data']['name']
