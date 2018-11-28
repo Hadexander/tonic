@@ -37,9 +37,8 @@ class Steam_Tonic:
                 metacritic_score = response[appid]['data']['metacritic']['score']
                 metacritic_url = response[appid]['data']['metacritic']['url']
         #Build Genre table
-        for genre in response[appid]['data']['genres'].items()
-            genres+="{} ".format(genre[g_count]['description'])
-            g_count+=1
+        for genre in response[appid]['data']['genres'].keys():
+            genres+="{} ".format(response[appid]['data']['genres'][genre]['description'])
         #Builds data from response
         g_name = response[appid]['data']['name']
         message = """ Game: {} \n Developer: {} \n Publisher: {} \n Description: {} \n Genres: {} \n {} \n Price(EUR): {}
