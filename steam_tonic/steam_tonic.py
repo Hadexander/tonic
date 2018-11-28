@@ -25,7 +25,9 @@ class Steam_Tonic:
         response[appid]['data']['price_overview']['final_formatted'])
         image = discord.Embed()
         image.set_image(url=response[appid]['data']['header_image'])
-        image.set_footer(text='https://store.steampowered.com/app/%s'%appid)
+        image.set_author(url='https://store.steampowered.com/app/%s'%appid)
+        image.description(message)
+        image.title(response[appid]['data']['name'])
         await ctx.bot.send_message(ctx.message.channel, embed=image)
-        await ctx.bot.send_message(ctx.message.channel,'```%s```'%message)
+        #await ctx.bot.send_message(ctx.message.channel,'```%s```'%message)
         return
