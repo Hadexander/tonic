@@ -1,43 +1,18 @@
-from steam import SteamClient
 from discord.ext import commands
 from storage import settings
-
+import requests
+import json
 
 class Steam_Tonic:
-    s_tonic = None
-    def __init__(self):
-        #Load "config" file.
-        config = settings.load('Steam')
-        #Create Steam Client, Login as Bot....
-        self.s_tonic = SteamClient()
-        s_username = config.get('steam_u')
-        s_password = config.get('steam_p')
-        result = self.s_tonic.cli_login(s_username,s_password)
-        print(result)
-    #Returns Game Dict info
-    def _gamesearch_(self,appid):
-        #Get Game Info...its a huge file.
-        appid = int(appid)
-        developer_url = "No url"
-        metascore ="No score"
-        print(appid)
-        s_json = self.s_tonic.get_product_info([appid])
-        if "developer_url" in s_json['apps'][appid]['extended']:
-            developer_url = s_json['apps'][appid]['extended']['developer_url']
-        if "metacrtic_score" in s_json['apps'][appid]['common']:
-            metascore = s_json['apps'][appid]['common']['metacrtic_score']
-        game = {
-        "game": s_json['apps'][appid]['common']['name'],
-        "developer": s_json['apps'][appid]['extended']['developer'],
-        "publisher": s_json['apps'][appid]['extended']['publisher'],
-        "website": developer_url,
-        "metascore": metascore
-        }
-        return game
 
     @commands.command(pass_context=True)
     async def gameinfo(self,ctx,appid):
-        game = self._gamesearch_(appid)
-        message = "Game: {} \n Developer: {} \n Publisher: {} \n Developer Website: {} \n Metacrtic Score: {}".format(
-        game['game'], game['developer'], game['publisher'], game['website'], game['metascore'])
+        response = json.loads(requests.get('https://store.steampowered.com/api/appdetails?appids=%s' %appid).content)
+
+        message = "Game: {} \n Developer: {} \n Publisher: {} \n Description: {} \n Price(USD): {}".format(
+        response[appid]['data']['name'],
+        response[appid]['data']['developers'][0],
+        response[appid]['data']['publishers'][0],
+        response[appid]['data']['short_description'],
+        response[appid]['data']['price_overview']['final_formatted'])
         ctx.bot.send_message(message)
