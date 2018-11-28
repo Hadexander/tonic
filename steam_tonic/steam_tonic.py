@@ -13,7 +13,6 @@ class Steam_Tonic:
         #Checks if there was a valid response
         metacritic_score = "None"
         genres = ""
-        g_count = 0
         if response is None or 'data' not in response[appid]:
             await ctx.bot.send_message(ctx.message.channel, "Game not found")
             return
@@ -38,8 +37,7 @@ class Steam_Tonic:
                 metacritic_url = response[appid]['data']['metacritic']['url']
         #Build Genre table
         for genre in response[appid]['data']['genres']:
-            genres+="{} ".format(genre['description'])
-            g_count+=1
+            genres+="{}, ".format(genre['description'])
         #Builds data from response
         g_name = response[appid]['data']['name']
         message = """ Game: {} \n Developer: {} \n Publisher: {} \n Description: {} \n Genres: {} \n {} \n Price(EUR): {}
