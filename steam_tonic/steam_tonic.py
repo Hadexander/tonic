@@ -35,8 +35,8 @@ class Steam_Tonic:
                 metacritic_url = response[appid]['data']['metacritic']['url']
         #Builds data from response
         g_name = response[appid]['data']['name']
-        message = " Game: {} \n Developer: {} \n Publisher: {} \n Description: {} \n {} \n Price(EUR): {} \n
-        Metacritic Score: {} ".format(
+        message = """ Game: {} \n Developer: {} \n Publisher: {} \n Description: {} \n {} \n Price(EUR): {}
+        \n Metacritic Score: {} """.format(
         g_name,
         response[appid]['data']['developers'][0],
         response[appid]['data']['publishers'][0],
