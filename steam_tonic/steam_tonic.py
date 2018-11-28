@@ -7,8 +7,10 @@ class Steam_Tonic:
 
     @commands.command(pass_context=True)
     async def gameinfo(self,ctx,appid):
-        response = json.loads(requests.get('https://store.steampowered.com/api/appdetails?appids=%s' %appid).content)
+        print(appid)
 
+        response = json.loads(requests.get('https://store.steampowered.com/api/appdetails?appids=%s' %appid).content)
+        print(response)
         message = "Game: {} \n Developer: {} \n Publisher: {} \n Description: {} \n Price(USD): {}".format(
         response[appid]['data']['name'],
         response[appid]['data']['developers'][0],
