@@ -10,11 +10,12 @@ class Steam_Tonic:
         print(appid)
 
         response = json.loads(requests.get('https://store.steampowered.com/api/appdetails?appids=%s' %appid).content)
-        print(response)
+        #print(response)
         message = "Game: {} \n Developer: {} \n Publisher: {} \n Description: {} \n Price(USD): {}".format(
         response[appid]['data']['name'],
         response[appid]['data']['developers'][0],
         response[appid]['data']['publishers'][0],
         response[appid]['data']['short_description'],
         response[appid]['data']['price_overview']['final_formatted'])
+        print(message)
         ctx.bot.send_message(message)
