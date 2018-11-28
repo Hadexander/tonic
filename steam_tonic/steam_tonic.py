@@ -17,15 +17,16 @@ class Steam_Tonic:
         if response[appid]['data']['type'] == 'movie':
             return
         #Builds data from response
+        g_name = response[appid]['data']['name']
         message = "Game: {} \n Developer: {} \n Publisher: {} \n Description: {} \n Price(EUR): {}".format(
-        response[appid]['data']['name'],
+        g_name,
         response[appid]['data']['developers'][0],
         response[appid]['data']['publishers'][0],
         response[appid]['data']['short_description'],
         response[appid]['data']['price_overview']['final_formatted'])
         image = discord.Embed()
         image.set_image(url=response[appid]['data']['header_image'])
-        image.set_author(url='https://store.steampowered.com/app/%s'%appid)
+        image.set_author(name=g_name,url='https://store.steampowered.com/app/%s'%appid)
         image.description(message)
         image.title(response[appid]['data']['name'])
         await ctx.bot.send_message(ctx.message.channel, embed=image)
