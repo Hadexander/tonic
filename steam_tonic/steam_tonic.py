@@ -20,7 +20,7 @@ class Steam_Tonic:
         response[appid]['data']['price_overview']['final_formatted'])
         image = discord.Embed()
         image.set_image(url=response[appid]['data']['header_image'])
-        image.set_footer(text='https://store.steampowered.com/app/%s/DARK_SOULS_III/'%appid)
+        image.set_footer(text='https://store.steampowered.com/app/%s'%appid)
         print(message)
         await ctx.bot.send_message(ctx.message.channel,'```%s```'%message)
         await ctx.bot.send_message(ctx.message.channel, embed=image)
