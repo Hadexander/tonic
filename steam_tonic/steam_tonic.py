@@ -14,19 +14,39 @@ class Steam_Tonic:
         if response is None or 'data' not in response[appid]:
             await ctx.bot.send_message(ctx.message.channel, "Game not found")
             return
+        #checks if its a movie as we're not interested in those.
         if response[appid]['data']['type'] == 'movie':
             return
+        #Is the game free?
+        if  response[appid]['data']['is_free']:
+            price = "Free!"
+        else if 'price_overview' in response[appid]['data'] :
+            price = response[appid]['data']['price_overview']['final_formatted']
+        else:
+            price = "TBA"
+        #Check if game is released or not.
+        if response[appid]['data']['release_date']['coming_soon']:
+            date = "Coming soon in: {}".format(response[appid]['data']['release_date']['date'])
+        else:
+            date = "Released on: {}".format(response[appid]['data']['release_date']['date'])
+            #Check if there's a metacritic score Also
+            if 'metacritic' in response[appid]['data']:
+                metacritic_score = response[appid]['data']['metacritic']['score']
+                metacritic_url = response[appid]['data']['metacritic']['url']
         #Builds data from response
         g_name = response[appid]['data']['name']
-        message = "Game: {} \n Developer: {} \n Publisher: {} \n Description: {} \n Price(EUR): {}".format(
+        message = " Game: {} \n Developer: {} \n Publisher: {} \n Description: {} \n {} \n Price(EUR): {} \n
+         Metacritic Score: ".format(
         g_name,
         response[appid]['data']['developers'][0],
         response[appid]['data']['publishers'][0],
         response[appid]['data']['short_description'],
-        response[appid]['data']['price_overview']['final_formatted'])
-        image = discord.Embed(title=g_name,description=message,url = 'https://store.steampowered.com/app/%s' %appid)
-        image.set_image(url=response[appid]['data']['header_image'])
-        image.set_author(name="steam",url='https://store.steampowered.com')
-        await ctx.bot.send_message(ctx.message.channel, embed=image)
-        #await ctx.bot.send_message(ctx.message.channel,'```%s```'%message)
+        date,
+        price,
+        metacritic_score)
+        #Builds embeding based off everything we compiled together
+        finalout = discord.Embed(title=g_name,description=message,url = 'https://store.steampowered.com/app/%s' %appid)
+        finalout.set_image(url=response[appid]['data']['header_image'])
+        finalout.set_author(name="Steam",url='https://store.steampowered.com')
+        await ctx.bot.send_message(ctx.message.channel, embed=finalout)
         return
