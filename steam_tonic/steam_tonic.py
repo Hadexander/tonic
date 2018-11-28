@@ -14,7 +14,7 @@ class Steam_Tonic:
         if response is None or 'data' not in response[appid]:
             await ctx.bot.send_message(ctx.message.channel, "Game not found")
             return
-        if response[appid]['data'] == 'movie':
+        if response[appid]['data']['type'] == 'movie':
             return
         #Builds data from response
         message = "Game: {} \n Developer: {} \n Publisher: {} \n Description: {} \n Price(USD): {}".format(
