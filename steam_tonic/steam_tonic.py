@@ -6,13 +6,14 @@ import json
 
 class Steam_Tonic:
 
+
     @commands.command(pass_context=True)
     async def gameinfo(self,ctx,appid):
         #Calls api for appid (will later be provided by an internal DB)
         response = json.loads(requests.get('https://store.steampowered.com/api/appdetails?appids=%s' %appid).content)
-        #Checks if there was a valid response
         metacritic_score = "None"
         genres = ""
+        #Checks if there was a valid response
         if response is None or 'data' not in response[appid]:
             await ctx.bot.send_message(ctx.message.channel, "Game not found")
             return
@@ -40,7 +41,7 @@ class Steam_Tonic:
             genres+="{}, ".format(genre['description'])
         #Builds data from response
         g_name = response[appid]['data']['name']
-        message = """ Game: {} \n Developer: {} \n Publisher: {} \n Description: {} \n Genres: {} \n {} \n Price(EUR): {}
+        message = """ Game: {} \n Developer: {} \n Publisher: {} \n **Description** \n{} \n \n Genres: {} \n **{}**   **Price(EUR):** {}
         Metacritic Score: {} """.format(
         g_name,
         response[appid]['data']['developers'][0],
