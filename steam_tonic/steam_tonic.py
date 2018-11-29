@@ -9,7 +9,7 @@ class Steam_Tonic:
 
     def __init__(self):
         self.steamdb = sqlite3.connect("./steamdb.db")
-        self.s_cursor = self.steamdb.s_cursor()
+        self.s_cursor = self.steamdb.cursor()
 
     def __gamesearch__(self,game):
         appid = self.s_cursor.execute('SELECT appid FROM steamdb WHERE name LIKE ?',game).fetchone()
