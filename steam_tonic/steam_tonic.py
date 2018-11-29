@@ -6,6 +6,13 @@ import json
 
 class Steam_Tonic:
 
+    def __init__(self,bot):
+        self.bot = bot
+        self.steamdb = bot.steamdb
+
+    def __gamesearch__(self,game):
+        return
+
     @commands.command(pass_context=True)
     async def gameinfo(self,ctx,appid):
         #Calls api for appid (will later be provided by an internal DB)
