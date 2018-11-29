@@ -12,7 +12,7 @@ class Steam_Tonic:
         self.s_cursor = self.steamdb.cursor()
 
     def __gamesearch__(self,game):
-        appid = self.s_cursor.execute('SELECT appid FROM steamdb WHERE name LIKE ?',game).fetchone()
+        appid = self.s_cursor.execute('SELECT appid FROM steamdb WHERE name LIKE ?',(game)).fetchone()
         return appid[0]
 
     @commands.command(pass_context=True)
