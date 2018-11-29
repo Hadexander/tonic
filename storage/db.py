@@ -34,7 +34,10 @@ class DatabaseInterface:
     def getall(self, Table, **kwargs):
         q = self.session.query(Table)
         for key in kwargs:
-            q = q.filter(getattr(Table, key) == kwargs[key])
+            if isinstance(kwargs[key], Like):
+                q = q.filter(getattr(Table, key).like(kwargs[key].pattern))
+            else:
+                q = q.filter(getattr(Table, key) == kwargs[key])
         return q
     
     def get(self, Table, **kwargs):
@@ -53,3 +56,7 @@ class DatabaseInterface:
     
     def commit(self):
         self.session.commit()
+
+class Like:
+    def __init__(self, pattern):
+        self.pattern = pattern
