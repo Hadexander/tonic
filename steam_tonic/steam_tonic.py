@@ -8,7 +8,7 @@ import sqlite3
 class Steam_Tonic:
 
     def __init__(self):
-        self.steamdb = sqlite3.connect("./steamdb.db")
+        self.steamdb = sqlite3.connect("steamdb.db")
         self.s_cursor = self.steamdb.cursor()
 
     def __gamesearch__(self,game):
