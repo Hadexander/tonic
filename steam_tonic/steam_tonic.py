@@ -40,8 +40,8 @@ class Steam_Tonic:
             genres+="{}, ".format(genre['description'])
         #Builds data from response
         g_name = response[appid]['data']['name']
-        message = """ **Game:** {} \n **Developer:** {} \n **Publisher:** {} \n\n\n **Description** \n{} \n \n \n **Genres:** {} \n *{}*   Price(EUR): *{}*
-        **Metacritic Score:** {} """.format(
+        message = """ **Game:** {} \n **Developer:** {} \n **Publisher:** {} \n\n\n **Description** \n{} \n \n \n *Genres:* {} \n *{}* \nPrice(EUR): *{}*
+        *Metacritic Score:* {} """.format(
         g_name,
         response[appid]['data']['developers'][0],
         response[appid]['data']['publishers'][0],
