@@ -13,7 +13,8 @@ bot = Bot(command_prefix)
 
 dburl = settings.load('Database').get('url')
 bot.database = DatabaseInterface(dburl)
-
+steamurl = settings.load('Database').get('url')
+bot.steamdb = DatabaseInterface(steamurl)
 # event code remains here for now
 sass = ["I don't {} your {}.", "I can't {} a {}, you donut.",
         "No, you {} your {}.", "You should know that I can't {} a {} just like that..."]
