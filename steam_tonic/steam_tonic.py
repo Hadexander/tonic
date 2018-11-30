@@ -19,7 +19,7 @@ class Steam_Tonic:
     @commands.command(pass_context=True)
     async def gameinfo(self,ctx):
         #Calls api for appid (will later be provided by an internal DB)
-        game = ctx.message.content[:8]
+        game = ctx.message.content[9:]
         appid = self.__gamesearch__(game)
         response = json.loads(requests.get('https://store.steampowered.com/api/appdetails?appids=%s' %appid).content)
         metacritic_score = "None"
