@@ -1,5 +1,6 @@
 from discord.ext import commands
 from storage import settings
+from lxml import html
 import discord
 import requests
 import json
@@ -9,11 +10,16 @@ class Steam_Tonic:
 
 
     def __gamesearch__(self,game):
-        return
+        response = requests.get('https://store.steampowered.com/search/?term={}'.format(game)).content
+        root = html.fromstring(response)
+        newroot = root.xpath('//a[@class= "search_result_row ds_collapse_flag " ]')
+        appid = newroot[0].get('data-ds-appid')
+        return appid
 
     @commands.command(pass_context=True)
-    async def gameinfo(self,ctx,appid):
+    async def gameinfo(self,ctx,game):
         #Calls api for appid (will later be provided by an internal DB)
+        appid = self.__gamesearch__(game)
         response = json.loads(requests.get('https://store.steampowered.com/api/appdetails?appids=%s' %appid).content)
         metacritic_score = "None"
         genres = ""
