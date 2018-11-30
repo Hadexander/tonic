@@ -3,26 +3,17 @@ from storage import settings
 import discord
 import requests
 import json
-import sqlite3
+
 
 class Steam_Tonic:
 
-    def __init__(self):
-        self.steamdb = sqlite3.connect("steamdb.db")
-        self.s_cursor = self.steamdb.cursor()
 
     def __gamesearch__(self,game):
-        game = ('{}'.format(game),)
-        self.s_cursor.execute('SELECT appid FROM steamdb WHERE name LIKE ?;', game)
-        print(self.s_cursor.fetchone())
-        print(game)
-        appid = self.scursor.fetchone()
-        return appid[0]
+        return
 
     @commands.command(pass_context=True)
-    async def gameinfo(self,ctx,game):
+    async def gameinfo(self,ctx,appid):
         #Calls api for appid (will later be provided by an internal DB)
-        appid = self.__gamesearch__(game)
         response = json.loads(requests.get('https://store.steampowered.com/api/appdetails?appids=%s' %appid).content)
         metacritic_score = "None"
         genres = ""
