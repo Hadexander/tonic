@@ -18,6 +18,7 @@ class Steam_Tonic:
 
     @commands.command(pass_context=True)
     async def gameinfo(self,ctx):
+        """Searches a game on steam"""
         #Calls api for appid (will later be provided by an internal DB)
         game = ctx.message.content[9:]
         appid = self.__gamesearch__(game)
