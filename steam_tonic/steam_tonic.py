@@ -10,9 +10,13 @@ class Steam_Tonic:
 
 
     def __gamesearch__(self,game):
+        #Uses steam's search engine.
         response = requests.get('https://store.steampowered.com/search/?term={}'.format(game)).content
         root = html.fromstring(response)
+        #parse through results and get the first element of results.
         newroot = root.xpath('//a[@class= "search_result_row ds_collapse_flag " ]')
+        if newroot is None:
+            return False
         appid = newroot[0].get('data-ds-appid')
         return appid
 
@@ -22,6 +26,10 @@ class Steam_Tonic:
         #Calls api for appid (will later be provided by an internal DB)
         game = ctx.message.content[9:]
         appid = self.__gamesearch__(game)
+        #check if we even got a result
+        if not appid:
+            await ctx.bot.send_message(ctx.message.channel, "Game not found")
+            return
         response = json.loads(requests.get('https://store.steampowered.com/api/appdetails?appids=%s' %appid).content)
         metacritic_score = "None"
         genres = ""
