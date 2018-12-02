@@ -20,13 +20,13 @@ class Steam_Tonic:
         appid = newroot[0].get('data-ds-appid')
         return appid
 
-    def __isMedia__(self,game_res):
+    def __isMedia__(self,game_res,appid):
         mediatype = game_res[appid]['data']['type']
         if mediatype == 'movie' or mediatype == 'series':
             return True
         return False
 
-    def __getPrice__(self,game_res):
+    def __getPrice__(self,game_res,appid):
         if  game_res[appid]['data']['is_free']:
             return "Free!"
         elif 'price_overview' in game_res[appid]['data'] :
@@ -35,14 +35,14 @@ class Steam_Tonic:
             return "TBA"
         return False
 
-    def __getReleaseDate__(self,game_res):
+    def __getReleaseDate__(self,game_res,appid):
         if game_res[appid]['data']['release_date']['coming_soon']:
             date = "Coming soon in: {}".format(game_res[appid]['data']['release_date']['date'])
         else:
             date = "Released on: {}".format(game_res[appid]['data']['release_date']['date'])
         return date
 
-    def __getGenres__(self,game_res):
+    def __getGenres__(self,game_res,appid):
         genrelist = game_res[appid]['data']['genres']
         if len(genrelist) < 2:
             return genrelist[0]
@@ -50,15 +50,15 @@ class Steam_Tonic:
             genres+="{}, ".format(genre['description'])
         return genres
 
-    def __getDescription__(self,game_res):
+    def __getDescription__(self,game_res,appid):
         description = game_res[appid]['data']['short_description']
         return description
 
-    def __getGameName__(self,game_res):
+    def __getGameName__(self,game_res,appid):
         g_name = game_res[appid]['data']['name']
         return g_name
 
-    def __getDevelopers__(self,game_res):
+    def __getDevelopers__(self,game_res,appid):
         developerslist = response[appid]['data']['developers']
         developers= ""
         if len(developerslist) < 2:
@@ -68,11 +68,11 @@ class Steam_Tonic:
                 developers = "{},".format(Pub)
         return developers
 
-    def __getPublisher__(self,game_res):
+    def __getPublisher__(self,game_res,appid):
         publisher = game_res[appid]['data']['publishers'][0]
         return publisher
 
-    def __getMetascore__(self,game_res):
+    def __getMetascore__(self,game_res,appid):
         if 'metacritic' in response[appid]['data']:
             metacritic_score = response[appid]['data']['metacritic']['score']
             return metacritic_score
@@ -96,14 +96,14 @@ class Steam_Tonic:
             await ctx.bot.send_message(ctx.message.channel, "Game not found")
             return
         #getters
-        g_name = self.__getGameName__(response)
-        developers = self.__getDescription__(response)
-        publisher = self.__getPublisher__(response)
-        description = self.__getDescription__(response)
-        genres = self.__getGenres__(response)
-        price = self.__getPrice__(reponse)
-        metascore = self.__getMetascore__(response)
-        date = self.__getMetascore__(reponse)
+        g_name = self.__getGameName__(response,appid)
+        developers = self.__getDescription__(response,appid)
+        publisher = self.__getPublisher__(response,appid)
+        description = self.__getDescription__(response,appid)
+        genres = self.__getGenres__(response,appid)
+        price = self.__getPrice__(reponse,appid)
+        metascore = self.__getMetascore__(response,appid)
+        date = self.__getMetascore__(reponse,appid)
         #Build out string for embed
         message = """ **Game:** {} \n **Developer:** {} \n **Publisher:** {} \n\n\n **Description** \n{} \n \n \n **Genres:** {} \n *{}* \n**Price(EUR):** *{}*
         **Metacritic Score:** {} """.format(
