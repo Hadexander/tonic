@@ -113,7 +113,7 @@ class Steam_Tonic:
         genres,
         date,
         price,
-        metacritic_score)
+        metascore)
         #Create embeding
         finalout = discord.Embed(title=g_name,description=message,url = 'https://store.steampowered.com/app/%s' %appid)
         finalout.set_image(url=response[appid]['data']['header_image'])
