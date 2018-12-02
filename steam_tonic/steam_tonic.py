@@ -64,7 +64,7 @@ class Steam_Tonic:
             return developerslist[0]
         else:
             for Pub in developerslist:
-                developers = "{},".format(Pub)
+                developers += "{},".format(Pub)
         return developers
 
     def __getPublisher__(self,game_res,appid):
