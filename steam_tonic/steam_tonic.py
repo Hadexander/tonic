@@ -96,7 +96,7 @@ class Steam_Tonic:
             return
         #getters
         g_name = self.__getGameName__(response,appid)
-        developers = self.__getDescription__(response,appid)
+        developers = self.__getDevelopers__(response,appid)
         publisher = self.__getPublisher__(response,appid)
         description = self.__getDescription__(response,appid)
         genres = self.__getGenres__(response,appid)
