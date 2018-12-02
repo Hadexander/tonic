@@ -44,8 +44,6 @@ class Steam_Tonic:
 
     def __getGenres__(self,game_res,appid):
         genrelist = game_res[appid]['data']['genres']
-        if len(genrelist) < 2:
-            return genrelist[0]
         for genre in genrelist:
             genres+="{}, ".format(genre['description'])
         return genres
@@ -100,10 +98,10 @@ class Steam_Tonic:
         developers = self.__getDescription__(response,appid)
         publisher = self.__getPublisher__(response,appid)
         description = self.__getDescription__(response,appid)
-        #genres = self.__getGenres__(response,appid)
-        price = self.__getPrice__(reponse,appid)
+        genres = self.__getGenres__(response,appid)
+        price = self.__getPrice__(response,appid)
         metascore = self.__getMetascore__(response,appid)
-        date = self.__getMetascore__(reponse,appid)
+        date = self.__getReleaseDate__(reponse,appid)
         #Build out string for embed
         message = """ **Game:** {} \n **Developer:** {} \n **Publisher:** {} \n\n\n **Description** \n{} \n \n \n **Genres:** {} \n *{}* \n**Price(EUR):** *{}*
         **Metacritic Score:** {} """.format(
