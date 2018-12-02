@@ -73,7 +73,7 @@ class Steam_Tonic:
 
     def __getMetascore__(self,game_res,appid):
         if 'metacritic' in response[appid]['data']:
-            metacritic_score = response[appid]['data']['metacritic']['score']
+            metacritic_score = game_res[appid]['data']['metacritic']['score']
             return metacritic_score
         else:
             return False
