@@ -15,10 +15,70 @@ class Steam_Tonic:
         root = html.fromstring(response)
         #parse through results and get the first element of results.
         newroot = root.xpath('//a[@class= "search_result_row ds_collapse_flag " ]')
-        if newroot is None:
+        if newroot is None or newroot < 1:
             return False
         appid = newroot[0].get('data-ds-appid')
         return appid
+
+    def __isMedia__(self,game_res):
+        mediatype = game_res[appid]['data']['type']
+        if mediatype == 'movie' or mediatype == 'series':
+            return True
+        return False
+
+    def __getPrice__(self,game_res):
+        if  game_res[appid]['data']['is_free']:
+            return "Free!"
+        elif 'price_overview' in game_res[appid]['data'] :
+            return game_res[appid]['data']['price_overview']['final_formatted']
+        else:
+            return "TBA"
+        return False
+
+    def __getReleaseDate__(self,game_res):
+        if game_res[appid]['data']['release_date']['coming_soon']:
+            date = "Coming soon in: {}".format(game_res[appid]['data']['release_date']['date'])
+        else:
+            date = "Released on: {}".format(game_res[appid]['data']['release_date']['date'])
+        return date
+
+    def __getGenres__(self,game_res):
+        genrelist = game_res[appid]['data']['genres']
+        if len(genrelist) < 2:
+            return genrelist[0]
+        for genre in genrelist:
+            genres+="{}, ".format(genre['description'])
+        return genres
+
+    def __getDescription__(self,game_res):
+        description = game_res[appid]['data']['short_description']
+        return description
+
+    def __getGameName__(self,game_res):
+        g_name = game_res[appid]['data']['name']
+        return g_name
+
+    def __getDevelopers__(self,game_res):
+        developerslist = response[appid]['data']['developers']
+        developers= ""
+        if len(developerslist) < 2:
+            return developerslist[0]
+        else:
+            for Pub in developerslist:
+                developers = "{},".format(Pub)
+        return developers
+
+    def __getPublisher__(self,game_res):
+        publisher = game_res[appid]['data']['publishers'][0]
+        return publisher
+
+    def __getMetascore__(self,game_res):
+        if 'metacritic' in response[appid]['data']:
+            metacritic_score = response[appid]['data']['metacritic']['score']
+            return metacritic_score
+        else:
+            return False
+        return
 
     @commands.command(pass_context=True)
     async def gameinfo(self,ctx):
@@ -31,47 +91,31 @@ class Steam_Tonic:
             await ctx.bot.send_message(ctx.message.channel, "Game not found")
             return
         response = json.loads(requests.get('https://store.steampowered.com/api/appdetails?appids=%s' %appid).content)
-        metacritic_score = "None"
-        genres = ""
         #Checks if there was a valid response
         if response is None or 'data' not in response[appid]:
             await ctx.bot.send_message(ctx.message.channel, "Game not found")
             return
-        #checks if its a movie as we're not interested in those.
-        if response[appid]['data']['type'] == 'movie':
-            return
-        #Is the game free?
-        if  response[appid]['data']['is_free']:
-            price = "Free!"
-        elif 'price_overview' in response[appid]['data'] :
-            price = response[appid]['data']['price_overview']['final_formatted']
-        else:
-            price = "TBA"
-        #Check if game is released or not.
-        if response[appid]['data']['release_date']['coming_soon']:
-            date = "Coming soon in: {}".format(response[appid]['data']['release_date']['date'])
-        else:
-            date = "Released on: {}".format(response[appid]['data']['release_date']['date'])
-            #Check if there's a metacritic score Also
-            if 'metacritic' in response[appid]['data']:
-                metacritic_score = response[appid]['data']['metacritic']['score']
-                metacritic_url = response[appid]['data']['metacritic']['url']
-        #Build Genre table
-        for genre in response[appid]['data']['genres']:
-            genres+="{}, ".format(genre['description'])
-        #Builds data from response
-        g_name = response[appid]['data']['name']
+        #getters
+        g_name = self.__getGameName__(response)
+        developers = self.__getDescription__(response)
+        publisher = self.__getPublisher__(response)
+        description = self.__getDescription__(response)
+        genres = self.__getGenres__(response)
+        price = self.__getPrice__(reponse)
+        metascore = self.__getMetascore__(response)
+        date = self.__getMetascore__(reponse)
+        #Build out string for embed
         message = """ **Game:** {} \n **Developer:** {} \n **Publisher:** {} \n\n\n **Description** \n{} \n \n \n **Genres:** {} \n *{}* \n**Price(EUR):** *{}*
         **Metacritic Score:** {} """.format(
         g_name,
-        response[appid]['data']['developers'][0],
-        response[appid]['data']['publishers'][0],
-        response[appid]['data']['short_description'],
+        developers,
+        publisher,
+        description,
         genres,
         date,
         price,
         metacritic_score)
-        #Builds embeding based off everything we compiled together
+        #Create embeding
         finalout = discord.Embed(title=g_name,description=message,url = 'https://store.steampowered.com/app/%s' %appid)
         finalout.set_image(url=response[appid]['data']['header_image'])
         finalout.set_author(name="Steam",url='https://store.steampowered.com')
