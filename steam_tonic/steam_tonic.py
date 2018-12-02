@@ -58,7 +58,7 @@ class Steam_Tonic:
         return g_name
 
     def __getDevelopers__(self,game_res,appid):
-        developerslist = response[appid]['data']['developers']
+        developerslist = game_res[appid]['data']['developers']
         developers= ""
         if len(developerslist) < 2:
             return developerslist[0]
@@ -72,7 +72,7 @@ class Steam_Tonic:
         return publisher
 
     def __getMetascore__(self,game_res,appid):
-        if 'metacritic' in response[appid]['data']:
+        if 'metacritic' in game_res[appid]['data']:
             metacritic_score = game_res[appid]['data']['metacritic']['score']
             return metacritic_score
         else:
