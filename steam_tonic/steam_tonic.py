@@ -15,7 +15,7 @@ class Steam_Tonic:
         root = html.fromstring(response)
         #parse through results and get the first element of results.
         newroot = root.xpath('//a[@class= "search_result_row ds_collapse_flag " ]')
-        if newroot is None or newroot < 1:
+        if newroot is None or len(newroot) < 1:
             return False
         appid = newroot[0].get('data-ds-appid')
         return appid
