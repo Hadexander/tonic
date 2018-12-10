@@ -14,9 +14,9 @@ class Player:
 
     def get_server_dict(self, server_id):
         if server_id not in self._servers:
-            self._servers[server_id] = {'queue':deque(), 'volume':1.0, 'voice':None, 'player':None, 'song':None}
+            self._servers[server_id] = {'queue':deque(), 'volume':0.5, 'voice':None, 'player':None, 'song':None}
         return self._servers[server_id]
-    
+
     def in_voice(self, server_id):
         """Returns True if in a voice channel on that server."""
         srv = self.get_server_dict(server_id)
@@ -67,10 +67,10 @@ class Player:
         if not nick:
             nick = user.name
         return nick
-    
+
     def format_song_display(self, prefix, title, duration, user):
         return "``{} {} [{}] [{}]``\n".format(prefix, title, duration, user)
-    
+
     @commands.command(pass_context=True)
     async def queue(self, ctx):
         """Shows currently queued items."""
@@ -83,7 +83,7 @@ class Player:
             i += 1
             msg += line
         await ctx.bot.send_message(ctx.message.channel, msg)
-    
+
     def _after(self, bot, server_id):
         coro = self._play(bot, server_id)
         future = asyncio.run_coroutine_threadsafe(coro, bot.loop)
@@ -98,7 +98,7 @@ class Player:
         await bot.change_presence(game = None)
         srv = self.get_server_dict(server_id)
         srv['player'] = None
-    
+
     async def _play(self, bot, server_id):
         """Starts the ffmpeg player with the next song in queue."""
         srv = self.get_server_dict(server_id)
@@ -116,7 +116,7 @@ class Player:
             return
         srv['player'].volume = srv['volume']
         srv['player'].start()
-    
+
     async def _find(self, bot, search_str):
         """Performs a youtube search. Returns ytdl entry or None."""
         ytdl = YoutubeDL(self._search_options)
@@ -218,6 +218,23 @@ class Player:
             srv['player'].pause()
         else:
             srv['player'].resume()
+
+    @commands.command(pass_context=True)
+    async def stop(self, ctx):
+        """Stops whatever it's playing."""
+        server_id = ctx.message.server.id
+        srv = self.get_server_dict(server_id)
+        requester = ctx.message.author
+        #silentrly drop if not in voice
+        if not self.in_voice(server_id):
+            return
+        #refuse if user not in the same channel
+        if not self.user_in_channel(server_id, requester):
+            vcname = self.get_server_dict(server_id)['voice'].channel.name
+            await ctx.bot.send_message(ctx.message.channel, "You can't control me outside of {}.".format(vcname))
+            return
+        srv['queue'].clear()
+        await self._finish_playback(bot, server_id)
 
     def format_volume_bar(self, value):
         """Returns the volume bar string. Expects value = [0.0-2.0]"""

@@ -1,5 +1,4 @@
 from discord.ext import commands
-from storage import settings
 from lxml import html
 import discord
 import requests
