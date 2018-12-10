@@ -5,6 +5,8 @@ import discord
 import re
 from discord.ext import commands
 from discord.ext.commands import BadArgument
+from lxml import html
+import requests
 
 class Fun:
     @commands.command(pass_context=True)
@@ -80,10 +82,27 @@ class Fun:
         for frame in frames[1:]:
             await asyncio.sleep(1)
             await ctx.bot.edit_message(msg, frame)
-    
+
     @commands.command(pass_context=True)
     async def bother(self, ctx, user: discord.Member):
         """A very mean thing to do."""
         for i in range(5):
             msg =  await ctx.bot.send_message(ctx.message.channel, user.mention)
             await ctx.bot.delete_message(msg)
+
+    @commands.command(pass_context=True)
+    async def drinkify(self,ctx):
+        """Ask Tonic for a drink inspired by your favorite artists!"""
+        artist = ctx.message.content[9:]
+        drink = ""
+        response = requests.get('http://drinkify.org/{}'.format(artist))
+        if response.status_code == 200:
+            root = html.fromstring(response.content)
+            recipe = root.xpath('//ul[@class="recipe"]/li/text()')
+            for alc in recipe:
+                drink +="{}\n".format(alc)
+            instructions = root.xpath('normalize-space(//p[@class="instructions"]/text())')
+            drink += "\nInstructions:\n{}".format(instructions)
+        else:
+            return
+        await ctx.bot.send_message(ctx.message.channel, drink)

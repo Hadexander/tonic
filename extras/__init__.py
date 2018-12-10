@@ -8,4 +8,3 @@ def setup(bot):
     bot.add_cog(Fun())
     bot.add_cog(Emoji(bot))
     bot.add_cog(Polling())
-    bot.add_cog(Bartender())
