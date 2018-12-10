@@ -6,7 +6,7 @@ class Bartender:
     @commands.command(pass_context=True)
     async def orderartist(self,ctx):
         """Ask Tonic for a drink inspired by your favorite artists!"""
-        artist = ctx.message.content[6:]
+        artist = ctx.message.content[12:]
         drink = ""
         response = requests.get('http://drinkify.org/{}'.format(artist))
         if response.status_code == 200:
