@@ -234,7 +234,7 @@ class Player:
             await ctx.bot.send_message(ctx.message.channel, "You can't control me outside of {}.".format(vcname))
             return
         srv['queue'].clear()
-        await self._finish_playback(bot, server_id)
+        await self._finish_playback(ctx.bot, server_id)
 
     def format_volume_bar(self, value):
         """Returns the volume bar string. Expects value = [0.0-2.0]"""
