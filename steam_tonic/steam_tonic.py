@@ -1,4 +1,4 @@
-from discord.ext import commands
+"N/"from discord.ext import commands
 from lxml import html
 import discord
 import requests
@@ -75,7 +75,7 @@ class Steam_Tonic:
             metacritic_score = game_res[appid]['data']['metacritic']['score']
             return metacritic_score
         else:
-            return False
+            return "N/A"
         return
 
     @commands.command(pass_context=True)
