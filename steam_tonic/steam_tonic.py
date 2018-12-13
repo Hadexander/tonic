@@ -1,4 +1,4 @@
-"N/"from discord.ext import commands
+from discord.ext import commands
 from lxml import html
 import discord
 import requests
