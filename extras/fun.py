@@ -110,7 +110,7 @@ class Fun:
     @commands.command(pass_context=True)
     async def mal(self,ctx):
         """Quickly search something on MyAnimeList.....weebs.."""
-        anime = ctx.message.content[:4]
+        anime = ctx.message.content[4:]
         print(anime)
         response = requests.get("https://api.jikan.moe/v3/search/anime?q={}".format(anime))
         if response.status_code != 200:
