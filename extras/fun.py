@@ -111,10 +111,11 @@ class Fun:
     async def mal(self,ctx):
         """Quickly search something on MyAnimeList.....weebs.."""
         anime = ctx.message.content[:4]
-        response = json.loads(requests.get("https://api.jikan.moe/v3/search/anime?q={}page=1".format(anime)).content)
+        response = requests.get("https://api.jikan.moe/v3/search/anime?q={}page=1".format(anime))
         if response.status_code != 200:
             await ctx.bot.send_message(ctx.message.channel, "Anime not found.")
             return
+        response = json.loads(response.content)
         url = response['results'][0]['url']
         await ctx.bot.send_message(ctx.message.channel, url)
         return
