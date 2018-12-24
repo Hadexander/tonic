@@ -7,7 +7,7 @@ from discord.ext import commands
 from discord.ext.commands import BadArgument
 from lxml import html
 import requests
-
+import json
 class Fun:
     @commands.command(pass_context=True)
     async def inspire(self, ctx):
