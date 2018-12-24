@@ -116,5 +116,5 @@ class Fun:
             await ctx.bot.send_message(ctx.message.channel, "Anime not found.")
             return
         url = response['results'][0]['url']
-        ctx.bot.send_message(ctx.message.channel, url)
+        await ctx.bot.send_message(ctx.message.channel, url)
         return
