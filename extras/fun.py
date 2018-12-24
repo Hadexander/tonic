@@ -106,3 +106,15 @@ class Fun:
         else:
             return
         await ctx.bot.send_message(ctx.message.channel, drink)
+
+    @commands.command(pass_context=True)
+    async def mal(self,ctx):
+        """Quickly search something on MyAnimeList.....weebs.."""
+        anime = ctx.message.content[:4]
+        response = json.loads(requests.get("https://api.jikan.moe/v3/search/anime?q={}page=1".format(anime)))
+        if response.status_code != 200:
+            await ctx.bot.send_message(ctx.message.channel, "Anime not found.")
+            return
+        url = response['results'][0]['url']
+        ctx.bot.send_message(ctx.message.channel, url)
+        return
