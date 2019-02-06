@@ -10,7 +10,7 @@ from discord import Game
 from util.logger import LoggingErrorWriter
 
 class Player:
-    def __init__():
+    def __init__(self):
         logger = logging.getLogger()
         self._default_options = {'logger':logger, 'quiet':False, 'noplaylist':True, 'playlist_items':'1', 'format':'bestaudio/webm[abr>0]/best'}
         self._search_options = {'logger':logger, 'default_search':'ytsearch1', 'quiet':False, 'noplaylist':True, 'playlist_items':'1', 'format':'bestaudio/webm[abr>0]/best'}
