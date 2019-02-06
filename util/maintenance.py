@@ -2,15 +2,18 @@ import imghdr
 import aiohttp
 import asyncio
 import shlex
+import logging
 from discord.ext import commands
 from storage.db import User, Guild
 from .checks import require_owner_access, no_private_message, require_server_permissions
 from .prefix import prefix_changed
+from .logger import DiscordLoggingHandler
 
 class Maintenance:
     def __init__(self, bot):
         self.bot = bot
         self.db = bot.database
+        self.loggers = {}
     
     @commands.command(pass_context=True)
     async def access(self, ctx):
@@ -69,6 +72,16 @@ class Maintenance:
                     msg = "Changed to branch: {}. {}".format(branch_name, msg)
             await ctx.bot.send_message(ctx.message.channel, msg)
             await ctx.bot.close()
+        elif command == 'log':
+            cname = ctx.message.channel.name
+            logger = logging.getLogger()
+            if cname in self.loggers:
+                logger.removeHandler(self.loggers[cname])
+                del self.loggers[cname]
+            else:
+                handler = DiscordLoggingHandler(ctx.bot, ctx.message.channel)
+                logger.addHandler(handler)
+                self.loggers[cname] = handler
         else:
             raise commands.MissingRequiredArgument()
     

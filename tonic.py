@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import random
+import logging
 import traceback
 import pkgutil
 import importlib
@@ -8,6 +9,8 @@ from util.prefix import command_prefix
 from util.checks import VerificationError
 from storage import settings
 from storage.db import DatabaseInterface
+
+logging.basicConfig(level=logging.INFO)
 
 bot = Bot(command_prefix)
 
