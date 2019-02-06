@@ -14,4 +14,4 @@ class DiscordLoggingHandler(logging.Handler):
 
 class DiscordLoggingFormatter(logging.Formatter):
     def format(self, record):
-        return f"``**{record.levelname}:{record.name}**``\n```{record.msg}```"
+        return f"``{record.levelname}:{record.name}``\n```{record.msg}```"
