@@ -78,10 +78,12 @@ class Maintenance:
             if cname in self.loggers:
                 logger.removeHandler(self.loggers[cname])
                 del self.loggers[cname]
+                await ctx.bot.send_message(ctx.message.channel, "Logging stopped.")
             else:
                 handler = DiscordLoggingHandler(ctx.bot, ctx.message.channel)
                 logger.addHandler(handler)
                 self.loggers[cname] = handler
+                await ctx.bot.send_message(ctx.message.channel, "Logging started.")
         else:
             raise commands.MissingRequiredArgument()
     
