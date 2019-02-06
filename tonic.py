@@ -11,6 +11,7 @@ from storage import settings
 from storage.db import DatabaseInterface
 
 logging.basicConfig(level=logging.INFO)
+log = logging.getLogger()
 
 bot = Bot(command_prefix)
 
@@ -43,7 +44,9 @@ async def on_command_error(error, ctx):
     elif(isinstance(error, NoPrivateMessage)):
         await ctx.bot.send_message(ctx.message.channel, 'This command must be used in a channel.')
     else:
-        traceback.print_exception(type(error), error, error.__traceback__)
+        #traceback.print_exception(type(error), error, error.__traceback__)
+        log.error(traceback.format_exception(type(error), error, error.__traceback__))
+        
 
 # load submodules
 startup_modules = []

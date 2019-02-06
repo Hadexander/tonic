@@ -86,6 +86,10 @@ class Maintenance:
             raise commands.MissingRequiredArgument()
     
     @commands.command(pass_context=True)
+    async def crash(self, ctx):
+        raise Exception()
+    
+    @commands.command(pass_context=True)
     @commands.check(no_private_message)
     @commands.check(require_server_permissions)
     async def prefix(self, ctx, string=None):
