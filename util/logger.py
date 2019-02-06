@@ -11,3 +11,7 @@ class DiscordLoggingHandler(logging.Handler):
         record_fmt = self.format(record)
         coro = self.bot.send_message(self.channel, record_fmt)
         asyncio.run_coroutine_threadsafe(coro, self.bot.loop)
+
+class DiscordLoggingFormatter(logging.Formatter):
+    def format(self, record):
+        return "``**{record.levelname}:{record.name}**``\n```{record.msg}```"

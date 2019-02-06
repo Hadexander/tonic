@@ -7,7 +7,7 @@ from discord.ext import commands
 from storage.db import User, Guild
 from .checks import require_owner_access, no_private_message, require_server_permissions
 from .prefix import prefix_changed
-from .logger import DiscordLoggingHandler
+from .logger import DiscordLoggingHandler, DiscordLoggingFormatter
 
 class Maintenance:
     def __init__(self, bot):
@@ -81,6 +81,7 @@ class Maintenance:
                 await ctx.bot.send_message(ctx.message.channel, "Logging stopped.")
             else:
                 handler = DiscordLoggingHandler(ctx.bot, ctx.message.channel)
+                handler.setFormatter(DiscordLoggingFormatter())
                 logger.addHandler(handler)
                 self.loggers[cname] = handler
                 await ctx.bot.send_message(ctx.message.channel, "Logging started.")

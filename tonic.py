@@ -46,8 +46,7 @@ async def on_command_error(error, ctx):
     else:
         #traceback.print_exception(type(error), error, error.__traceback__)
         lines = traceback.format_exception(type(error), error, error.__traceback__)
-        message = "".join(lines)
-        log.error(message)
+        log.error("".join(lines))
         
 
 # load submodules
