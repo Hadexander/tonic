@@ -10,7 +10,7 @@ from util.checks import VerificationError
 from storage import settings
 from storage.db import DatabaseInterface
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.INFO, format="``%(levelname)s:%(name)s\n %(message)s``")
 log = logging.getLogger()
 
 bot = Bot(command_prefix)
@@ -45,7 +45,8 @@ async def on_command_error(error, ctx):
         await ctx.bot.send_message(ctx.message.channel, 'This command must be used in a channel.')
     else:
         #traceback.print_exception(type(error), error, error.__traceback__)
-        log.error(traceback.format_exception(type(error), error, error.__traceback__))
+        #lines = traceback.format_exception(type(error), error, error.__traceback__)
+        log.exception(error, exc_info=True)
         
 
 # load submodules
