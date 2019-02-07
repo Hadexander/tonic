@@ -1,5 +1,6 @@
 import logging
 import asyncio
+from datetime import datetime
 
 class DiscordLoggingHandler(logging.Handler):
     def __init__(self, bot, channel):
@@ -28,7 +29,7 @@ class DiscordLoggingHandler(logging.Handler):
 
 class DiscordLoggingFormatter(logging.Formatter):
     def format(self, r):
-        return f"``{r.levelname}:{r.name}@{r.asctime}\n{r.msg}``"
+        return f"``{r.levelname}:{r.name}@{datetime.now()}\n{r.msg}``"
 
 class LoggingErrorWriter:
     def __init__(self, logger):
