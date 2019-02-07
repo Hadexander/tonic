@@ -1,5 +1,6 @@
 import logging
 import asyncio
+import re
 from datetime import datetime
 
 class DiscordLoggingHandler(logging.Handler):
@@ -22,14 +23,15 @@ class DiscordLoggingHandler(logging.Handler):
             await asyncio.sleep(5)
     
     def close(self):
+        print("stopping")
         self.run = False
         self.buffer.clear()
         super.close()
 
-
 class DiscordLoggingFormatter(logging.Formatter):
     def format(self, r):
-        return f"``{r.levelname}:{r.name}@{datetime.now()}\n{r.msg}``"
+        msg = re.sub(r"\u001b\[\d+m", "", r.msg)
+        return f"``{r.levelname}:{r.name}@{datetime.now()}\n{msg}``"
 
 class LoggingErrorWriter:
     def __init__(self, logger):

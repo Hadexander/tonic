@@ -11,7 +11,7 @@ from util.logger import LoggingErrorWriter
 
 class Player:
     def __init__(self):
-        logger = logging.getLogger()
+        logger = logging.getLogger(__name__)
         self._default_options = {'logger':logger, 'quiet':False, 'noplaylist':True, 'playlist_items':'1', 'format':'bestaudio/webm[abr>0]/best'}
         self._search_options = {'logger':logger, 'default_search':'ytsearch1', 'quiet':False, 'noplaylist':True, 'playlist_items':'1', 'format':'bestaudio/webm[abr>0]/best'}
         self._servers = {}
@@ -112,7 +112,7 @@ class Player:
             await self._finish_playback(bot, server_id)
             return
         try:
-            srv['player'] = srv['voice'].create_ffmpeg_player(srv['song'][0], stderr=self.log_writer, after=lambda: self._after(bot, server_id))
+            srv['player'] = srv['voice'].create_ffmpeg_player(srv['song'][0], after=lambda: self._after(bot, server_id))
             await bot.change_presence(game = Game(name=srv['song'][1]))
         except:
             #shit's fucked
