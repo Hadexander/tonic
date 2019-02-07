@@ -2,6 +2,7 @@ import asyncio
 import functools
 import datetime
 import logging
+import subprocess
 from collections import deque
 from youtube_dl import YoutubeDL
 from youtube_dl.utils import DownloadError
@@ -92,6 +93,9 @@ class Player:
         error = srv['player'].error
         if error:
             self.logger.error(error)
+        stderr = srv['player'].process.stderr.read() #lul
+        if len(stderr) > 0:
+            self.logger.error(stderr)
         coro = self._play(bot, server_id)
         future = asyncio.run_coroutine_threadsafe(coro, bot.loop)
         try:
@@ -115,7 +119,7 @@ class Player:
             await self._finish_playback(bot, server_id)
             return
         try:
-            srv['player'] = srv['voice'].create_ffmpeg_player(srv['song'][0], after=lambda: self._after(bot, server_id))
+            srv['player'] = srv['voice'].create_ffmpeg_player(srv['song'][0], stderr=subprocess.PIPE, after=lambda: self._after(bot, server_id))
             await bot.change_presence(game = Game(name=srv['song'][1]))
         except Exception as ex:
             #shit's fucked
