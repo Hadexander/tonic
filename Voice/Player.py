@@ -120,7 +120,7 @@ class Player:
             await self._finish_playback(bot, server_id)
             return
         try:
-            srv['player'] = srv['voice'].create_ffmpeg_player(srv['song'][0], stderr=subprocess.PIPE, before_options=, after=lambda: self._after(bot, server_id))
+            srv['player'] = srv['voice'].create_ffmpeg_player(srv['song'][0], stderr=subprocess.PIPE, before_options=self._ffmpeg_options, after=lambda: self._after(bot, server_id))
             await bot.change_presence(game = Game(name=srv['song'][1]))
         except Exception as ex:
             #shit's fucked
