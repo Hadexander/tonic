@@ -23,19 +23,18 @@ class DiscordLoggingHandler(logging.Handler):
             await asyncio.sleep(5)
     
     def close(self):
-        print("stopping")
         self.run = False
         self.buffer.clear()
         super.close()
 
 class DiscordLoggingFormatter(logging.Formatter):
     def format(self, r):
-        msg = re.sub(r"\u001b\[\d+m", "", r.msg)
+        msg = re.sub(r"\u001b\[\d+(?:;\d+)?m", "", r.msg)
         return f"``{r.levelname}:{r.name}@{datetime.now()}\n{msg}``"
 
-class LoggingErrorWriter:
+class StderrLogger:
     def __init__(self, logger):
         self.logger = logger
     
-    def write(self, message):
-        self.logger.error(message)
+    def write(self, string):
+        self.logger.error(string)

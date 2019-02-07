@@ -1,17 +1,21 @@
 #!/usr/bin/env python3
 import random
 import logging
+import sys
 import traceback
 import pkgutil
 import importlib
 from discord.ext.commands import Bot, MissingRequiredArgument, BadArgument, NoPrivateMessage, CommandNotFound
 from util.prefix import command_prefix
 from util.checks import VerificationError
+from util.logger import StderrLogger
 from storage import settings
 from storage.db import DatabaseInterface
 
 logging.basicConfig(level=logging.WARNING)
 log = logging.getLogger()
+stderr = logging.getLogger("stderr")
+sys.stderr = StderrLogger(stderr)
 
 bot = Bot(command_prefix)
 

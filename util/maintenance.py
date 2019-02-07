@@ -84,6 +84,7 @@ class Maintenance:
             cname = ctx.message.channel.name
             logger = logging.getLogger()
             if cname in self.loggers:
+                self.loggers[cname].close()
                 logger.removeHandler(self.loggers[cname])
                 del self.loggers[cname]
                 await ctx.bot.send_message(ctx.message.channel, "Logging stopped.")
@@ -100,10 +101,6 @@ class Maintenance:
                 await ctx.bot.send_message(ctx.message.channel, "Logging started.")
         else:
             raise commands.MissingRequiredArgument()
-    
-    @commands.command(pass_context=True)
-    async def crash(self, ctx):
-        raise Exception()
     
     @commands.command(pass_context=True)
     @commands.check(no_private_message)
