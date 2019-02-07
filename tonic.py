@@ -10,7 +10,7 @@ from util.checks import VerificationError
 from storage import settings
 from storage.db import DatabaseInterface
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.WARNING)
 log = logging.getLogger()
 
 bot = Bot(command_prefix)
