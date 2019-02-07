@@ -7,7 +7,6 @@ from youtube_dl import YoutubeDL
 from youtube_dl.utils import DownloadError
 from discord.ext import commands
 from discord import Game
-from util.logger import LoggingErrorWriter
 
 class Player:
     def __init__(self):
