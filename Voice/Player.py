@@ -14,7 +14,7 @@ class Player:
         self.logger = logging.getLogger(__name__)
         self._default_options = {'quiet':False, 'noplaylist':True, 'playlist_items':'1', 'format':'bestaudio/webm[abr>0]/best'}
         self._search_options = {'logger':self.logger, 'default_search':'ytsearch1', 'quiet':False, 'noplaylist':True, 'playlist_items':'1', 'format':'bestaudio/webm[abr>0]/best'}
-        self._ffmpeg_options = "-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5"
+        self._ffmpeg_options = "-reconnect 1"
         self._servers = {}
 
     def get_server_dict(self, server_id):
