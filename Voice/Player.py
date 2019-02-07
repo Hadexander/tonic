@@ -12,8 +12,9 @@ from discord import Game
 class Player:
     def __init__(self):
         self.logger = logging.getLogger(__name__)
-        self._default_options = {'logger':self.logger, 'quiet':False, 'noplaylist':True, 'playlist_items':'1', 'format':'bestaudio/webm[abr>0]/best'}
+        self._default_options = {'quiet':False, 'noplaylist':True, 'playlist_items':'1', 'format':'bestaudio/webm[abr>0]/best'}
         self._search_options = {'logger':self.logger, 'default_search':'ytsearch1', 'quiet':False, 'noplaylist':True, 'playlist_items':'1', 'format':'bestaudio/webm[abr>0]/best'}
+        self._ffmpeg_options = "-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5"
         self._servers = {}
 
     def get_server_dict(self, server_id):
@@ -119,7 +120,7 @@ class Player:
             await self._finish_playback(bot, server_id)
             return
         try:
-            srv['player'] = srv['voice'].create_ffmpeg_player(srv['song'][0], stderr=subprocess.PIPE, after=lambda: self._after(bot, server_id))
+            srv['player'] = srv['voice'].create_ffmpeg_player(srv['song'][0], stderr=subprocess.PIPE, before_options=, after=lambda: self._after(bot, server_id))
             await bot.change_presence(game = Game(name=srv['song'][1]))
         except Exception as ex:
             #shit's fucked
