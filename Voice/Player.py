@@ -93,9 +93,9 @@ class Player:
         error = srv['player'].error
         if error:
             self.logger.error(error)
-        stderr = srv['player'].process.stderr.read() #lul
+        stderr = srv['player'].process.stderr.read() #I hate discord.py
         if len(stderr) > 0:
-            self.logger.error(stderr)
+            self.logger.error(stderr.decode())
         coro = self._play(bot, server_id)
         future = asyncio.run_coroutine_threadsafe(coro, bot.loop)
         try:
