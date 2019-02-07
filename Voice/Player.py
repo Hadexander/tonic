@@ -2,6 +2,7 @@ import asyncio
 import functools
 import datetime
 import logging
+from io import StringIO
 from collections import deque
 from youtube_dl import YoutubeDL
 from youtube_dl.utils import DownloadError
@@ -14,6 +15,7 @@ class Player:
         self._default_options = {'logger':logger, 'quiet':False, 'noplaylist':True, 'playlist_items':'1', 'format':'bestaudio/webm[abr>0]/best'}
         self._search_options = {'logger':logger, 'default_search':'ytsearch1', 'quiet':False, 'noplaylist':True, 'playlist_items':'1', 'format':'bestaudio/webm[abr>0]/best'}
         self._servers = {}
+        self.ebuf = StringIO()
 
     def get_server_dict(self, server_id):
         if server_id not in self._servers:
@@ -110,7 +112,7 @@ class Player:
             await self._finish_playback(bot, server_id)
             return
         try:
-            srv['player'] = srv['voice'].create_ffmpeg_player(srv['song'][0], stderr=subprocess.PIPE, after=lambda: self._after(bot, server_id))
+            srv['player'] = srv['voice'].create_ffmpeg_player(srv['song'][0], stderr=self.ebuf, after=lambda: self._after(bot, server_id))
             await bot.change_presence(game = Game(name=srv['song'][1]))
         except:
             #shit's fucked

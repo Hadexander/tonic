@@ -31,10 +31,3 @@ class DiscordLoggingFormatter(logging.Formatter):
     def format(self, r):
         msg = re.sub(r"\u001b\[\d+(?:;\d+)?m", "", r.msg)
         return f"``{r.levelname}:{r.name}@{datetime.now()}\n{msg}``"
-
-class StderrLogger:
-    def __init__(self, logger):
-        self.logger = logger
-    
-    def write(self, string):
-        self.logger.error(string)

@@ -1,21 +1,17 @@
 #!/usr/bin/env python3
 import random
 import logging
-import sys
 import traceback
 import pkgutil
 import importlib
 from discord.ext.commands import Bot, MissingRequiredArgument, BadArgument, NoPrivateMessage, CommandNotFound
 from util.prefix import command_prefix
 from util.checks import VerificationError
-from util.logger import StderrLogger
 from storage import settings
 from storage.db import DatabaseInterface
 
 logging.basicConfig(level=logging.WARNING)
 log = logging.getLogger()
-stderr = logging.getLogger("stderr")
-sys.stderr = StderrLogger(stderr)
 
 bot = Bot(command_prefix)
 
@@ -30,7 +26,7 @@ nope = ['No.', 'Nope.', 'Nah.', 'Your access level isn\'t high enough.']
 
 @bot.event
 async def on_ready():
-    print('Ready (%s:%s)' % (bot.user.name, bot.user.id))
+    log.info('Ready (%s:%s)' % (bot.user.name, bot.user.id))
 
 @bot.event
 async def on_command_error(error, ctx):
@@ -56,7 +52,7 @@ async def on_command_error(error, ctx):
 # load submodules
 startup_modules = []
 
-print("Loading submodules...")
+log.info("Loading submodules...")
 for finder, name, ispkg in pkgutil.iter_modules('.'):
     if ispkg:
         try:
@@ -64,9 +60,9 @@ for finder, name, ispkg in pkgutil.iter_modules('.'):
             if hasattr(module, 'setup'):
                 startup_modules.append(name)
         except Exception as ex:
-            print("[{}] could not be imported. Reason:\n{} {}".format(name, type(ex), str(ex)))
+            log.error("[{}] could not be imported. Reason:\n{} {}".format(name, type(ex), str(ex)))
 
-print("Installing cogs...")
+log.info("Installing cogs...")
 for name in startup_modules:
     bot.load_extension(name)
 
