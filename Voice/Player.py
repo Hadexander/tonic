@@ -96,7 +96,10 @@ class Player:
         if error:
             self.logger.error(error)
         self.logger.info("obtain stderr")
-        stderr = srv['player'].process.stderr #I hate discord.py
+        try:
+            stderr = srv['player'].process.stderr #I hate discord.py
+        except Exception as ex:
+            self.logger.exception(ex, exc_info=True)
         if len(stderr) > 0:
             self.logger.info("stderr not empty")
             self.logger.error(stderr.read().decode())
