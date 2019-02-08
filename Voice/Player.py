@@ -90,20 +90,10 @@ class Player:
         await ctx.bot.send_message(ctx.message.channel, msg)
 
     def _after(self, bot, server_id):
-        self.logger.info("_after")
         srv = self.get_server_dict(server_id)
         error = srv['player'].error
         if error:
             self.logger.error(error)
-        self.logger.info("obtain stderr")
-        try:
-            stderr = srv['player'].process.stderr #I hate discord.py
-        except Exception as ex:
-            self.logger.exception(ex, exc_info=True)
-        if len(stderr) > 0:
-            self.logger.info("stderr not empty")
-            self.logger.error(stderr.read().decode())
-        self.logger.info("scheduled _play")
         asyncio.run_coroutine_threadsafe(self._play(bot, server_id), bot.loop)
 
     async def _finish_playback(self, bot, server_id):
