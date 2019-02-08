@@ -95,14 +95,15 @@ class Player:
         error = srv['player'].error
         if error:
             self.logger.error(error)
-        stderr = srv['player'].process.stderr.read() #I hate discord.py
+        self.logger.info("obtain stderr")
+        stderr = srv['player'].process.stderr #I hate discord.py
         if len(stderr) > 0:
-            self.logger.error(stderr.decode())
+            self.logger.info("stderr not empty")
+            self.logger.error(stderr.read().decode())
         self.logger.info("scheduled _play")
         asyncio.run_coroutine_threadsafe(self._play(bot, server_id), bot.loop)
 
     async def _finish_playback(self, bot, server_id):
-        self.logger.info("_finish_playback")
         await self._leave(server_id)
         await bot.change_presence(game = None)
         srv = self.get_server_dict(server_id)
@@ -110,7 +111,6 @@ class Player:
 
     async def _play(self, bot, server_id):
         """Starts the ffmpeg player with the next song in queue."""
-        self.logger.info("_play")
         srv = self.get_server_dict(server_id)
         srv['song'] = self.dequeue(server_id)
         if not srv['song']:
