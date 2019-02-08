@@ -194,8 +194,8 @@ class Player:
         if not self.is_playing(server_id):
             await self._play(ctx.bot, server_id)
     
-    def common_checks(self, ctx):
-        """Common control checks for multiple commands."""
+    async def control_checks(self, ctx):
+        """Returns True if access to player controls is allowed."""
         server_id = ctx.message.server.id
         requester = ctx.message.author
         #silently drop if not in voice
@@ -211,7 +211,7 @@ class Player:
     @commands.command(pass_context=True)
     async def next(self, ctx):
         """Skips to the next song in queue."""
-        if not self.common_checks(ctx):
+        if not await self.control_checks(ctx):
             return
         server_id = ctx.message.server.id
         if self.is_playing(server_id):
@@ -222,7 +222,7 @@ class Player:
     @commands.command(pass_context=True)
     async def pause(self, ctx):
         """Pauses or resumes playback."""
-        if not self.common_checks(ctx):
+        if not await self.control_checks(ctx):
             return
         server_id = ctx.message.server.id
         srv = self.get_server_dict(server_id)
@@ -234,7 +234,7 @@ class Player:
     @commands.command(pass_context=True)
     async def stop(self, ctx):
         """Stops and clears the entire queue."""
-        if not self.common_checks(ctx):
+        if not await self.control_checks(ctx):
             return
         server_id = ctx.message.server.id
         srv = self.get_server_dict(server_id)
