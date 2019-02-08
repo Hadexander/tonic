@@ -193,40 +193,39 @@ class Player:
         #start playback unless already playing
         if not self.is_playing(server_id):
             await self._play(ctx.bot, server_id)
-
-    @commands.command(pass_context=True)
-    async def next(self, ctx):
-        """Skips to the next song in queue."""
+    
+    def common_checks(self, ctx):
+        """Common control checks for multiple commands."""
         server_id = ctx.message.server.id
-        srv = self.get_server_dict(server_id)
         requester = ctx.message.author
-        #silentrly drop if not in voice
+        #silently drop if not in voice
         if not self.in_voice(server_id):
-            return
+            return False
         #refuse if user not in the same channel
         if not self.user_in_channel(server_id, requester):
             vcname = self.get_server_dict(server_id)['voice'].channel.name
             await ctx.bot.send_message(ctx.message.channel, "You can't control me outside of {}.".format(vcname))
+            return False
+        return True
+
+    @commands.command(pass_context=True)
+    async def next(self, ctx):
+        """Skips to the next song in queue."""
+        if not self.common_checks(ctx):
             return
+        server_id = ctx.message.server.id
         if self.is_playing(server_id):
-            srv['player'].stop()
+            self.get_server_dict(server_id)['player'].stop()
         else:
             await self._play(ctx.bot, server_id)
 
     @commands.command(pass_context=True)
     async def pause(self, ctx):
         """Pauses or resumes playback."""
+        if not self.common_checks(ctx):
+            return
         server_id = ctx.message.server.id
         srv = self.get_server_dict(server_id)
-        requester = ctx.message.author
-        #silentrly drop if not in voice
-        if not self.in_voice(server_id):
-            return
-        #refuse if user not in the same channel
-        if not self.user_in_channel(server_id, requester):
-            vcname = self.get_server_dict(server_id)['voice'].channel.name
-            await ctx.bot.send_message(ctx.message.channel, "You can't control me outside of {}.".format(vcname))
-            return
         if self.is_playing(server_id):
             srv['player'].pause()
         else:
@@ -234,20 +233,14 @@ class Player:
 
     @commands.command(pass_context=True)
     async def stop(self, ctx):
-        """Stops whatever it's playing."""
+        """Stops and clears the entire queue."""
+        if not self.common_checks(ctx):
+            return
         server_id = ctx.message.server.id
         srv = self.get_server_dict(server_id)
-        requester = ctx.message.author
-        #silentrly drop if not in voice
-        if not self.in_voice(server_id):
-            return
-        #refuse if user not in the same channel
-        if not self.user_in_channel(server_id, requester):
-            vcname = self.get_server_dict(server_id)['voice'].channel.name
-            await ctx.bot.send_message(ctx.message.channel, "You can't control me outside of {}.".format(vcname))
-            return
         srv['queue'].clear()
-        await self._finish_playback(ctx.bot, server_id)
+        if self.is_playing(server_id):
+            srv['player'].stop()
 
     def format_volume_bar(self, value):
         """Returns the volume bar string. Expects value = [0.0-2.0]"""
