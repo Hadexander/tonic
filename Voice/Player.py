@@ -90,6 +90,7 @@ class Player:
         await ctx.bot.send_message(ctx.message.channel, msg)
 
     def _after(self, bot, server_id):
+        self.logger.info("_after")
         srv = self.get_server_dict(server_id)
         error = srv['player'].error
         if error:
@@ -107,6 +108,7 @@ class Player:
             return
 
     async def _finish_playback(self, bot, server_id):
+        self.logger.info("_finish_playback")
         await self._leave(server_id)
         await bot.change_presence(game = None)
         srv = self.get_server_dict(server_id)
@@ -114,6 +116,7 @@ class Player:
 
     async def _play(self, bot, server_id):
         """Starts the ffmpeg player with the next song in queue."""
+        self.logger.info("_play")
         srv = self.get_server_dict(server_id)
         srv['song'] = self.dequeue(server_id)
         if not srv['song']:
