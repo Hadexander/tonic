@@ -98,14 +98,8 @@ class Player:
         stderr = srv['player'].process.stderr.read() #I hate discord.py
         if len(stderr) > 0:
             self.logger.error(stderr.decode())
-        coro = self._play(bot, server_id)
-        future = asyncio.run_coroutine_threadsafe(coro, bot.loop)
-        try:
-            future.result()
-        except Exception as ex:
-            #shit's more fucked
-            self.logger.exception(ex, exc_info=True)
-            return
+        self.logger.info("scheduled _play")
+        asyncio.run_coroutine_threadsafe(self._play(bot, server_id), bot.loop)
 
     async def _finish_playback(self, bot, server_id):
         self.logger.info("_finish_playback")
