@@ -46,7 +46,8 @@ class Steam_Tonic:
         genres = ""
         for genre in genrelist:
             genres+="{}, ".format(genre['description'])
-        return genres[:-1]
+        genres = genres[:-1]
+        return genres
 
     def __getDescription__(self,game_res,appid):
         description = game_res[appid]['data']['short_description']
